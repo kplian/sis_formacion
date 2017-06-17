@@ -267,7 +267,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: true
                 },
-                {
+                /*{
                     config: {
                         name: 'cod_tipo',
                         fieldLabel: 'Tipo',
@@ -294,8 +294,47 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     grid: true,
                     form: true
-                },
-                {
+                },*/
+
+	            {
+	                    config: {
+	                           name: 'cod_tipo',
+	                           fieldLabel: 'Tipo',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'cod_tipo'
+			                        ],
+			                        data: [['Seminario'], ['Curso'], ['Difusión']]
+	                           }),
+	                           valueField: 'cod_tipo',
+	                           displayField: 'cod_tipo',
+	                           gdisplayField: 'cod_tipo',
+	                           hiddenName: 'cod_tipo',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return String.format('{0}', record.data['cod_tipo']);
+	                           }
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'cur.cod_tipo',type: 'string'},
+	                    grid: false,
+	                    form: true
+	                    //,egrid:true,
+	            },
+                /*{
                     config: {
                         name: 'cod_prioridad',
                         fieldLabel: 'Prioridad',
@@ -322,8 +361,46 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     grid: true,
                     form: true
-                },
-                {
+                },*/
+	            {
+	                    config: {
+	                           name: 'cod_prioridad',
+	                           fieldLabel: 'Prioridad',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'cod_prioridad'
+			                        ],
+			                        data: [['Alta'], ['Media'], ['Baja']]
+	                           }),
+	                           valueField: 'cod_prioridad',
+	                           displayField: 'cod_prioridad',
+	                           gdisplayField: 'cod_prioridad',
+	                           hiddenName: 'cod_prioridad',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return String.format('{0}', record.data['cod_prioridad']);
+	                           }
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'cur.cod_prioridad',type: 'string'},
+	                    grid: false,
+	                    form: true
+	                    //,egrid:true,
+	            },
+                /*{
                     config: {
                         name: 'cod_clasificacion',
                         fieldLabel: 'Clasificación',
@@ -350,7 +427,45 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     grid: true,
                     form: true
-                },
+                },*/
+	            {
+	                    config: {
+	                           name: 'cod_clasificacion',
+	                           fieldLabel: 'Clasificación',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'cod_clasificacion'
+			                        ],
+			                        data: [['Formación'], ['Capacitación'], ['Entrenamiento'], ['Especialización']]
+	                           }),
+	                           valueField: 'cod_clasificacion',
+	                           displayField: 'cod_clasificacion',
+	                           gdisplayField: 'cod_clasificacion',
+	                           hiddenName: 'cod_clasificacion',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return String.format('{0}', record.data['cod_clasificacion']);
+	                           }
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'cur.cod_clasificacion',type: 'string'},
+	                    grid: false,
+	                    form: true
+	                    //,egrid:true,
+	            },
                 {
                     config: {
                         name: 'objetivo',
@@ -418,7 +533,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         emptyText: 'Elija una opción...',
                         store: new Ext.data.JsonStore({
                             url: '../../sis_organigrama/control/Funcionario/listarFuncionario',
-                            id: 'id_funcionario',
+                            id: 'id_funcionario',	
                             root: 'datos',
                             sortInfo: {
                                 field: 'desc_person',
@@ -593,7 +708,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: true
                 },
-                {
+                /*{
                     config: {
                         name: 'origen',
                         fieldLabel: 'Origen',
@@ -621,7 +736,45 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     grid: true,
                     form: true
-                },
+                },*/
+	            {
+	                    config: {
+	                           name: 'origen',
+	                           fieldLabel: 'Origen',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'origen'
+			                        ],
+			                        data: [['Externo'], ['Interno'],['In Company']]
+	                           }),
+	                           valueField: 'origen',
+	                           displayField: 'origen',
+	                           gdisplayField: 'origen',
+	                           hiddenName: 'origen',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return String.format('{0}', record.data['origen']);
+	                           }
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'cur.origen',type: 'string'},
+	                    grid: false,
+	                    form: true
+	                    //,egrid:true,
+	            },
                 {
                     config: {
                         name: 'expositor',
@@ -681,7 +834,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: true
                 },                
-                {
+                /*{
                     config: {
                         name: 'evaluacion',
                         fieldLabel: 'Evaluacion',
@@ -712,8 +865,51 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     grid: true,
                     form: true
-                },
-                {
+                },*/
+	            {
+	                    config: {
+	                           name: 'evaluacion',
+	                           fieldLabel: 'Evaluacion',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'evaluacion'
+			                        ],
+			                        data: [['Si'], ['No']]
+	                           }),
+	                           valueField: 'evaluacion',
+	                           displayField: 'evaluacion',
+	                           gdisplayField: 'evaluacion',
+	                           hiddenName: 'evaluacion',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return "";
+	                           }
+	                           ,listeners: {
+								   'afterrender': function(combo){			  
+		    							combo.setValue('NO');       
+								  	}
+								}
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'cur.evaluacion',type: 'string'},
+	                    grid: false,
+	                    form: true
+	                    //,egrid:true,
+	            },
+                /*{
                     config: {
                         name: 'certificacion',
                         fieldLabel: 'Certificacion',
@@ -744,7 +940,50 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     grid: true,
                     form: true
-                },
+                },*/
+	            {
+	                    config: {
+	                           name: 'certificacion',
+	                           fieldLabel: 'Certificacion',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'certificacion'
+			                        ],
+			                        data: [['Si'], ['No']]
+	                           }),
+	                           valueField: 'certificacion',
+	                           displayField: 'certificacion',
+	                           gdisplayField: 'certificacion',
+	                           hiddenName: 'certificacion',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return "";
+	                           }
+	                           ,listeners: {
+								   'afterrender': function(combo){			  
+		    							combo.setValue('NO');       
+								  	}
+								}
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'cur.certificacion',type: 'string'},
+	                    grid: false,
+	                    form: true
+	                    //,egrid:true,
+	            },
                 {
                     config: {
                         name: 'estado_reg',
