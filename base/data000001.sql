@@ -84,3 +84,15 @@ select pxp.f_insert_tgui ('Cuestionario', 'Cuestionario', 'CUE', 'si', 13, 'sis_
 /********************************************I-DAT-MANU-SIGEFO-0-12/09/2017********************************************/
 select pxp.f_insert_tgui ('Curso', 'Curso', 'CUR', 'si', 5, 'sis_formacion/vista/curso/Curso.php', 2, '', 'Curso', 'SIGEFO');
 /********************************************F-DAT-MANU-SIGEFO-0-12/09/2017********************************************/
+
+
+/********************************************I-DAT-JUAN-SIGEFO-1-28/09/2017********************************************/
+select pxp.f_insert_tgui ('Planificación', 'Planificación', 'SIGEFOP', 'si', 2, 'sis_formacion/vista/planificacion/Planificacion.php', 2, '', 'Planificacion', 'SIGEFO');
+select pxp.f_delete_tgui ('SIGEFOCU');
+select pxp.f_delete_tgui ('CUPL');
+select pxp.f_delete_tgui ('CUFU');
+select pxp.f_insert_tgui ('Curso', 'Curso', 'CUR', 'si', 3, 'sis_formacion/vista/curso/Curso.php', 2, '', 'Curso', 'SIGEFO');
+select pxp.f_insert_tgui ('Avance Real', 'Avance Real', 'AR', 'si', 4, 'sis_formacion/vista/curso/FormCursoAvanceReal.php', 2, '', 'FormCursoAvanceReal', 'SIGEFO');
+select pxp.f_insert_tgui ('Cuestionario', 'Cuestionario', 'SIGEFOCUE', 'si', 5, '', 2, '', '', 'SIGEFO');
+/********************************************F-DAT-JUAN-SIGEFO-1-28/09/2017********************************************/
+

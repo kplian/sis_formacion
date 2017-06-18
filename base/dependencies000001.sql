@@ -408,5 +408,10 @@ ALTER TABLE sigefo.tcurso
   ALTER COLUMN certificacion TYPE VARCHAR(25) COLLATE pg_catalog."default"; 
 /***********************************F-DEP-MANU-SIGEFO-0-13/09/2017****************************************/
 
+/***********************************I-DEP-JUAN-SIGEFO-0-28/09/2017****************************************/
+select pxp.f_delete_testructura_gui ('SIGEFOCU', 'SIGEFO');
+select pxp.f_delete_testructura_gui ('CUPL', 'SIGEFO');
+select pxp.f_delete_testructura_gui ('CUFU', 'SIGEFO');
+/***********************************F-DEP-JUAN-SIGEFO-0-28/09/2017****************************************/
 
   
