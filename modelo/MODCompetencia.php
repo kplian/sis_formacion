@@ -58,6 +58,7 @@ class MODCompetencia extends MODbase{
 		$this->captura('id_competencia','int4');
 		$this->captura('cod_competencia','int4');
 		$this->captura('tipo','varchar');
+		$this->captura('desc_competencia','varchar');
 		/*$this->captura('id_usuario_ai','int4');
 		$this->captura('id_usuario_reg','int4');
 		$this->captura('fecha_reg','timestamp');

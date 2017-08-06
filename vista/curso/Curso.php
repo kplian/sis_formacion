@@ -724,13 +724,13 @@ header("content-type: text/javascript; charset=UTF-8");
                             id: 'id_cargo',
                             root: 'datos',
                             sortInfo: {
-                                field: 'nombre',
+                                field: 'unidad_organizacional',
                                 direction: 'ASC'
                             },
                             totalProperty: 'total',
                             fields: ['id_cargo', 'nombre','cod_cargo'],
                             remoteSort: true,
-                            baseParams: {par_filtro: 'nombre'},
+                            baseParams: {par_filtro: 'uo.nombre_cargo'},
                             
                         }),
                         valueField: 'id_cargo',
@@ -770,16 +770,16 @@ header("content-type: text/javascript; charset=UTF-8");
                             id: 'id_competencia',
                             root: 'datos',
                             sortInfo: {
-                                field: 'competencia',
+                                field: 'desc_competencia',
                                 direction: 'ASC'
                             },
                             totalProperty: 'total',
-                            fields: ['id_competencia', 'competencia', 'tipo','cod_competencia','id_uo'],
+                            fields: ['id_competencia', 'competencia', 'tipo','cod_competencia','id_uo','desc_competencia'],
                             remoteSort: true,
-                            baseParams: {par_filtro: 'competencia'}
+                            baseParams: {par_filtro: 'comp.competencia'}
                         }),
                         valueField: 'id_competencia',
-                        displayField: 'competencia',
+                        displayField: 'desc_competencia',
                         tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{competencia} </p> </div> </tpl>',
                         gdisplayField: 'desc_competencia',
                         hiddenName: 'id_competencias',
@@ -821,7 +821,7 @@ header("content-type: text/javascript; charset=UTF-8");
                             totalProperty: 'total',
                             fields: ['id_funcionario', 'codigo', 'desc_person', 'ci'],
                             remoteSort: true,
-                            baseParams: {par_filtro: 'FUNCIO.codigo#PERSON.nombre_completo2'}
+                            baseParams: {par_filtro: 'p.nombre_completo2'}
 
                         }),
                         valueField: 'id_funcionario',
@@ -846,7 +846,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     type: 'AwesomeCombo',
                     id_grupo: 0,
-                    filters: {pfiltro: 'PERSON.desc_funcionario1', type: 'string'},
+                    filters: {pfiltro: 'desc_person', type: 'string'},
                     grid: true,
                     form: true
                 },

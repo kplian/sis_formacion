@@ -77,7 +77,8 @@ BEGIN
                         tu.id_uo,
                         comp.id_competencia,
                         comp.id_competencia::INTEGER as cod_competencia,
-                        comp.tipo
+                        comp.tipo,
+                        comp.competencia::VARCHAR as desc_competencia
                         from 
                         sigefo.tcargo_competencia cc 
                         join sigefo.tcompetencia comp on comp.id_competencia=cc.id_competencia

@@ -458,7 +458,7 @@ BEGIN
     /*********************************
     #TRANSACCION:  'PM_FUNCIO_SEL'
     #DESCRIPCION:	Consulta de datos
-    #AUTOR:		rac
+    #AUTOR:		JUAN
     #FECHA:		29-08-2011 09:19:28
     ***********************************/
 

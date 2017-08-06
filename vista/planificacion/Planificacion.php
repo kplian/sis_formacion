@@ -398,7 +398,7 @@ header("content-type: text/javascript; charset=UTF-8");
                             totalProperty: 'total',
                             fields: ['id_cargo', 'nombre'],
                             remoteSort: true,
-                            baseParams: {par_filtro: 'nombre'},
+                            baseParams: {par_filtro: 'uo.nombre_cargo'},
                             
                         }),
                         valueField: 'id_cargo',
@@ -487,7 +487,7 @@ header("content-type: text/javascript; charset=UTF-8");
                             totalProperty: 'total',
                             fields: ['id_competencia', 'competencia', 'tipo'],
                             remoteSort: true,
-                            baseParams: {par_filtro: 'competencia'}
+                            baseParams: {par_filtro: 'comp.competencia'}
                         }),
                         valueField: 'id_competencia',
                         displayField: 'competencia',

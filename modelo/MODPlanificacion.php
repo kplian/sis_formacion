@@ -151,6 +151,7 @@ class MODPlanificacion extends MODbase{
         $this->captura('nombre','varchar');
 		
 		$this->captura('cod_cargo','int4');
+		$this->captura('unidad_organizacional','varchar');
         //$this->captura('identificador','int4');
         //$this->captura('id_uo_padre','int4');
         //$this->captura('nombre_unidad_padre','varchar');

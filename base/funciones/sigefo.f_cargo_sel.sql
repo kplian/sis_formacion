@@ -65,7 +65,8 @@ BEGIN
       v_consulta:='SELECT 
           uo.id_uo::INTEGER as id_cargo,
           uo.nombre_cargo::varchar as nombre,
-          uo.id_uo::INTEGER as cod_cargo
+          uo.id_uo::INTEGER as cod_cargo,
+          uo.nombre_cargo::varchar as unidad_organizacional
           FROM 
           ORGA.testructura_uo euo
           JOIN orga.tuo uo on euo.id_uo_hijo=uo.id_uo
