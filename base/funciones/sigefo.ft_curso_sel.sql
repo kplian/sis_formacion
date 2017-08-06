@@ -503,6 +503,7 @@ JOIN orga.tuo tu on tu.id_uo=c.id_uo
 JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
 JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
 JOIN segu.vpersona p on p.id_persona=f.id_persona 
+JOIN sigefo.tcargo_competencia cc on cc.id_cargo=c.id_cargo and c.id_uo=tu.id_uo
 WHERE tu.estado_reg=''activo'' and  c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin)
 and ';
                   

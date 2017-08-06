@@ -128,8 +128,11 @@ class ACTCurso extends ACTbase{
 		$this->objParam->defecto('ordenacion','p.nombre_completo2');
 
         if ($this->objParam->getParametro('id_uo')) {
-            $this->objParam->addFiltro("tu.id_uo  in (".$this->objParam->getParametro('id_uo').")");
+            $this->objParam->addFiltro("cc.id_competencia  in (".$this->objParam->getParametro('id_uo').")");
         }
+		else{
+			$this->objParam->addFiltro("tu.id_uo = 0");
+		}
 
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){

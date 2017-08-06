@@ -56,7 +56,10 @@ class ACTPlanificacion extends ACTbase{
 
         if ($this->objParam->getParametro('id_uo')) {
             $this->objParam->addFiltro("euo.id_uo_padre = ".$this->objParam->getParametro('id_uo'));
-        } 
+        }
+		else{
+			$this->objParam->addFiltro("euo.id_uo_padre = 0");
+		} 
 
         if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
             $this->objReporte = new Reporte($this->objParam,$this);

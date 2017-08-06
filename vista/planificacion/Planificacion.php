@@ -127,47 +127,28 @@ header("content-type: text/javascript; charset=UTF-8");
                 }, this);
                 
                 this.Cmp.id_uo.on('select', function (Combo, dato) {
-                	//alert("entro "+this.Cmp.id_unidad_organizacional.getValue());
-                	//alert("entro "+dato.data.id_uo);
-                	
-                	//this.Cmp.nombre_unidad.setValue('');
-		            this.Cmp.id_unidad_organizacional.setValue(''); 
-		            this.Cmp.id_competencias.setValue(''); 
-		                
+
+                	 this.Cmp.id_unidad_organizacional.setValue(''); 
+
                      this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', Combo.getValue());
                      this.Cmp.id_unidad_organizacional.modificado = true;
+               
 
+                     this.Cmp.id_competencias.reset();
+                     
+                     
                 }, this);
                 this.Cmp.id_unidad_organizacional.on('select', function (Combo, dato) {
-                	
-                	 console.log("id de uo por juan ",this.Cmp.id_unidad_organizacional);
-                     
-                     this.Cmp.id_competencias.store.setBaseParam('id_uo', Combo.getValue());
-                     this.Cmp.id_competencias.modificado = true;
-                     
+
+                	    this.Cmp.id_competencias.reset();
+                        this.Cmp.id_competencias.store.setBaseParam('id_uo', Combo.getValue());
+                        this.Cmp.id_competencias.modificado = true;
+                        
+        
                 }, this);
+                
             },
-            //
-            /*cargarGerenciaCargos: function (Combo) {
-                this.Cmp.id_uo.store.setBaseParam('id_uo', Combo.getValue());
-                this.Cmp.id_uo.modificado = true;
-            },*/
-            //
-            /*cargarCargosCompetencias: function (Combo) {
-                this.Cmp.id_cargos.store.setBaseParam('id_cargos', Combo.getValue());
-                this.Cmp.id_cargos.modificado = true;
-            },*/
-            //
-            /*cargarCompetencias: function (Combo) {            	
-                this.Cmp.id_competencias.store.setBaseParam('id_competencias', Combo.getValue());
-                this.Cmp.id_competencias.modificado = true;
-            },*/
-            //
-            /*cargarProveedores: function (Combo) {            	
-                this.Cmp.id_proveedores.store.setBaseParam('id_proveedores', Combo.getValue());
-                this.Cmp.id_proveedores.modificado = true;
-            },*/
-			//
+
             Atributos: [
                 {
                     config: {
@@ -797,7 +778,16 @@ header("content-type: text/javascript; charset=UTF-8");
 		    },
             loadValoresIniciales: function () {
                 Phx.vista.Planificacion.superclass.loadValoresIniciales.call(this);
-                this.getComponente('id_gestion').setValue(this.cmbGestion.getValue());           				                                             
+                this.getComponente('id_gestion').setValue(this.cmbGestion.getValue());   
+                
+                
+
+                this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', null);
+				this.Cmp.id_unidad_organizacional.modificado = true;
+                this.Cmp.id_competencias.store.setBaseParam('id_uo', null);
+                this.Cmp.id_competencias.modificado = true;
+
+                        				                                             
             },
         }
     )

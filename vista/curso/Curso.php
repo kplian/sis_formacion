@@ -146,11 +146,15 @@ header("content-type: text/javascript; charset=UTF-8");
 																					              	    		banderaInicio++;
 																					              	    		if(banderaInicio==1){
 																					              	    			concatenarCompetencias+=y[cont1].data.id_competencia;
-																					              	    			concatenarIduo+=y[cont1].data.id_uo;
+																					              	    			//concatenarIduo+=y[cont1].data.id_uo;
+																					              	    			concatenarIduo+=y[cont1].data.id_competencia;
+																					              	    			
 																					              	    		}
 																					              	    		else{
 																					              	    			concatenarCompetencias+=','+y[cont1].data.id_competencia;
-																					              	    			concatenarIduo+=','+y[cont1].data.id_uo;
+																					              	    			//concatenarIduo+=','+y[cont1].data.id_uo;
+																					              	    			concatenarIduo+=','+y[cont1].data.id_competencia;
+																					              	    			
 																					              	    		}
 																					              	    		
 																					              	    		//
@@ -200,21 +204,58 @@ header("content-type: text/javascript; charset=UTF-8");
 
 
                 }, this);
+                
+
                 this.Cmp.id_uo.on('select', function (Combo, dato) {
-                	
+
                 	 this.Cmp.id_unidad_organizacional.setValue(''); 
-		             this.Cmp.id_competencias.setValue(''); 
-		             
+
                      this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', Combo.getValue());
                      this.Cmp.id_unidad_organizacional.modificado = true;
+               
+                     this.Cmp.id_funcionarios.reset();
+                     this.Cmp.id_competencias.reset();
                      
-
+                     this.Cmp.id_funcionarios.store.setBaseParam('id_uo',null);
+		             this.Cmp.id_funcionarios.modificado = true;
+                     
                 }, this);
                 this.Cmp.id_unidad_organizacional.on('select', function (Combo, dato) {
-                	
+
+                	    this.Cmp.id_competencias.reset();
+                	    this.Cmp.id_funcionarios.reset();
                         this.Cmp.id_competencias.store.setBaseParam('id_uo', Combo.getValue());
                         this.Cmp.id_competencias.modificado = true;
+                        
+                        this.Cmp.id_funcionarios.store.setBaseParam('id_uo',null);
+		                this.Cmp.id_funcionarios.modificado = true;
         
+                }, this);
+                
+                this.Cmp.id_competencias.on('select', function (Combo, dato) {
+
+      	    		
+                  var concatenarIduo=''; 
+                  this.Cmp.id_funcionarios.reset();
+                  this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag},  callback : function (y) {
+      	    		   concatenarIduo=''; 
+      	    		    for(c=0;c<y.length;c++){
+      	    		    	if(y[c].data.checked.trim()=='checked'){
+						            if(concatenarIduo==''){
+				      	    			concatenarIduo+=y[c].data.id_competencia;
+				      	    		}
+				      	    		else{
+				      	    			concatenarIduo+=','+y[c].data.id_competencia;
+				      	    		}
+      	    		    	}
+      	    		    }
+                        this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
+		                this.Cmp.id_funcionarios.modificado = true;
+                      
+                    }, scope : this }); 
+      	    		
+                 
+                
                 }, this);
                 
             },
@@ -246,7 +287,7 @@ header("content-type: text/javascript; charset=UTF-8");
 	            Phx.vista.Curso.superclass.onButtonEdit.call(this);
 	            this.cargarPaiseLugares(this.Cmp.id_lugar_pais);
 	            
-                
+
                 this.Cmp.id_unidad_organizacional.modificado = true;
                 this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', this.Cmp.id_uo.getValue());
                 
@@ -254,6 +295,12 @@ header("content-type: text/javascript; charset=UTF-8");
                 this.Cmp.id_competencias.modificado = true;
                 this.Cmp.id_competencias.store.setBaseParam('id_uo', this.Cmp.id_unidad_organizacional.value);
                 
+                this.window.show();
+		        this.loadForm(this.sm.getSelected())
+		       
+		        this.window.buttons[0].hide();
+		        this.loadValoresIniciales();
+		        
 	        },
 	        //
 	        onReloadPage: function (m) {
@@ -367,7 +414,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     config: {
                         name: 'id_planificacion',
                         fieldLabel: 'Planificacion',
-                        allowBlank: false,
+                        allowBlank: true,
                         emptyText: 'Planificacion...',
                         blankText: 'Planificacion',
                         store: new Ext.data.JsonStore({
@@ -1287,6 +1334,7 @@ header("content-type: text/javascript; charset=UTF-8");
 		       	   	alert("Seleccione una gestion");
 		       	}
 		       	else{
+		       		
 			        this.window.buttons[0].show();
 			        this.form.getForm().reset();
 			        this.loadValoresIniciales();
@@ -1297,16 +1345,9 @@ header("content-type: text/javascript; charset=UTF-8");
 		       	}
 
 
+
 		    },
-		    onButtonEdit: function() {
-		    	
-		        this.window.show();
-		        this.loadForm(this.sm.getSelected())
-		       
-		        this.window.buttons[0].hide();
-		        this.loadValoresIniciales();
-		         
-		    },
+
             loadValoresIniciales: function () {
                 Phx.vista.Curso.superclass.loadValoresIniciales.call(this);
 
@@ -1314,6 +1355,15 @@ header("content-type: text/javascript; charset=UTF-8");
 
             	this.Cmp.id_planificacion.store.setBaseParam('id_gestion', this.cmbGestion.getValue());
 				this.Cmp.id_planificacion.modificado = true;
+				
+
+                this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', null);
+				this.Cmp.id_unidad_organizacional.modificado = true;
+                this.Cmp.id_competencias.store.setBaseParam('id_uo', null);
+                this.Cmp.id_competencias.modificado = true;
+                this.Cmp.id_funcionarios.store.setBaseParam('id_uo','');
+		        this.Cmp.id_funcionarios.modificado = true;
+           
 									                                             
             },
         }
