@@ -492,7 +492,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         valueField: 'id_competencia',
                         displayField: 'competencia',
                         tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{competencia} </p> </div> </tpl>',
-                        gdisplayField: 'competencia',
+                        gdisplayField: 'desc_competencia',
                         hiddenName: 'id_competencias',
                         forceSelection: true,
                         typeAhead: false,
@@ -506,7 +506,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         minChars: 2,
                         enableMultiSelect: true,
                         renderer: function (value, p, record) {
-                            return String.format('{0}', (record.data['desc_competencia']) ? record.data['desc_competencia'] : '');                   
+                            return record.data['desc_competencia'];                   
                         }
                     },
                     type: 'AwesomeCombo',
