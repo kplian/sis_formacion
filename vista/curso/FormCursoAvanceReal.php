@@ -1,8 +1,8 @@
-<?php
+<?php 
 /**
  * @package pXP
  * @file gen-Curso.php
- * @author  (manu)
+ * @author  (admin)
  * @date 23-01-2017 13:34:58
  * @description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
  */
@@ -10,417 +10,300 @@
 header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
-var arrayMeses = [];
-var sw = true;
-var v_id_gestion;
-var vgestion;
-var v_id_correlativo = null;
-var v_id_curso = null;
-var v_padre='%';
-Phx.vista.FormCursoAvanceReal = Ext.extend(Phx.arbGridInterfaz, {
-		
-    constructor: function (config) {
-		this.maestro=config.maestro;
-		this.initButtons = [this.cmbGestion];
-    	//llama al constructor de la clase padre
-		Phx.vista.FormCursoAvanceReal.superclass.constructor.call(this,config);							
-		this.loaderTree.baseParams = {id_gestion: undefined};
-		this.init();
-		this.cmbGestion.on('select', this.capturaFiltros, this);
-		
-		this.addButton('btnAvances', {
-            text: 'Avances',
-            iconCls: 'block',
-            disabled: false,
-            handler: this.AsignarAvance,
-            tooltip: '<b>Avances</b>'
-        });		
-        this.treePanel.expandAll();				
-    },
-    //
-    AsignarAvance: function (record) {
-        this.GenerarColumnas('new', this);      
-    },
-    //
-    openAvance: function () {  	  	       
-		if (this.cmbGestion.getValue()) {        	        	
-        	var me = this; 
-	        Phx.CP.loadingShow();
-	    	me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/curso/FormAvance.php',
-	        'Formulario de Avance',
-	        {
-	            modal: true,
-	            width: '80%',
-	            height: '60%'
-	        }, 
-	        {
-	            data: 
-	            {
-	                'id_gestion': v_id_gestion,
-	                meses: arrayMeses
-	            }
-	        },
-	        this.idContenedor,
-	        'FormAvance',
-	        );	
-        } else {
-        	alert('Seleccione una gestion');	
-        }
-    },
-    //
-    onSaveForm: function (interface,valores,id) {
-		alert('Guardado Correctamente');
-		interface.panel.close();
-    },	
-    //
-	GenerarColumnas: function (){
-    	Ext.Ajax.request({
-			url: '../../sis_formacion/control/Curso/GenerarColumnaMeses',
-			params: {
-			    'id_gestion': v_id_gestion,
+	var v_maestro =null;
+	var valor;
+	var valor2;
+
+  //variables para recuperar datos de planificacion 
+    var  v_gerencia;
+	var  v_unidad_organizacional;
+	var  v_competencias;
+	var  v_nombre_planificacion;
+	var  v_contenido_basico;
+	var  v_horas_previstas;
+	var  v_id_proveedor;
+
+    var arrayMeses = [];
+    var v_id_gestion;
+    
+    Phx.vista.FormCursoAvanceReal = Ext.extend(Phx.gridInterfaz, {
+
+            constructor: function (config) {
+				this.maestro = config.maestro;
+				this.initButtons = [this.cmbGestion];
+				v_maestro = config.maestro;
+				//llama al constructor de la clase padre
+				Phx.vista.FormCursoAvanceReal.superclass.constructor.call(this, config);
+				this.init();
+				this.load({params: {start: 0, limit: this.tam_pag}})
+				this.addButton('btnAvances', {
+		            text: 'Avance real',
+		            iconCls: 'blist',
+		            disabled: false,
+		            handler: this.AsignarAvance,
+		            tooltip: '<b>Registro de los avances reales por meses</b>'
+		        });	
+						
+				this.iniciarEventos();            
+            },
+            iniciarEventos: function () {
+            	
+                this.cmbGestion.on('select',
+                       function (cmb, dat) {
+                       	this.sm.clearSelections();
+		                this.store.baseParams = {id_gestion: dat.data.id_gestion};
+		                v_id_gestion=dat.data.id_gestion;
+		                this.store.reload();
+                }, this);
+                
+            },
+		    AsignarAvance: function (record) {
+		        this.GenerarColumnas('new', this);      
+		    },
+			GenerarColumnas: function (){
+		    	Ext.Ajax.request({
+					url: '../../sis_formacion/control/Curso/GenerarColumnaMeses',
+					params: {
+					    'id_gestion': v_id_gestion,
+					},
+					success: this.RespuestaColumnas,
+					failure: this.conexionFailure,
+					timeout: this.timeout,
+					scope: this
+				}); 
 			},
-			success: this.RespuestaColumnas,
-			failure: this.conexionFailure,
-			timeout: this.timeout,
-			scope: this
-		}); 
-	},
-	//
-	RespuestaColumnas: function (s,m){		
-        this.maestro = m;
-        var meses = s.responseText.split('%');
-		arrayMeses = meses[1].split(",");
-		this.openAvance();
-	},
-    //
-    successSaveAprobar: function () {
-        Phx.CP.loadingHide();
-        this.root.reload();
-        Ext.MessageBox.alert('id_correlativo');
-    },
-    //
-    conexionFailureAprobar: function () {
-        Phx.CP.loadingHide(); 	
-        alert('Error');
-        this.root.reload();
-    }, 
-    //
-    onButtonAct: function () {
-        this.root.reload();
-    	this.treePanel.expandAll();	
-    },
-    //
-    capturaFiltros: function (combo, record, index) {
-    	this.desplegarArbol();	
-    },  
-    //
-    desplegarArbol:function(){
-    	v_id_gestion=this.cmbGestion.getValue()
-		this.loaderTree.baseParams = {id_gestion: this.cmbGestion.getValue()};		
-        this.root.reload();
-        this.treePanel.expandAll();	
-	},
-	//
-	loadValoresIniciales: function () {
-        Phx.vista.FormCursoAvanceReal.superclass.loadValoresIniciales.call(this);
-        this.getComponente('id_gestion').setValue(this.cmbGestion.getValue());
-    },   
-    //
-    onReloadPage: function (m) {     
-	   this.maestro = m;
-	   this.loaderTree.baseParams = {id_curso: this.maestro.id_correlativo};  
-	   v_id_correlativo=this.maestro.id_correlativo;			   
-    },
-    //
-    cmbGestion: new Ext.form.ComboBox({
-        fieldLabel: 'Gestion',
-        allowBlank: true,
-        emptyText: 'Gestion...',
-        store: new Ext.data.JsonStore(
-        {
-            url: '../../sis_parametros/control/Gestion/listarGestion',
-            id: 'id_gestion',
-            root: 'datos',
+			RespuestaColumnas: function (s,m){		
+		        this.maestro = m;
+		        var meses = s.responseText.split('%');
+				arrayMeses = meses[1].split(",");
+				this.openAvance();
+			},
+		    openAvance: function () {  	  
+		    	       
+				if (this.cmbGestion.getValue()) {        	        	
+		        	var me = this; 
+			        Phx.CP.loadingShow();
+			    	me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/curso/FormAvance.php',
+			        'Formulario de Avance',
+			        {
+			            modal: true,
+			            width: '80%',
+			            height: '60%'
+			        }, 
+			        {
+			            data: 
+			            {
+			                'id_gestion': v_id_gestion,
+			                meses: arrayMeses
+			            }
+			        },
+			        this.idContenedor,
+			        'FormAvance',
+			        );	
+		        } else {
+		        	alert('Seleccione una gestion');	
+		        }
+		    },
+            cmbGestion: new Ext.form.ComboBox({
+                fieldLabel: 'Gestion',
+                allowBlank: true,
+                emptyText: 'Gestion...',
+                store: new Ext.data.JsonStore(
+                    {
+                        url: '../../sis_parametros/control/Gestion/listarGestion',
+                        id: 'id_gestion',
+                        root: 'datos',
+                        sortInfo: {
+                            field: 'gestion',
+                            direction: 'DESC'
+                        },
+                        totalProperty: 'total',
+                        fields: ['id_gestion', 'gestion'],
+                        // turn on remote sorting
+                        remoteSort: true,
+                        baseParams: {par_filtro: 'gestion'}
+                    }),
+                valueField: 'id_gestion',
+                triggerAction: 'all',
+                displayField: 'gestion',
+                hiddenName: 'id_gestion',
+                mode: 'remote',
+                pageSize: 50,
+                queryDelay: 500,
+                listWidth: '280',
+                width: 80
+            }),
+
+
+	        onReloadPage: function (m) {
+	           this.maestro = m;
+	           console.log('maestro:',this.maestro);        
+	        },
+			//
+			successSave: function(resp) {
+    	  		this.store.rejectChanges();
+				Phx.CP.loadingHide();
+				if(resp.argument && resp.argument.news){
+					if(resp.argument.def == 'reset'){
+					  this.onButtonNew();
+					}					
+					this.loadValoresIniciales()
+				}
+				else{
+					this.window.hide();
+				}		
+				this.reload();
+			},
+			//
+            Atributos: [
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
+                        name: 'id_curso'
+                    },
+                    type: 'Field',
+                    form: true
+                },
+                {
+                    config: {
+                        fieldLabel: 'id_gestion',
+                        inputType: 'hidden',
+                        name: 'id_gestion'
+                    },
+                    type: 'Field',
+                    form: true
+                },
+                {
+                    config: {
+                        name: 'gestion',
+                        fieldLabel: 'Gestion',
+                        allowBlank: false,
+                        anchor: '80%',
+                        gwidth: 100,
+                        maxLength: 500
+                    },
+                    type: 'TextField',
+                    filters: {pfiltro: 'cur.gestion', type: 'string'},
+                    id_grupo: 1,
+                    grid: true,
+                    form: false
+                },
+                {
+                    config: {
+                        name: 'nombre_curso',
+                        fieldLabel: 'Curso',
+                        allowBlank: false,
+                        anchor: '80%',
+                        gwidth: 100,
+                        maxLength: 500
+                    },
+                    type: 'TextField',
+                    filters: {pfiltro: 'cur.nombre_curso', type: 'string'},
+                    id_grupo: 1,
+                    grid: true,
+                    form: true
+                },
+
+
+                {
+                    config: {
+                        name: 'horas',
+                        fieldLabel: 'Horas',
+                        allowBlank: false,
+                        anchor: '80%',
+                        gwidth: 100,
+                        maxLength: 4
+                    },
+                    type: 'NumberField',
+                    filters: {pfiltro: 'cur.horas', type: 'numeric'},
+                    id_grupo: 1,
+                    grid: true,
+                    form: true
+                },
+	            {
+	                    config: {
+	                           name: 'cod_prioridad',
+	                           fieldLabel: 'Prioridad',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'cod_prioridad'
+			                        ],
+			                        data: [['Alta'], ['Media'], ['Baja']]
+	                           }),
+	                           valueField: 'cod_prioridad',
+	                           displayField: 'cod_prioridad',
+	                           gdisplayField: 'cod_prioridad',
+	                           hiddenName: 'cod_prioridad',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return String.format('{0}', record.data['cod_prioridad']);
+	                           }
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'cur.cod_prioridad',type: 'string'},
+	                    grid: true,
+	                    form: true
+	                    //,egrid:true,
+	            },
+                {
+                    config: {
+                        name: 'peso',
+                        fieldLabel: 'Peso',
+                        allowBlank: true,
+                        anchor: '80%',
+                        gwidth: 100,
+                        maxLength: 4
+                    },
+                    type: 'NumberField',
+                    filters: {pfiltro: 'scu.peso', type: 'numeric'},
+                    id_grupo: 1,
+                    grid: true,
+                    form: false
+                },
+            ],
+            tam_pag: 50,
+            argumentSave: {},
+            timeout: Phx.CP.config_ini.timeout,
+    		conexionFailure: Phx.CP.conexionFailure,
+            title: 'Curso',
+            ActSave: '../../sis_formacion/control/Curso/insertarCurso',
+            ActDel: '../../sis_formacion/control/Curso/eliminarCurso',
+            ActList: '../../sis_formacion/control/Curso/listarCurso',
+            id_store: 'id_curso',
+            fields: [
+                {name: 'id_curso', type: 'numeric'},
+                {name: 'nombre_curso', type: 'string'},
+                {name: 'id_gestion', type: 'numeric'},
+                {name: 'cod_prioridad', type: 'string'},
+                {name: 'horas', type: 'numeric'},
+                'cantidad_personas',
+                {name: 'peso', type: 'numeric'},
+                {name: 'gestion', type: 'string'},
+                
+            ],
             sortInfo: {
-                field: 'gestion',
-                direction: 'DESC'
+                field: 'id_curso',
+                direction: 'ASC'
             },
-            
-            totalProperty: 'total',
-            fields: ['id_gestion', 'gestion'],
-            remoteSort: true,
-            baseParams: {par_filtro: 'gestion'}
-        }),
-        valueField: 'id_gestion',
-        triggerAction: 'all',
-        displayField: 'gestion',
-        hiddenName: 'id_gestion',
-        mode: 'remote',
-        pageSize: 50,
-        queryDelay: 500,
-        listWidth: '280',
-        width: 80
-    }),    
-    //           
-    Atributos: [
-    	{
-            config: {
-                name: 'id_correlativo',
-                fieldLabel: 'id_correlativo',
-                allowBlank: true,
-                anchor: '80%',
-                inputType:'hidden',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: false
-        },
-   		{
-            config: {
-                name: 'id_correlativo_key',
-                fieldLabel: 'id_correlativo_key',
-                allowBlank: true,
-                anchor: '80%',
-                inputType:'hidden',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: false
-        },
-   		{
-            config: {
-                name: 'id_uo_temp',
-                fieldLabel: 'id_uo_temp',
-                allowBlank: true,
-                anchor: '80%',
-                inputType:'hidden',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid:false
-        },
-        {
-            config: {
-                name: 'id_uo_t_temp',
-                fieldLabel: 'id_uo_t_temp',
-                allowBlank: true,
-                anchor: '80%',
-                inputType:'hidden',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: false 	 	
-        },
-        {
-            config: {
-                fieldLabel: 'id_uo_padre_temp',
-                name: 'id_uo_padre_temp',
-                inputType:'hidden',
-                allowBlank: true,
-                inputType:'hidden',
-                anchor: '80%',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: false
-        },
-        {
-            config: {
-                fieldLabel: 'id_curso_temp',
-                name: 'id_curso_temp',
-                allowBlank: true,
-                inputType:'hidden',
-                anchor: '80%',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid:false
-        },             
-        {
-            config: {
-                name: 'nombre_unidad_temp',
-                fieldLabel: 'Unidad Organizacional:',
-                allowBlank: true,
-                anchor: '80%',
-                gwidth: 250,
-                maxLength: 150,
-                disabled: true
-            },
-            filters: {pfiltro: 'padre.nombre_unidad_temp', type: 'string'},
-            type: 'Field',
-            form: true,
-            grid:true
-        },
-        {
-            config: {
-                fieldLabel: 'Curso',
-                name: 'nombre_curso_temp',
-                allowBlank: true,
-                inputType:'hidden',
-                anchor: '80%',
-                gwidth: 250,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: false
-        },
-        {
-            config: {
-                name: 'cod_prioridad_temp',
-                fieldLabel: 'Prioridad',
-                allowBlank: true,
-                anchor: '80%',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: true
-        },
-        {
-            config: {
-                name: 'tipo_nodo_temp',
-                fieldLabel: 'tipo_nodo_temp',
-                allowBlank: true,
-                inputType:'hidden',
-                anchor: '80%',
-                gwidth: 150,
-                maxLength: 150,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: false
-        },
-        {
-            config: {
-                name: 'horas_temp',
-                fieldLabel: 'Horas',
-                allowBlank: true,
-                anchor: '80%',
-                gwidth: 100,
-                maxLength:100,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: true
-        },
-        {
-            config: {
-                name: 'cantidad_temp',
-                fieldLabel: 'Cantidad de personas',
-                allowBlank: true,
-                anchor: '80%',
-                gwidth: 100,
-                maxLength: 100,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: true
-        },
-        {
-            config: {
-                name: 'prioridad_temp',
-                fieldLabel: 'Prioridad',
-                allowBlank: true,
-                anchor: '80%',
-                gwidth: 100,
-                maxLength: 100,
-                disabled: true
-            },
-            type: 'Field',
-            form: true,
-            grid: false
-        },
-        {
-            config: {
-                name: 'tparcial_temp',
-                fieldLabel: 'Total',
-                allowBlank: true,
-                anchor: '80%',
-                gwidth: 100,
-                maxLength: 100
-            },
-            type: 'Field',
-            form: true,
-            grid: false
-        },
-        {
-            config: {
-                name: 'peso_temp',
-                fieldLabel: 'Peso',
-                allowBlank: true,
-                anchor: '80%',
-                gwidth: 100,
-                maxLength: 100,
-                disabled: true,
-                decimalPrecision : 3,
-				forceDecimals : true
-            },
-            type: 'Field',
-            form: true,
-            grid: true
-        }        
-    ],
-    
-    NodoCheck: false,//si los nodos tienen los valores para el check
-    id_nodo: 'id_correlativo_key',
-    id_nodo_p: 'id_uo_padre_temp',
-    enableDD: false,
-    rootVisible: false,
-    baseParams: {clasificacion: true},
-    fwidth: 420,
-    fheight: 250,
-    title: 'Avance Real Curso',
-    ActList: '../../sis_formacion/control/Curso/listarCursoAvanceArb',
-    id_store: 'id_correlativo_key',
-    
-    fields: [
-    	{name: 'id_correlativo', type: 'numeric'},
-        {name: 'id_correlativo_key', type: 'numeric'},
-    	{name: 'id_uo_t_temp', type: 'numeric'},
-    	{name: 'id_uo_temp', type: 'numeric'},
-    	{name: 'id_uo_padre_temp', type: 'numeric'},
-        {name: 'nombre_unidad_temp', type: 'varchar'},
-        {name: 'id_curso_temp', type: 'numeric'},
-        {name: 'nombre_curso_temp', type: 'varchar'},
-        {name: 'cod_prioridad_temp', type: 'varchar'},
-        {name: 'tipo_nodo_temp', type: 'varchar'},
-        {name: 'horas_temp', type: 'varchar'},
-        {name: 'cantidad_temp', type: 'varchar'},
-        {name: 'prioridad_temp', type: 'varchar'},
-        {name: 'tparcial_temp', type: 'varchar'},
-        {name: 'peso_temp', type: 'numeric'}
-    ],
-    
-    bdel: false,
-    bsave: false,
-    bnew:false,
-    bedit:false
-})
+            bdel: true,
+            bsave: false,
+            bdel: false,
+            bnew: false,
+            bedit: false,
+        }
+    )
 </script>
-		
-		

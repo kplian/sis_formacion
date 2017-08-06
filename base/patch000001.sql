@@ -210,3 +210,49 @@ ALTER TABLE sigefo.tpreguntas
     NOT DEFERRABLE;
 
 /***********************************F-SCP-MANU-SIGEFO-0-12/09/2017****************************************/
+
+
+/***********************************I-SCP-JUAN-SIGEFO-0-09/11/2017****************************************/
+
+ALTER TABLE sigefo.tplanificacion
+  ADD COLUMN id_gerencia INTEGER;
+  
+--------------- SQL ---------------
+
+ALTER TABLE sigefo.tplanificacion
+  ADD COLUMN id_unidad_organizacional INTEGER;
+  
+/***********************************F-SCP-JUAN-SIGEFO-0-09/11/2017****************************************/
+
+
+/***********************************I-SCP-JUAN-SIGEFO-0-10/11/2017****************************************/
+
+ALTER TABLE sigefo.tcurso
+  ADD COLUMN id_gerencia INTEGER;
+  
+--------------- SQL ---------------
+
+ALTER TABLE sigefo.tcurso
+  ADD COLUMN id_unidad_organizacional INTEGER;
+
+--------------- SQL ---------------
+
+ALTER TABLE sigefo.tcurso
+  ADD COLUMN id_planificacion INTEGER;
+  
+--------------- SQL ---------------
+
+ALTER TABLE sigefo.tplanificacion
+  ADD COLUMN id_proveedor INTEGER;
+  
+--------------- SQL ---------------
+
+ALTER TABLE sigefo.tcurso
+  ALTER COLUMN peso TYPE NUMERIC(10,2);
+  
+--------------- SQL ---------------
+
+ALTER TABLE sigefo.tcurso
+  ALTER COLUMN peso TYPE NUMERIC;
+/***********************************F-SCP-JUAN-SIGEFO-0-10/11/2017****************************************/
+

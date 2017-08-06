@@ -15,6 +15,7 @@ header("content-type: text/javascript; charset=UTF-8");
 
             constructor: function (config) {
                 this.maestro = config.maestro; 
+                this.initButtons = [this.cmbGestion];
                 v_maestro = this.maestro;
                 //llama al constructor de la clase padre
                 Phx.vista.Planificacion.superclass.constructor.call(this, config);
@@ -23,31 +24,71 @@ header("content-type: text/javascript; charset=UTF-8");
                 this.iniciarEventos();
             },
             //
+            cmbGestion: new Ext.form.ComboBox({
+                fieldLabel: 'Gestion',
+                allowBlank: true,
+                emptyText: 'Gestion...',
+                store: new Ext.data.JsonStore(
+                    {
+                        url: '../../sis_parametros/control/Gestion/listarGestion',
+                        id: 'id_gestion',
+                        root: 'datos',
+                        sortInfo: {
+                            field: 'gestion',
+                            direction: 'DESC'
+                        },
+                        totalProperty: 'total',
+                        fields: ['id_gestion', 'gestion'],
+                        // turn on remote sorting
+                        remoteSort: true,
+                        baseParams: {par_filtro: 'gestion'}
+                    }),
+                valueField: 'id_gestion',
+                triggerAction: 'all',
+                displayField: 'gestion',
+                hiddenName: 'id_gestion',
+                mode: 'remote',
+                pageSize: 50,
+                queryDelay: 500,
+                listWidth: '280',
+                width: 80
+            }),
             onButtonEdit: function () {
                 Phx.vista.Planificacion.superclass.onButtonEdit.call(this);                
-                this.cargarGerenciaCargos(this.Cmp.id_uo);
-                this.cargarCargosCompetencias(this.Cmp.id_cargos);                
-                this.cargarCompetencias(this.Cmp.id_competencias);
-                this.cargarProveedores(this.Cmp.id_proveedores);
+                //this.cargarGerenciaCargos(this.Cmp.id_uo);
+            
+                //this.cargarCompetencias(this.Cmp.id_competencias);
+                //this.cargarProveedores(this.Cmp.id_proveedores);
+                
+                this.Cmp.id_unidad_organizacional.modificado = true;
+                this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', this.Cmp.id_uo.getValue());
+
+                //console.log("id de unidad",this.Cmp.id_unidad_organizacional);
+                this.Cmp.id_competencias.modificado = true;
+                this.Cmp.id_competencias.store.setBaseParam('id_uo', this.Cmp.id_unidad_organizacional.value);
+                
+                     
             },
             //
             onButtonDel:function(){	
-            	var me = this;				
-				Phx.CP.loadingShow();
-				var filas=this.sm.getSelections();							
-				Ext.Ajax.request({
-					url: '../../sis_formacion/control/Planificacion/eliminarPlanificacion',
-					success:this.successDel,
-					failure:this.conexionFailure,
-					params: 
-					{						
-                        'id_planificacion': filas[0].id
-                    },
-					//success: me.successSaveAprobar,
-                    //failure: me.conexionFailureAprobar,
-                    timeout: me.timeout,
-                    scope: me
-				});		
+            	if(confirm('¿Está seguro de eliminar el registro?')){
+	            	var me = this;				
+					Phx.CP.loadingShow();
+					var filas=this.sm.getSelections();							
+					Ext.Ajax.request({
+						url: '../../sis_formacion/control/Planificacion/eliminarPlanificacion',
+						success:this.successDel,
+						failure:this.conexionFailure,
+						params: 
+						{						
+	                        'id_planificacion': filas[0].id
+	                    },
+						//success: me.successSaveAprobar,
+	                    //failure: me.conexionFailureAprobar,
+	                    timeout: me.timeout,
+	                    scope: me
+					});	
+				}	
 			},
 			//
 			successDel:function(resp){
@@ -62,13 +103,13 @@ header("content-type: text/javascript; charset=UTF-8");
             },
             //
             iniciarEventos: function () {
-                this.Cmp.id_uo.on('select', function (Combo, dato) {
+                /*this.Cmp.id_uo.on('select', function (Combo, dato) {
                     this.cargarGerenciaCargos(Combo);
-                }, this);
-                this.Cmp.id_cargos.on('select', function (Combo, dato) {
+                }, this);*/
+                /*this.Cmp.id_unidad_organizacional.on('select', function (Combo, dato) {
                     this.cargarCargosCompetencias(Combo);	
-                }, this);
-                this.Cmp.id_competencias.on('select', function (Combo, dato) {
+                }, this);*/
+               /* this.Cmp.id_competencias.on('select', function (Combo, dato) {
                     this.cargarCompetencias(Combo);	
                 }, this);
                 this.Cmp.id_competencias.on('select', function (Combo, dato) {
@@ -76,28 +117,56 @@ header("content-type: text/javascript; charset=UTF-8");
                 }, this);
                 this.Cmp.id_proveedores.on('select', function (Combo, dato) {
                     this.cargarProveedores(Combo);	
+                }, this);  */
+                this.cmbGestion.on('select',
+                       function (cmb, dat) {
+                       	//console.log("testear combo",dat.data.id_gestion);
+                       	this.sm.clearSelections();
+		                this.store.baseParams = {id_gestion: dat.data.id_gestion};
+		                this.store.reload();
+                }, this);
+                
+                this.Cmp.id_uo.on('select', function (Combo, dato) {
+                	//alert("entro "+this.Cmp.id_unidad_organizacional.getValue());
+                	//alert("entro "+dato.data.id_uo);
+                	
+                	//this.Cmp.nombre_unidad.setValue('');
+		            this.Cmp.id_unidad_organizacional.setValue(''); 
+		            this.Cmp.id_competencias.setValue(''); 
+		                
+                     this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', Combo.getValue());
+                     this.Cmp.id_unidad_organizacional.modificado = true;
+
+                }, this);
+                this.Cmp.id_unidad_organizacional.on('select', function (Combo, dato) {
+                	
+                	 console.log("id de uo por juan ",this.Cmp.id_unidad_organizacional);
+                     
+                     this.Cmp.id_competencias.store.setBaseParam('id_uo', Combo.getValue());
+                     this.Cmp.id_competencias.modificado = true;
+                     
                 }, this);
             },
             //
-            cargarGerenciaCargos: function (Combo) {
+            /*cargarGerenciaCargos: function (Combo) {
                 this.Cmp.id_uo.store.setBaseParam('id_uo', Combo.getValue());
                 this.Cmp.id_uo.modificado = true;
-            },
+            },*/
             //
-            cargarCargosCompetencias: function (Combo) {
+            /*cargarCargosCompetencias: function (Combo) {
                 this.Cmp.id_cargos.store.setBaseParam('id_cargos', Combo.getValue());
                 this.Cmp.id_cargos.modificado = true;
-            },
+            },*/
             //
-            cargarCompetencias: function (Combo) {            	
+            /*cargarCompetencias: function (Combo) {            	
                 this.Cmp.id_competencias.store.setBaseParam('id_competencias', Combo.getValue());
                 this.Cmp.id_competencias.modificado = true;
-            },
+            },*/
             //
-            cargarProveedores: function (Combo) {            	
+            /*cargarProveedores: function (Combo) {            	
                 this.Cmp.id_proveedores.store.setBaseParam('id_proveedores', Combo.getValue());
                 this.Cmp.id_proveedores.modificado = true;
-            },
+            },*/
 			//
             Atributos: [
                 {
@@ -111,46 +180,11 @@ header("content-type: text/javascript; charset=UTF-8");
                 },
                 {
                     config: {
-                        name: 'id_gestion',
-                        fieldLabel: 'Gestion',
-                        allowBlank: false,
-                        emptyText: 'Gestion...',
-                        blankText: 'Año',
-                        store: new Ext.data.JsonStore({
-                            url: '../../sis_parametros/control/Gestion/listarGestion',
-                            id: 'id_gestion',
-                            root: 'datos',
-                            sortInfo: {
-                                field: 'gestion',
-                                direction: 'DESC'
-                            },
-                            totalProperty: 'total',
-                            fields: ['id_gestion', 'gestion'],
-                            remoteSort: true,
-                            baseParams: {par_filtro: 'gestion'}
-                        }),
-                        valueField: 'id_gestion',
-                        displayField: 'gestion',
-                        gdisplayField: 'gestion',
-                        hiddenName: 'id_gestion',
-                        forceSelection: true,
-                        typeAhead: false,
-                        triggerAction: 'all',
-                        lazyRender: true,
-                        mode: 'remote',
-                        pageSize: 15,
-                        queryDelay: 1000,
-                        anchor: '60%',
-                        gwidth: 50,
-                        minChars: 2,
-                        renderer: function (value, p, record) {
-                            return String.format('{0}', record.data['gestion']);
-                        }
+                        fieldLabel: 'id_gestion',
+                        inputType: 'hidden',
+                        name: 'id_gestion'
                     },
-                    type: 'ComboBox',
-                    id_grupo: 0,
-                    filters: {pfiltro: 'tg.gestion', type: 'string'},
-                    grid: true,
+                    type: 'Field',
                     form: true
                 },
                 {
@@ -263,7 +297,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         mode: 'remote',
                         pageSize: 15,
                         queryDelay: 1000,
-                        anchor: '60%',
+                        anchor: '80%',
                         gwidth: 150,
                         minChars: 2,
                         enableMultiSelect: true,
@@ -277,14 +311,13 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: true
                 },
-
                 {
                     config: {
                         name: 'id_uo',
                         fieldLabel: 'Gerencia',
                         allowBlank: false,
-                        emptyText: 'Gerencias...',
-                        blankText: 'Debe seleccionar una gerencia',
+                        emptyText: 'Unidad...',
+                        blankText: 'Debe seleccionar una unidad',
                         store: new Ext.data.JsonStore({
                             url: '../../sis_formacion/control/Planificacion/listarGerenciauo',
                             id: 'id_uo',
@@ -300,7 +333,51 @@ header("content-type: text/javascript; charset=UTF-8");
                         }),
                         valueField: 'id_uo',
                         displayField: 'nombre_unidad',
-                        gdisplayField: 'nombre_unidad',
+                        gdisplayField: 'desc_uo',
+                        hiddenName: 'id_uo',
+                        forceSelection: true,
+                        typeAhead: false,
+                        triggerAction: 'all',
+                        lazyRender: true,
+                        mode: 'remote',
+                        pageSize: 15,
+                        queryDelay: 1000,
+                        anchor: '80%',
+                        gwidth: 50,
+                        minChars: 2,
+                        gtpl: function (p){
+                            	return this.desc_uo;
+						}
+                    },
+                    type: 'ComboBox',
+                    id_grupo: 0,
+                    filters: {pfiltro: 'desc_uo', type: 'string'},
+                    grid: true,
+                    form: true
+                },
+                /*              {
+                    config: {
+                        name: 'id_uo',
+                        fieldLabel: 'Gerencia',
+                        allowBlank: false,
+                        emptyText: 'Unidad...',
+                        blankText: 'Debe seleccionar una unidad',
+                        store: new Ext.data.JsonStore({
+                            url: '../../sis_formacion/control/Planificacion/listarGerenciauo',
+                            id: 'id_uo',
+                            root: 'datos',
+                            sortInfo: {
+                                field: 'nombre_unidad',
+                                direction: 'ASC'
+                            },
+                            totalProperty: 'total',
+                            fields: ['id_uo', 'nombre_unidad'],
+                            remoteSort: true,
+                            baseParams: {par_filtro: 'nombre_unidad'}
+                        }),
+                        valueField: 'id_uo',
+                        displayField: 'nombre_unidad',
+                        gdisplayField: 'desc_uo',
                         hiddenName: 'id_uo',
                         forceSelection: true,
                         typeAhead: false,
@@ -310,25 +387,69 @@ header("content-type: text/javascript; charset=UTF-8");
                         pageSize: 15,
                         queryDelay: 1000,
                         anchor: '60%',
-                        gwidth: 150,
+                        gwidth: 50,
                         minChars: 2,
-                        enableMultiSelect: true,
-                        renderer: function (value, p, record) {
-                            return String.format('{0}', (record.data['desc_uo']) ? record.data['desc_uo'] : '');
-                        }
+                        gtpl: function (p){
+                            	return this.desc_uo;
+						}
                     },
-                    type: 'AwesomeCombo',
+                    type: 'ComboBox',
                     id_grupo: 0,
                     filters: {pfiltro: 'desc_uo', type: 'string'},
                     grid: true,
                     form: true
-                },
+                },*/
                 {
                     config: {
-                        name: 'id_cargos',
-                        fieldLabel: 'Cargo',
+                        name: 'id_unidad_organizacional',
+                        fieldLabel: 'Unidad organizacional',
                         allowBlank: false,
-                        emptyText: 'Cargo...',
+                        emptyText: 'Unidad...',
+                        blankText: 'Debe seleccionar una unidad',
+                        store: new Ext.data.JsonStore({
+                            url: '../../sis_formacion/control/Planificacion/listarCargo',
+                            id: 'id_cargo',
+                            root: 'datos',
+                            sortInfo: {
+                                field: 'nombre',
+                                direction: 'ASC'
+                            },
+                            totalProperty: 'total',
+                            fields: ['id_cargo', 'nombre'],
+                            remoteSort: true,
+                            baseParams: {par_filtro: 'nombre'},
+                            
+                        }),
+                        valueField: 'id_cargo',
+                        displayField: 'nombre',
+                        gdisplayField: 'unidad_organizacional',
+                        hiddenName: 'id_unidad_organizacional',
+                        forceSelection: true,
+                        typeAhead: false,
+                        triggerAction: 'all',
+                        lazyRender: true,
+                        mode: 'remote',
+                        pageSize: 15,
+                        queryDelay: 1000,
+                        anchor: '80%',
+                        gwidth: 50,
+                        minChars: 2,
+                        gtpl: function (p){
+                            return this.unidad_organizacional;
+						}
+                    },
+                    type: 'ComboBox',
+                    id_grupo: 0,
+                    filters: {pfiltro: 'unidad_organizacional', type: 'string'},
+                    grid: true,
+                    form: true
+                },
+               /* {
+                    config: {
+                        name: 'id_cargo',
+                        fieldLabel: 'Unidad organizacional',
+                        allowBlank: false,
+                        emptyText: 'Unidad...',
                         blankText: 'Debe seleccionar un cargo',
                         store: new Ext.data.JsonStore({
                             url: '../../sis_formacion/control/Planificacion/listarCargo',
@@ -346,7 +467,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         valueField: 'id_cargo',
                         displayField: 'nombre',
                         gdisplayField: 'nombre',
-                        hiddenName: 'id_cargos',
+                        hiddenName: 'id_cargo',
                         forceSelection: true,
                         typeAhead: false,
                         triggerAction: 'all',
@@ -355,19 +476,18 @@ header("content-type: text/javascript; charset=UTF-8");
                         pageSize: 15,
                         queryDelay: 1000,
                         anchor: '60%',
-                        gwidth: 150,
+                        gwidth: 50,
                         minChars: 2,
-                        enableMultiSelect: true,
                         renderer: function (value, p, record) {
-                            return String.format('{0}', (record.data['desc_cargos']) ? record.data['desc_cargos'] : '');
+                            return String.format('{0}', record.data['cargo']);
                         }
                     },
-                    type: 'AwesomeCombo',
+                    type: 'ComboBox',
                     id_grupo: 0,
-                    filters: {pfiltro: 'nombre', type: 'string'},
+                    filters: {pfiltro: 'tg.gestion', type: 'string'},
                     grid: true,
                     form: true
-                },
+                },*/
                 {
                     config: {
                         name: 'id_competencias',
@@ -376,7 +496,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         emptyText: 'Competencias...',
                         blankText: 'Debe seleccionar una competencia',
                         store: new Ext.data.JsonStore({
-                            url: '../../sis_formacion/control/Competencia/listarCompetencia',
+                            url: '../../sis_formacion/control/Competencia/listarCompetenciaCombo',
                             id: 'id_competencia',
                             root: 'datos',
                             sortInfo: {
@@ -384,12 +504,13 @@ header("content-type: text/javascript; charset=UTF-8");
                                 direction: 'ASC'
                             },
                             totalProperty: 'total',
-                            fields: ['id_competencia', 'competencia'],
+                            fields: ['id_competencia', 'competencia', 'tipo'],
                             remoteSort: true,
                             baseParams: {par_filtro: 'competencia'}
                         }),
                         valueField: 'id_competencia',
                         displayField: 'competencia',
+                        tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{competencia} </p> </div> </tpl>',
                         gdisplayField: 'competencia',
                         hiddenName: 'id_competencias',
                         forceSelection: true,
@@ -399,7 +520,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         mode: 'remote',
                         pageSize: 15,
                         queryDelay: 1000,
-                        anchor: '60%',
+                        anchor: '80%',
                         gwidth: 150,
                         minChars: 2,
                         enableMultiSelect: true,
@@ -414,6 +535,50 @@ header("content-type: text/javascript; charset=UTF-8");
                     form: true
                 },
                 {
+                    config: {
+                        name: 'id_proveedor',
+                        fieldLabel: 'proveedor',
+                        allowBlank: false,
+                        emptyText: 'proveedor...',
+                        blankText: 'Debe seleccionar un proveedor',
+                        store: new Ext.data.JsonStore({
+                            url: '../../sis_parametros/control/Proveedor/listarProveedorCombos',
+                            id: 'id_proveedor',
+                            root: 'datos',
+                            sortInfo: {
+                                field: 'desc_proveedor',
+                                direction: 'ASC'
+                            },
+                            totalProperty: 'total',
+                            fields: ['id_proveedor', 'desc_proveedor'],
+                            remoteSort: true,
+                            baseParams: {par_filtro: 'desc_proveedor'}
+                        }),
+                        valueField: 'id_proveedor',
+                        displayField: 'desc_proveedor',
+                        gdisplayField: 'desc_proveedor',
+                        hiddenName: 'id_proveedor',
+                        forceSelection: true,
+                        typeAhead: false,
+                        triggerAction: 'all',
+                        lazyRender: true,
+                        mode: 'remote',
+                        pageSize: 15,
+                        queryDelay: 1000,
+                        anchor: '80%',
+                        gwidth: 50,
+                        minChars: 2,
+                        gtpl: function (p){
+                            return this.desc_proveedor;
+						}
+                    },
+                    type: 'ComboBox',
+                    id_grupo: 0,
+                    filters: {pfiltro: 'proveedor', type: 'string'},
+                    grid: true,
+                    form: true
+                },
+                /*{
                     config: {
                         name: 'id_proveedores',
                         fieldLabel: 'Proveedores',
@@ -457,7 +622,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     filters: {pfiltro: 'desc_proveedores', type: 'string'},
                     grid: true,
                     form: true
-                },
+                },*/
                 {
                     config: {
                         name: 'usuario_ai',
@@ -595,14 +760,14 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'usr_reg', type: 'string'},
                 {name: 'usr_mod', type: 'string'},
                 {name: 'gestion', type: 'string'},
-                'id_cargos',
-                'desc_cargos',
+                'id_unidad_organizacional',
+                'unidad_organizacional',
                 'cod_criterio',
                 'desc_criterio',
                 'id_competencias',
                 'desc_competencia',
-                'id_proveedores',
-                'desc_proveedores',
+                'id_proveedor',
+                'desc_proveedor',
                 'id_uo',
                 'desc_uo',
             ],            
@@ -611,7 +776,29 @@ header("content-type: text/javascript; charset=UTF-8");
                 direction: 'ASC'
             },
             bdel: true,
-            bsave: false
+            bsave: false,
+	        onButtonNew: function() {
+		       	//Phx.vista.Curso.superclass.onButtonNew.call(this);
+		       
+		       	if(!this.cmbGestion.getValue()){
+		       	   	alert("Seleccione una gestion");
+		       	}
+		       	else{
+			        this.window.buttons[0].show();
+			        this.form.getForm().reset();
+			        this.loadValoresIniciales();
+			        this.window.show();
+			        if(this.getValidComponente(0)){
+			        	this.getValidComponente(0).focus(false,100);
+			        }
+		       	}
+
+
+		    },
+            loadValoresIniciales: function () {
+                Phx.vista.Planificacion.superclass.loadValoresIniciales.call(this);
+                this.getComponente('id_gestion').setValue(this.cmbGestion.getValue());           				                                             
+            },
         }
     )
 </script>

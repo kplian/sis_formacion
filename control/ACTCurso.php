@@ -10,8 +10,15 @@
 class ACTCurso extends ACTbase{
 			
 	function listarCurso(){
-		$this->objParam->defecto('ordenacion','id_curso');
+		$this->objParam->defecto('ordenacion','scu.nombre_curso');
 
+        if ($this->objParam->getParametro('id_gestion')) {
+            $this->objParam->addFiltro("scu.id_gestion  =". $this->objParam->getParametro('id_gestion'));
+        }
+		else{
+			$this->objParam->addFiltro("scu.id_gestion  = 0");
+		}
+		
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);
@@ -35,7 +42,7 @@ class ACTCurso extends ACTbase{
 	}
 						
 	function eliminarCurso(){
-			$this->objFunc=$this->create('MODCurso');	
+		$this->objFunc=$this->create('MODCurso');	
 		$this->res=$this->objFunc->eliminarCurso($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
@@ -98,6 +105,42 @@ class ACTCurso extends ACTbase{
 		$this->res=$this->objFunc->insertarAvanceReal($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}	
+    function datosPlanificacion()
+    {
+        $this->objFunc = $this->create('MODCurso');
+        $this->res = $this->objFunc->datosPlanificacion($this->objParam);
+        $this->res->imprimirRespuesta($this->res->generarJson());
+    }
+	function listarProveedorCombos(){
+		$this->objParam->defecto('ordenacion','id_proveedor');
+
+		$this->objParam->defecto('dir_ordenacion','asc');
+		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
+			$this->objReporte = new Reporte($this->objParam, $this);
+			$this->res = $this->objReporte->generarReporteListado('MODCurso','listarProveedorCombos');
+		} else{
+			$this->objFunc=$this->create('MODCurso');
+			$this->res=$this->objFunc->listarProveedorCombos();
+		}
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
+	function listarFuncionarioCombos(){
+		$this->objParam->defecto('ordenacion','p.nombre_completo2');
+
+        if ($this->objParam->getParametro('id_uo')) {
+            $this->objParam->addFiltro("tu.id_uo  in (".$this->objParam->getParametro('id_uo').")");
+        }
+
+		$this->objParam->defecto('dir_ordenacion','asc');
+		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
+			$this->objReporte = new Reporte($this->objParam, $this);
+			$this->res = $this->objReporte->generarReporteListado('MODCurso','listarFuncionarioCombos');
+		} else{
+			$this->objFunc=$this->create('MODCurso');
+			$this->res=$this->objFunc->listarFuncionarioCombos();
+		}
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
 			
 }
 

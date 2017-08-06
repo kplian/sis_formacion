@@ -10,8 +10,17 @@
 class ACTPlanificacion extends ACTbase{
 
 	function listarPlanificacion(){
-		$this->objParam->defecto('ordenacion','id_planificacion');
-
+		$this->objParam->defecto('ordenacion','sigefop.nombre_planificacion');
+        
+		//filtro desde curso para el combo
+		if ($this->objParam->getParametro('id_gestion')) {
+            $this->objParam->addFiltro("sigefop.id_gestion  =". $this->objParam->getParametro('id_gestion'));
+        }
+		else{
+			$this->objParam->addFiltro("sigefop.id_gestion  = 0");
+		}
+		//
+		
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);
@@ -42,12 +51,12 @@ class ACTPlanificacion extends ACTbase{
 
 
     function listarCargo(){
-        $this->objParam->defecto('ordenacion','uop.id_uo');
+        $this->objParam->defecto('ordenacion','uo.nombre_cargo');
         $this->objParam->defecto('dir_ordenacion','asc');
 
-        if ($this->objParam->getParametro('id_uo') != '') {
-            $this->objParam->addFiltro("uop.id_uo in (".$this->objParam->getParametro('id_uo').")  ");
-        }
+        if ($this->objParam->getParametro('id_uo')) {
+            $this->objParam->addFiltro("euo.id_uo_padre = ".$this->objParam->getParametro('id_uo'));
+        } 
 
         if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
             $this->objReporte = new Reporte($this->objParam,$this);
@@ -74,6 +83,7 @@ class ACTPlanificacion extends ACTbase{
         }
         $this->res->imprimirRespuesta($this->res->generarJson());
     }
+	
 
 
 }

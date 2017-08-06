@@ -38,18 +38,18 @@ BEGIN
   v_parametros = pxp.f_get_record(p_tabla);
 
   /*********************************
-   #TRANSACCION:  'SIGEFO_SIGEFOCO_SEL'
+   #TRANSACCION:  'SIGEFO_COMCOMBO_SEL'
    #DESCRIPCION:	Consulta de datos
-   #AUTOR:		admin
+   #AUTOR:		JUAN
    #FECHA:		04-05-2017 19:30:13
   ***********************************/
 
-  IF (p_transaccion = 'SIGEFO_SIGEFOCO_SEL')
+  IF (p_transaccion = 'SIGEFO_COMCOMBO_SEL')
   THEN
 
     BEGIN
       --Sentencia de la consulta
-      v_consulta:='select DISTINCT
+      /* v_consulta:='select DISTINCT
 						sigefoco.id_competencia,
 						--tc.descripcion as tipo,
                         sigefoco.tipo,
@@ -69,6 +69,21 @@ BEGIN
 						left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod
 						left join param.tcatalogo tc on tc.codigo = sigefoco.tipo
 						left join sigefo.tcargo_competencia cp on cp.id_competencia=sigefoco.id_competencia
+				        where  ';*/
+                        
+           v_consulta:='SELECT 
+                        DISTINCT 
+                        comp.competencia,
+                        tu.id_uo,
+                        comp.id_competencia,
+                        comp.id_competencia::INTEGER as cod_competencia,
+                        comp.tipo
+                        from 
+                        sigefo.tcargo_competencia cc 
+                        join sigefo.tcompetencia comp on comp.id_competencia=cc.id_competencia
+                        join orga.tcargo c on cc.id_cargo=c.id_cargo
+                        join orga.tuo tu on tu.id_uo=c.id_uo
+                        join orga.testructura_uo eu on eu.id_uo_hijo=tu.id_uo
 				        where  ';
 
       --Definicion de la respuesta
@@ -93,68 +108,25 @@ BEGIN
     THEN
 
       BEGIN
-         --RAISE exception '%', v_parametros;
         --Sentencia de la consulta
-        v_consulta:='select
-						cargo.id_cargo,
-						cargo.id_uo,
-						cargo.id_tipo_contrato,
-						cargo.id_lugar,
-						cargo.id_temporal_cargo,
-						cargo.id_escala_salarial,
-						cargo.codigo,
-						cargo.nombre as nombre_cargo,
-						cargo.fecha_ini,
-						cargo.estado_reg,
-						cargo.fecha_fin,
-						cargo.fecha_reg,
-						cargo.id_usuario_reg,
-						cargo.fecha_mod,
-						cargo.id_usuario_mod,
-						usu1.cuenta as usr_reg,
-						usu2.cuenta as usr_mod,
-						tipcon.nombre,
-						escsal.nombre,
-						ofi.nombre,
-						(case when (orga.f_get_empleado_x_item(cargo.id_cargo)  is null and cargo.fecha_fin is null) then
-						  ''ACEFALO''
-						else
-						  ''ASIGNADO''
-						end)::varchar as acefalo,
-						cargo.id_oficina,
-						cargo.id_cargo as identificador,
-						tipcon.codigo as codigo_tipo_contrato,
-			            cargo.id_cargo as cod_cargo
-						from orga.tcargo cargo
-						inner join segu.tusuario usu1 on usu1.id_usuario = cargo.id_usuario_reg
-						left join segu.tusuario usu2 on usu2.id_usuario = cargo.id_usuario_mod
-						inner join orga.ttipo_contrato tipcon on tipcon.id_tipo_contrato = cargo.id_tipo_contrato
-						inner join orga.tescala_salarial escsal on escsal.id_escala_salarial = cargo.id_escala_salarial
-						left join orga.toficina ofi on ofi.id_oficina = cargo.id_oficina left join sigefo.tcargo_competencia cc on  cargo.id_cargo=cc.id_cargo
-				        where cargo.estado_reg = ''activo'' and  ';
+        v_consulta:='SELECT c.id_cargo, c.id_cargo::integer as cod_cargo, c.nombre::varchar as nombre_cargo, (COALESCE(p.ap_paterno, '''') || '''' || COALESCE(p.ap_materno, '''') || '', '' || COALESCE(p.nombre, ''''))::varchar as funcionario,
+      
+        (CASE WHEN  cc.id_competencia ISNULL THEN 0::INTEGER ELSE  cc.id_competencia END)::integer as id_competencia
+FROM orga.tcargo c
+JOIN orga.tuo tu on tu.id_uo=c.id_uo
+JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
+JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
+JOIN segu.vpersona p on p.id_persona=f.id_persona 
+LEFT JOIN sigefo.tcargo_competencia cc on cc.id_cargo=c.id_cargo
+WHERE tu.estado_reg=''activo'' and  c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin) and   ';
 
         --Definicion de la respuesta
         v_consulta:=v_consulta || v_parametros.filtro;
-        IF (pxp.f_existe_parametro(p_tabla, 'tipo') AND
-            pxp.f_existe_parametro(p_tabla, 'fecha') AND
-            pxp.f_existe_parametro(p_tabla, 'id_uo'))
-        THEN
-          IF (v_parametros.tipo IS NOT NULL AND v_parametros.tipo = 'oficial' AND v_parametros.fecha IS NOT NULL AND
-              v_parametros.id_uo IS NOT NULL)
-          THEN
-            v_ids_cargo = orga.f_get_cargos_en_uso(v_parametros.id_uo, v_parametros.fecha);
-            v_consulta := v_consulta || ' and cargo.id_cargo not in (' || v_ids_cargo || ') ';
-            v_consulta := v_consulta || ' and (cargo.fecha_fin > ''' || v_parametros.fecha ||
-                          ''' or cargo.fecha_fin is null) ';
-          END IF;
-        END IF;
-        
         v_consulta:=
-        v_consulta || ' order by ' || v_parametros.ordenacion || ' ' || v_parametros.dir_ordenacion || ' limit ' ||
+        v_consulta || ' ORDER BY c.nombre ' || v_parametros.dir_ordenacion || ' limit ' ||
         v_parametros.cantidad || ' offset ' || v_parametros.puntero;
 
         --Devuelve la respuesta
-       
         RETURN v_consulta;
 
       END;
@@ -245,31 +217,17 @@ BEGIN
 
       BEGIN
         --Sentencia de la consulta de conteo de registros
-        v_consulta:='select count(cargo.id_cargo)
-                          from orga.tcargo cargo
-                          inner join segu.tusuario usu1 on usu1.id_usuario = cargo.id_usuario_reg
-                          left join segu.tusuario usu2 on usu2.id_usuario = cargo.id_usuario_mod
-                          inner join orga.ttipo_contrato tipcon on tipcon.id_tipo_contrato = cargo.id_tipo_contrato
-                          inner join orga.tescala_salarial escsal on escsal.id_escala_salarial = cargo.id_escala_salarial
-					              	left join orga.toficina ofi on ofi.id_oficina = cargo.id_oficina left join sigefo.tcargo_competencia cc on  cargo.id_cargo=cc.id_cargo
-                          where cargo.estado_reg = ''activo'' and ';
+        v_consulta:='SELECT count(c.id_cargo) FROM orga.tcargo c
+JOIN orga.tuo tu on tu.id_uo=c.id_uo
+JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
+JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
+JOIN segu.vpersona p on p.id_persona=f.id_persona 
+LEFT JOIN sigefo.tcargo_competencia cc on cc.id_cargo=c.id_cargo
+WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin) and';
 
         --Definicion de la respuesta
         v_consulta:=v_consulta || v_parametros.filtro;
 
-        IF (pxp.f_existe_parametro(p_tabla, 'tipo') AND
-            pxp.f_existe_parametro(p_tabla, 'fecha') AND
-            pxp.f_existe_parametro(p_tabla, 'id_uo'))
-        THEN
-          IF (v_parametros.tipo IS NOT NULL AND v_parametros.tipo = 'oficial' AND v_parametros.fecha IS NOT NULL AND
-              v_parametros.id_uo IS NOT NULL)
-          THEN
-            v_ids_cargo = orga.f_get_cargos_en_uso(v_parametros.id_uo, v_parametros.fecha);
-            v_consulta := v_consulta || ' and cargo.id_cargo not in (' || v_ids_cargo || ') ';
-            v_consulta := v_consulta || ' and (cargo.fecha_fin > ''' || v_parametros.fecha ||
-                          ''' or cargo.fecha_fin is null) ';
-          END IF;
-        END IF;
 
         --Devuelve la respuesta
         RETURN v_consulta;
@@ -277,23 +235,23 @@ BEGIN
       END;
 
       /*********************************
-       #TRANSACCION:  'SIGEFO_SIGEFOCO_CONT'
+       #TRANSACCION:  'SIGEFO_COMCOMBO_CONT'
        #DESCRIPCION:	Conteo de registros
        #AUTOR:		admin
        #FECHA:		04-05-2017 19:30:13
       ***********************************/
 
-  ELSIF (p_transaccion = 'SIGEFO_SIGEFOCO_CONT')
+  ELSIF (p_transaccion = 'SIGEFO_COMCOMBO_CONT')
     THEN
 
       BEGIN
         --Sentencia de la consulta de conteo de registros
-        v_consulta:='select count(DISTINCT sigefoco.id_competencia)
-					    from sigefo.tcompetencia sigefoco
-					    inner join segu.tusuario usu1 on usu1.id_usuario = sigefoco.id_usuario_reg
-						left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod
-						left join param.tcatalogo tc on tc.codigo = sigefoco.tipo
-						left join sigefo.tcargo_competencia cp on cp.id_competencia=sigefoco.id_competencia
+        v_consulta:='SELECT  count(DISTINCT tu.id_uo) from 
+sigefo.tcargo_competencia cc 
+join sigefo.tcompetencia comp on comp.id_competencia=cc.id_competencia
+join orga.tcargo c on cc.id_cargo=c.id_cargo
+join orga.tuo tu on tu.id_uo=c.id_uo
+join orga.testructura_uo eu on eu.id_uo_hijo=tu.id_uo
 					    where ';
 
         --Definicion de la respuesta
@@ -303,7 +261,78 @@ BEGIN
         RETURN v_consulta;
 
       END;
+  /*********************************
+   #TRANSACCION:  'SIGEFO_SIGEFOCO_SEL'
+   #DESCRIPCION:	Consulta de datos
+   #AUTOR:		admin
+   #FECHA:		04-05-2017 19:30:13
+  ***********************************/
 
+  ELSIF (p_transaccion = 'SIGEFO_SIGEFOCO_SEL')
+  THEN
+
+    BEGIN
+      --Sentencia de la consulta
+      v_consulta:='select DISTINCT
+						sigefoco.id_competencia,
+						--tc.descripcion as tipo,
+                        sigefoco.tipo,
+						sigefoco.estado_reg,
+						sigefoco.competencia,
+						sigefoco.id_usuario_ai,
+						sigefoco.id_usuario_reg,
+						sigefoco.fecha_reg,
+						sigefoco.usuario_ai,
+						sigefoco.id_usuario_mod,
+						sigefoco.fecha_mod,
+						usu1.cuenta as usr_reg,
+						usu2.cuenta as usr_mod,
+						sigefoco.id_competencia as cod_competencia
+						from sigefo.tcompetencia sigefoco
+						inner join segu.tusuario usu1 on usu1.id_usuario = sigefoco.id_usuario_reg
+						left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod
+						left join param.tcatalogo tc on tc.codigo = sigefoco.tipo
+						left join sigefo.tcargo_competencia cp on cp.id_competencia=sigefoco.id_competencia
+				        where  ';
+
+      --Definicion de la respuesta
+      v_consulta:=v_consulta || v_parametros.filtro;
+      v_consulta:=
+      v_consulta || ' order by ' || v_parametros.ordenacion || ' ' || v_parametros.dir_ordenacion || ' limit ' ||
+      v_parametros.cantidad || ' offset ' || v_parametros.puntero;
+
+      --Devuelve la respuesta
+      RETURN v_consulta;
+
+    END;
+
+      /*********************************
+       #TRANSACCION:  'SIGEFO_SIGEFOCO_CONT'
+       #DESCRIPCION:	Conteo de registros
+       #AUTOR:		admin
+       #FECHA:		04-05-2017 19:30:13
+      ***********************************/
+
+      ELSIF (p_transaccion = 'SIGEFO_SIGEFOCO_CONT')
+        THEN
+
+          BEGIN
+            --Sentencia de la consulta de conteo de registros
+            v_consulta:='select count(DISTINCT sigefoco.id_competencia)
+                            from sigefo.tcompetencia sigefoco
+                            inner join segu.tusuario usu1 on usu1.id_usuario = sigefoco.id_usuario_reg
+                            left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod
+                            left join param.tcatalogo tc on tc.codigo = sigefoco.tipo
+                            left join sigefo.tcargo_competencia cp on cp.id_competencia=sigefoco.id_competencia
+                            where ';
+
+            --Definicion de la respuesta
+            v_consulta:=v_consulta || v_parametros.filtro;
+
+            --Devuelve la respuesta
+            RETURN v_consulta;
+
+          END;
 
   ELSE
 

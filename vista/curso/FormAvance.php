@@ -22,27 +22,27 @@ Phx.vista.FormAvance= Ext.extend(Phx.gridInterfaz, {
 	{
 		this.configMaestro=config;
 		this.config=config;
-		v_id_correlativo =this.configMaestro.data.id_correlativo;
+		
 	    arrayMeses=this.configMaestro.data.meses;
 	    gestion=this.configMaestro.data.id_gestion;
 		Phx.CP.loadingShow();	
-		this.storeAtributos= new Ext.data.JsonStore({
-			url:'../../sis_formacion/control/Curso/listarCursoAvanceDinamico',			
-			id: 'id_correlativo',
+		this.storeAtributos= new Ext.data.JsonStore({	
+			url:'../../sis_formacion/control/Curso/listarCurso',	//llamamos a la misma lista de cursos 		
+			id: 'id_curso',
 			root: 'datos',			
 			totalProperty: 'total',
 			fields: 
 			[
-				'id_correlativo',
-				{name:'nombre_unidad_temp', type: 'string'},				
-				{name:'nombre_curso_temp', type: 'string'},
-				{name:'cod_prioridad_temp', type: 'string'},
-				{name:'tipo_nodo_temp', type: 'string'},
-				{name:'id_correlativo_key', type: 'numeric'},
-				{name:'peso_temp', type: 'numeric'}			
+				'id_curso',
+				{name:'nombre_curso', type: 'string'},				
+				{name:'id_gestion', type: 'numeric'},
+				{name:'cod_prioridad', type: 'varchar'},
+				{name:'horas', type: 'numeric'},
+				{name:'peso', type: 'numeric'},			
 			],
+			
 			sortInfo:{
-				field: 'id_correlativo',
+				field: 'id_curso',
 				direction: 'ASC'
 			}
 		});
@@ -50,34 +50,35 @@ Phx.vista.FormAvance= Ext.extend(Phx.gridInterfaz, {
 		this.storeAtributos.load({
 			params:
 			{
-				'id_gestion': gestion,
-				"sort":"id_correlativo",
+				"sort":"id_curso",
 	  			"dir":"ASC",
 				start:0, 
 			   	limit:500
 			},callback:this.successConstructor,scope:this
+			
+		                               
+			
 		})		
 	},
 	//
 	successConstructor:function(rec,con,res)
 	{ 
+				
 		this.recColumnas = rec;
 		this.Atributos=[];
 		this.fields=[];
-		this.id_store='id_correlativo';	
+		this.id_store='id_curso';	
 		this.sortInfo=
 		{
-			field: 'id_correlativo',
+			field: 'id_curso',
 			direction: 'ASC'
 		};		
+		
 		this.fields.push(this.id_store)
-		this.fields.push('id_correlativo')
-		this.fields.push({name:'nombre_unidad_temp', type: 'TextField'})
-		this.fields.push({name:'nombre_curso_temp', type: 'TextField'})
-		this.fields.push('cod_prioridad_temp')
-		this.fields.push('tipo_nodo_temp')
-		this.fields.push('id_correlativo_key')
-		this.fields.push('peso_temp')
+		this.fields.push('id_curso')
+		this.fields.push({name:'nombre_curso', type: 'TextField'})
+		this.fields.push({name:'cod_prioridad', type: 'TextField'})
+		this.fields.push('peso')
 				
 		if(res)
 		{
@@ -97,7 +98,7 @@ Phx.vista.FormAvance= Ext.extend(Phx.gridInterfaz, {
 				config:{
 					labelSeparator:'',
 					inputType:'hidden',
-					name: this.id_correlativo
+					name: this.id_curso
 				},
 				type:'Field',
 				form:true 
@@ -105,73 +106,61 @@ Phx.vista.FormAvance= Ext.extend(Phx.gridInterfaz, {
 			this.Atributos[2]=
 			{
 				config:{							
-					name: 'nombre_unidad_temp',
-					fieldLabel: 'Unidad Organizacional',
+					name: 'nombre_curso',
+					fieldLabel: 'Curso',
 					allowBlank: false,
+                    renderer: function (value, p, record, rowIndex, colIndex){
+
+						       return  String.format('<div style="vertical-align:middle;text-align:left;">  <img src="../../../lib/imagenes/a_form.png"> '+ record.data.nombre_curso+' </div>');
+
+					},
 					anchor: '80%',
 					gwidth: 230,
-                	maxLength: 150,
-                	renderer: function (value, p, record, rowIndex, colIndex){
-                		var espacio="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";		                						
-						if(record.data.cod_prioridad_temp == '-'){							
-							return  String.format('<div style="vertical-align:middle;text-align:left;"> '+' <img src="../../../lib/imagenes/a_form_edit.png"> '+ record.data.nombre_unidad_temp+' </div>');
-						}
-						else{
-							return  String.format('<div style="vertical-align:middle;text-align:left;"> '+espacio+espacio+' <img src="../../../lib/imagenes/a_form.png"> '+ record.data.nombre_unidad_temp+' </div>');
-						} 
-	                } 	                
+                	maxLength: 150,	                
 				},
 				type:'TextField',
-				filters:{pfiltro:'nombre_unidad_temp',type:'string'},
+				filters:{pfiltro:'nombre_curso',type:'string'},
 				grid:true,
 				form:true 
 			};
 			this.Atributos[3]=
 			{
 				config:{							
-					name: 'cod_prioridad_temp',
+					name: 'cod_prioridad',
 					fieldLabel: 'Prioridad',
 					allowBlank: false,
+                    renderer: function (value, p, record, rowIndex, colIndex){
+		
+                        return record.data.cod_prioridad;
+					},
 					anchor: '80%',
 					gwidth: 70,
-	                maxLength: 150,
-	                renderer: function (value, p, record, rowIndex, colIndex){		                						
-						if(record.data.cod_prioridad_temp == '0'){
-							return  String.format('<div style="vertical-align:middle;text-align:left;"> '+'-' + ' </div>');
-						}
-						else{
-							return  String.format('<div style="vertical-align:middle;text-align:left;"> '+ record.data.cod_prioridad_temp +' </div>');
-						} 
-	                }                 
+	                maxLength: 150,                
 				},
 				type:'TextField',
-				filters:{pfiltro:'cod_prioridad_temp',type:'string'},
+				filters:{pfiltro:'cod_prioridad',type:'string'},
 				grid:true,
 				form:true 
 			};
 			this.Atributos[4]=
 			{
 				config:{							
-					name: 'peso_temp',
+					name: 'peso',
 					fieldLabel: 'Peso',
 					allowBlank: false,
+	                renderer: function (value, p, record, rowIndex, colIndex){
+		
+                        return record.data.peso;
+					},
 					anchor: '80%',
 					gwidth: 50,
-	                maxLength: 150,
-	                renderer: function (value, p, record, rowIndex, colIndex){		                						
-						if(record.data.peso_temp == '0.00'){
-							return  String.format('<div style="vertical-align:middle;text-align:left;"> '+'-' + ' </div>');
-						}
-						else{
-							return  String.format('<div style="vertical-align:middle;text-align:left;"> '+ "<font color='red'>"+record.data.peso_temp +"</font>"+'</div>');
-						} 
-	                }                
+	                maxLength: 150,                
 				},
 				type:'TextField',
-				filters:{pfiltro:'peso_temp',type:'numeric'},
+				filters:{pfiltro:'peso',type:'numeric'},
 				grid:true,
 				form:true 
-			};						
+			};					
 		}		
 		//
         var contador=0;
@@ -185,7 +174,7 @@ Phx.vista.FormAvance= Ext.extend(Phx.gridInterfaz, {
 					fieldLabel: arrayMeses[i],
 					allowBlank: true,
 					anchor: '80%',
-					gwidth: 80,
+					gwidth: 70,
 					maxLength:100,
 				},
 				type:'NumberField',
@@ -204,30 +193,34 @@ Phx.vista.FormAvance= Ext.extend(Phx.gridInterfaz, {
 				type:'Field',
 				form:true
 			}); 
-	
-			if(arrayMeses[i]!='total')
-			{					  		
-				contador++;
-				this.fields.push(contador.toString())
-				this.Atributos.push({
-					config:{
-						labelSeparator:'',
-						inputType:'hidden',
-						name: contador.toString()
-					},
-					type:'Field',
-					form:true 
-				});
-			}						
+
+			if(arrayMeses[i]!='total'){
+			  	  contador++;
+			  	  
+			      this.fields.push('id_lavance'+contador.toString())
+			      
+			      		this.Atributos.push({config:{
+										labelSeparator:'',
+										inputType:'hidden',
+										maxLength:100,
+										name: 'id_lavance'+contador.toString()
+								},
+								type:'Field',
+								form:true 
+						});
+			  }
+			  					
 		}						
 		//		        
 		Phx.CP.loadingHide();
 		Phx.vista.FormAvance.superclass.constructor.call(this, this.config);
-		//this.argumentExtraSubmit={'id_correlativo': this.configMaestro.data.id_correlativo,'datos': col_generado};
+		this.argumentExtraSubmit={'datos': col_generado};
 		this.init();
-		this.load({params: {'id_gestion': gestion}});		
 		this.grid.addListener('cellclick', this.oncellclick,this);
-        this.grid.addListener('afteredit', this.onAfterEdit, this);							           		
+        this.grid.addListener('afteredit', this.onAfterEdit, this);		
+        
+        this.store.baseParams={'id_gestion': this.configMaestro.data.id_gestion , 'datos': col_generado};			               
+		this.load();				           		
 	},	
 	//
 	oncellclick : function(grid, rowIndex, columnIndex, e) {
@@ -245,41 +238,78 @@ Phx.vista.FormAvance= Ext.extend(Phx.gridInterfaz, {
 	//
 	onAfterEdit:function(prueba){	
 		var columna = prueba.field;
-        var peso = prueba.record.data['peso_temp'];
-        var cod_prioridad = prueba.record.data['cod_prioridad_temp'];        
+        //var peso = prueba.record.data['peso'];
+        //var cod_prioridad = prueba.record.data['cod_prioridad'];   
+        var id_curso=prueba.record.data['id_curso'];
+
         this.store.each(function(r){
             var sumTotal=0.00;
-			for (var i=0;i<arrayMeses.length-1;i++){																	
-				if(r.data[arrayMeses[i]]=='' ){
-					if(r.data.cod_prioridad_temp!='-'){
-						r.data[arrayMeses[i]]=0;
-					}				
+            if(id_curso==r.data.id_curso){
+            	
+		        if((prueba.value).toString().trim()==''){
+				    r.set(columna,0);
 				}
-				if(peso!='-'){					
-					sumTotal +=parseFloat(r.data[arrayMeses[i]]);
-					sum=sumTotal;	
+				for (var i=0;i<arrayMeses.length-1;i++){																	
+					sumTotal +=parseFloat(r.data[arrayMeses[i]]);				
+				}	
+				if(sumTotal>100){			
+					r.set(columna,0);						
+					alert("ERROR!! El monto ingresado ocaciona un desborde mayor a 100 en el total");																			
 				}
-				if(sum>100){					
-					sumTotal=sum-r.data[arrayMeses[i]];					
-					alert("Error, corrija el dato ingresado, la sumatoria no puede ser mayor a 100");																			
-					r.data[arrayMeses[i]]=0;
-					console.log('->'+prueba.record);
-					break;
-				}								
-			}						
-			if(peso!='-' && r.data.cod_prioridad_temp!='-'){					
-				r.set('total',sumTotal);				
-			}	
+				else{
+					r.set('total',sumTotal);
+					this.InsertarAvanceReal();
+				}			
+			}
+			
 		},this);    
+    },
+    InsertarAvanceReal: function (){
+    	
+	    	var filas=this.store.getModifiedRecords();
+			if(filas.length>0){	
+						//prepara una matriz para guardar los datos de la grilla
+						var data={};
+						for(var i=0;i<filas.length;i++){
+							 //rac 29/10/11 buscar & para remplazar por su valor codificado
+							 data[i]=filas[i].data;
+							 //captura el numero de fila
+							 data[i]._fila=this.store.indexOf(filas[i])+1
+							 //RCM 12/12/2011: Llamada a función para agregar parámetros
+							this.agregarArgsExtraSubmit(filas[i].data);
+							Ext.apply(data[i],this.argumentExtraSubmit);
+						    //FIN RCM
+						}
+						
+			}
+			
+			Phx.CP.loadingShow();
+	        Ext.Ajax.request({
+	        	// form:this.form.getForm().getEl(),
+	        	url:this.ActSave,
+	        	params:{_tipo:'matriz','row':String(Ext.util.JSON.encode(data))},
+			
+				isUpload:this.fileUpload,
+				success:this.successSaveFileUpload,
+				//argument:this.argumentSave,
+				failure: this.conexionFailure,
+				timeout:this.timeout,
+				scope:this
+	        });
+
+	   		this.store.rejectChanges();
+		    Phx.CP.varLog=false;
+	   		this.reload();
+       
     },
 	//
 	tam_pag:500,	
-	title:'Curso - Avance Real',
+	title:'Avance Real',
 	ActSave:'../../sis_formacion/control/Curso/insertarAvanceReal',
-	ActDel: '../../sis_formacion/control/LineaAvance/eliminarLineaAvance',
+	//ActDel: '../../sis_formacion/control/LineaAvance/eliminarLineaAvance',
 	ActList:'../../sis_formacion/control/Curso/listarCursoAvanceDinamico',
 	bdel:false,
-	bsave:true, 
+	bsave:false, 
 	bedit:false, 
 	bnew:false
 })

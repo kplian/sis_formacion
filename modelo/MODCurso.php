@@ -45,24 +45,33 @@ class MODCurso extends MODbase{
 		$this->captura('id_usuario_ai','int4');
 		$this->captura('id_usuario_mod','int4');
 		$this->captura('fecha_mod','timestamp');
+
+		$this->captura('evaluacion','varchar');
+		$this->captura('certificacion','varchar');
+		
+		$this->captura('gestion','int4');
+		$this->captura('nombre_pais','varchar');
+		$this->captura('nombre','varchar');
+		$this->captura('desc_proveedor','varchar');
+		
 		$this->captura('usr_reg','varchar');
 		$this->captura('usr_mod','varchar');
 		
-		$this->captura('gestion','int4');
-		$this->captura('nombre','varchar');
-		$this->captura('nombre_pais','varchar');
-		$this->captura('desc_proveedor','varchar');
-		$this->captura('evaluacion','varchar');
-		$this->captura('certificacion','varchar');
 		$this->captura('id_competencias','varchar');
-		$this->captura('competencias','varchar');
+		$this->captura('desc_competencia','varchar');
 		
-	    $this->captura('id_planificaciones','varchar');
-		$this->captura('planificaciones','varchar');
+	    $this->captura('id_planificacion','int4');
+		$this->captura('planificacion','varchar');
 		
 	    $this->captura('id_funcionarios','varchar');
 		$this->captura('funcionarios','varchar');
 		
+		$this->captura('id_uo','int4');
+        $this->captura('desc_uo','varchar');
+		$this->captura('id_unidad_organizacional','int4');
+		$this->captura('unidad_organizacional','varchar');
+		$this->captura('peso','numeric');
+        $this->captura('cantidad_personas','int4');
 		
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -102,10 +111,14 @@ class MODCurso extends MODbase{
 		
 		$this->setParametro('id_competencias','id_competencias','varchar');
 	    $this->setParametro('id_funcionarios','id_funcionarios','varchar');
-		$this->setParametro('id_planificaciones','id_planificaciones','varchar');	
+		$this->setParametro('id_planificacion','id_planificacion','int4');	
 		
 		$this->setParametro('evaluacion','evaluacion','varchar');	
-		$this->setParametro('certificacion','certificacion','varchar');				
+		$this->setParametro('certificacion','certificacion','varchar');	
+
+	
+        $this->setParametro('id_uo','id_uo','varchar');	
+		$this->setParametro('id_unidad_organizacional','id_unidad_organizacional','int4');	
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -142,9 +155,12 @@ class MODCurso extends MODbase{
 		
 		$this->setParametro('id_competencias','id_competencias','varchar');
 	    $this->setParametro('id_funcionarios','id_funcionarios','varchar');
-		$this->setParametro('id_planificaciones','id_planificaciones','varchar');		
+		$this->setParametro('id_planificacion','id_planificacion','int4');		
 		$this->setParametro('evaluacion','evaluacion','varchar');	
 		$this->setParametro('certificacion','certificacion','varchar');		
+		
+        $this->setParametro('id_uo','id_uo','varchar');	
+		$this->setParametro('id_unidad_organizacional','id_unidad_organizacional','int4');		
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -161,7 +177,7 @@ class MODCurso extends MODbase{
 				
 		//Define los parametros para la funcion
 		$this->setParametro('id_curso','id_curso','int4');
-
+		//$this->setParametro('id_gestion','id_gestion','int4');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -232,28 +248,31 @@ class MODCurso extends MODbase{
         $this->transaccion='SIGEFO_LCURSO_SEL';		
         $this->tipo_procedimiento='SEL';//tipo de transaccion
 
-        $this->setParametro('id_gestion', 'id_gestion', 'int4');
-        //Definicion de la lista del resultado del query
-        $this->captura('id_correlativo','int4');
-		$this->captura('id_uo_t_temp','int4');
-        $this->captura('id_uo_padre_temp','int4');
-        $this->captura('id_uo_temp','int4');
-        $this->captura('nombre_unidad_temp','varchar');
-		$this->captura('id_curso_temp','int4');
-        $this->captura('nombre_curso_temp','varchar');
-		$this->captura('cod_prioridad_temp','varchar');
-        $this->captura('tipo_nodo_temp','varchar');
-		
-		$this->captura('id_correlativo_key','int4');
-		$this->captura('peso_temp','numeric');	
+        $this->setParametro('id_gestion', 'id_gestion', 'int4'); 
+		 
+		 
+		$this->captura('id_temporal','int4');  //este id no se esta usando solo para cumplir las reglas de framework ya que este viene de una tabla temporal
+		$this->captura('id_curso','int4');
+		$this->captura('nombre_curso','varchar');
+        $this->captura('id_gestion','int4');	
+        $this->captura('cod_prioridad','varchar');
+		$this->captura('horas','int4');
+		$this->captura('peso','numeric');	
 			
-		$aux = $this->objParam->getParametro(0);
-		$datos = $aux['datos'];		
+        //Calculamos las columnas dinamicas de meses
+        $datos = $this->objParam->getParametro('datos');
 		$arrayMeses= explode('@',$datos);
-		$tamaño = sizeof($arrayMeses);		
-		for($i=1;$i<$tamaño;$i++){			
-			$this->setParametro($arrayMeses[$i],$arrayMeses[$i],'varchar');
-		}			
+		$tamaño = sizeof($arrayMeses);
+		for($i=1;$i<$tamaño;$i++){
+		
+			$this->captura($arrayMeses[$i],'varchar');
+			
+			if($i!=$tamaño-1){
+			   $this->captura('id_lavance'.$i.'','int4');
+		    }
+		}
+		//
+
         //Ejecuta la instruccion
         $this->armarConsulta();
         $this->ejecutarConsulta();
@@ -275,18 +294,19 @@ class MODCurso extends MODbase{
 	}	
 	
 	function insertarAvanceReal(){
+		
 		$this->procedimiento='sigefo.ft_curso_ime';
 		$this->transaccion='SIGEFO_CUR_AREAL_MOD';
 		$this->tipo_procedimiento='IME';			
-		//Define los parametros para la funcion
+
         $datos = $this->objParam->getParametro('datos');
 		
-		$this->setParametro('id_correlativo','id_correlativo','int4');
-		$this->setParametro('nombre_unidad_temp','nombre_unidad_temp','varchar');
-		$this->setParametro('nombre_curso_temp','nombre_curso_temp','varchar');
-		$this->setParametro('cod_prioridad_temp','cod_prioridad_temp','varchar');
-		$this->setParametro('tipo_nodo_temp','tipo_nodo_temp','varchar');
-        $this->setParametro('id_correlativo_key','id_correlativo_key','int4');
+		$this->setParametro('id_curso','id_curso','int4');
+		$this->setParametro('nombre_curso','nombre_curso','varchar');
+		$this->setParametro('id_gestion','id_gestion','int4');
+		$this->setParametro('cod_prioridad','cod_prioridad','varchar');
+		$this->setParametro('horas','horas','int4');
+        $this->setParametro('peso','peso','numeric');
 		$aux = $this->objParam->getParametro(0);
 		$datos = $aux['datos'];
 		
@@ -300,12 +320,103 @@ class MODCurso extends MODbase{
 			   $this->setParametro('id_lavance'.$i,'id_lavance'.$i,'int4');
 		    }
 		}
+
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+
+		return $this->respuesta;
+	}
+    function datosPlanificacion()
+    {
+        //Definicion de variables para ejecucion del procedimiento
+        $this->procedimiento='sigefo.ft_curso_ime';
+        $this->transaccion = 'DAT_PLANIFICA';
+        $this->tipo_procedimiento = 'IME';
+
+        //Define los parametros para la funcion
+        $this->setParametro('id_planificacion', 'id_planificacion', 'int4');
+		//$this->setParametro('estado', 'estado', 'bool');
+
+        //Ejecuta la instruccion
+        $this->armarConsulta();
+        $this->ejecutarConsulta();
+
+        //Devuelve la respuesta
+        return $this->respuesta;
+    }
+    function listarProveedorCombos(){
+		//Definicion de variables para ejecucion del procedimientp
+		$this->procedimiento='sigefo.ft_curso_sel';	
+		$this->transaccion='PM_PROVEEV_SEL';
+		$this->tipo_procedimiento='SEL';//tipo de transaccion
+				
+		//Definicion de la lista del resultado del query
+		$this->setParametro('id_lugar','id_lugar','int4');
+	
+        $this->captura('id_proveedor','INTEGER');
+		$this->captura('id_persona','INTEGER');
+		$this->captura('codigo','VARCHAR');
+		$this->captura('numero_sigma','VARCHAR');
+		$this->captura('tipo','VARCHAR');
+		$this->captura('id_institucion','INTEGER');
+		$this->captura('desc_proveedor','VARCHAR');
+		$this->captura('nit','VARCHAR');
+		$this->captura('id_lugar','int4');
+		$this->captura('lugar','varchar');
+		$this->captura('pais','varchar');
+		$this->captura('rotulo_comercial','varchar');
+		$this->captura('email','varchar');
+		$this->captura('cod_proveedor','int4');
+
+	
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		//echo $this->consulta; exit;
+		$this->ejecutarConsulta();
+		
+		//Devuelve la respuesta
+		return $this->respuesta;
+	 }
+     function listarFuncionarioCombos(){
+		//Definicion de variables para ejecucion del procedimientp
+		$this->procedimiento='sigefo.ft_curso_sel';	
+		$this->transaccion='PM_FUNCIO_SEL';
+		$this->tipo_procedimiento='SEL';//tipo de transaccion
+				
+	
+        $this->captura('id_funcionario','int4');
+		$this->captura('codigo','varchar');
+		$this->captura('desc_person','varchar');
+		$this->captura('ci','varchar');
+
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		//echo $this->consulta; exit;
+		$this->ejecutarConsulta();
+		
+		//Devuelve la respuesta
+		return $this->respuesta;
+	 }
+	/*function datosPlanificacion(){
+		//Definicion de variables para ejecucion del procedimientp
+		$this->procedimiento='sigefo.ft_curso_sel';
+		$this->transaccion='DAT_PLANIFICA_SEL';
+		$this->tipo_procedimiento='SEL';//tipo de transaccion
+		
+		$this->setParametro('id_planificacion', 'id_planificacion', 'int4');
+		 
+		$this->captura('id_unidad_organizacional','int4');
+		$this->captura('id_gerencia','int4');
+
+		
+
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
+		
 		//Devuelve la respuesta
 		return $this->respuesta;
-	}
+	}*/
 	
 }
 ?>

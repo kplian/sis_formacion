@@ -30,6 +30,25 @@ class ACTCompetencia extends ACTbase
         }
         $this->res->imprimirRespuesta($this->res->generarJson());
     }
+    function listarCompetenciaCombo()
+    {
+        $this->objParam->defecto('ordenacion', 'id_competencia');
+
+        $this->objParam->defecto('dir_ordenacion', 'asc');
+        if ($this->objParam->getParametro('tipoReporte') == 'excel_grid' || $this->objParam->getParametro('tipoReporte') == 'pdf_grid') {
+            $this->objReporte = new Reporte($this->objParam, $this);
+            $this->res = $this->objReporte->generarReporteListado('MODCompetencia', 'listarCompetenciaCombo');
+        } else {
+
+	        if ($this->objParam->getParametro('id_uo')) {
+	            $this->objParam->addFiltro("tu.id_uo=".$this->objParam->getParametro('id_uo')." OR "."eu.id_uo_padre=".$this->objParam->getParametro('id_uo'));
+	        } 
+            $this->objFunc = $this->create('MODCompetencia');
+
+            $this->res = $this->objFunc->listarCompetenciaCombo($this->objParam);
+        }
+        $this->res->imprimirRespuesta($this->res->generarJson());
+    }
 	function listarCompetenciaCargo(){
 		$this->objParam->defecto('ordenacion','id_competencia');
 
@@ -119,17 +138,14 @@ class ACTCompetencia extends ACTbase
 		$this->res->imprimirRespuesta($this->res->generarJson());
     }
 	function listarCargo(){
-		$this->objParam->defecto('ordenacion','id_cargo');
+		//$this->objParam->defecto('ordenacion','id_cargo');
 
 		$this->objParam->defecto('dir_ordenacion','asc');
 		
-		if ($this->objParam->getParametro('id_uo') != '') {
-			$this->objParam->addFiltro("cargo.id_uo = ". $this->objParam->getParametro('id_uo'));
-		}
-        if ($this->objParam->getParametro('id_competencias')) {
-            $this->objParam->addFiltro(" cc.id_competencia in (". $this->objParam->getParametro('id_competencias')." ) ");
+	    if ($this->objParam->getParametro('id_competencia')) {
+            $this->objParam->addFiltro(" cc.id_competencia = ". $this->objParam->getParametro('id_competencia'));
         }
-				
+	
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);
 			$this->res = $this->objReporte->generarReporteListado('MODCompetencia','listarCargo');

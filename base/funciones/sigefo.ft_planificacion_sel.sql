@@ -1,3 +1,5 @@
+--------------- SQL ---------------
+
 CREATE OR REPLACE FUNCTION sigefo.ft_planificacion_sel (
   p_administrador integer,
   p_id_usuario integer,
@@ -63,38 +65,40 @@ BEGIN
 						usu1.cuenta as usr_reg,
 						usu2.cuenta as usr_mod,
 						tg.gestion,
-						(SELECT
-  array_to_string( array_agg(tg.nombre), ''<br>'' )
-FROM orga.tcargo tg join sigefo.tplanificacion_cargo pc ON pc.id_cargo=tg.id_cargo
-where pc.id_planificacion=sigefop.id_planificacion)::varchar as desc_cargos,
-						(SELECT
-  array_to_string( array_agg(tg.id_cargo), '','' )
-FROM orga.tcargo tg join sigefo.tplanificacion_cargo pc ON pc.id_cargo=tg.id_cargo
-where pc.id_planificacion=sigefop.id_planificacion)::varchar as id_cargos,
+						(SELECT tu.nombre_cargo from sigefo.tplanificacion  pl
+join orga.tuo tu on tu.id_uo=pl.id_unidad_organizacional
+where pl.id_planificacion=sigefop.id_planificacion)::varchar as unidad_organizacional,
+
+						sigefop.id_unidad_organizacional::INTEGER,
+
 									(select      array_to_string( array_agg(c.codigo), '','' )
 from sigefo.tplanificacion_criterio pc join param.tcatalogo c on c.codigo = pc.cod_criterio
 where pc.id_planificacion=sigefop.id_planificacion)::varchar as cod_criterio,
+
 									(select      array_to_string( array_agg(c.descripcion), ''<br>'' )
 from sigefo.tplanificacion_criterio pc join param.tcatalogo c on c.codigo = pc.cod_criterio
 where pc.id_planificacion=sigefop.id_planificacion)::varchar as desc_criterio,
+
 								(select      array_to_string( array_agg(co.competencia), ''<br>'' )
 from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
 where pco.id_planificacion=sigefop.id_planificacion)::varchar as desc_competencia,
+
 									(select      array_to_string( array_agg(co.id_competencia), '','' )
 from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
 where pco.id_planificacion=sigefop.id_planificacion)::varchar as id_competencias,
+
 									(select  array_to_string( array_agg(prov.desc_proveedor), ''<br>'' )
 from sigefo.tplanificacion_proveedor pp join param.vproveedor prov ON pp.id_proveedor=prov.id_proveedor
 where pp.id_planificacion=sigefop.id_planificacion)::varchar as desc_proveedores,
+
 									(select  array_to_string( array_agg(pp.id_proveedor), '','' )
 from sigefo.tplanificacion_proveedor pp
 where pp.id_planificacion=sigefop.id_planificacion)::varchar as id_proveedores,
-(select  array_to_string( array_agg(puo.id_uo), '','' )
- from sigefo.tplanificacion_uo puo
- where puo.id_planificacion=sigefop.id_planificacion)::varchar as id_uo,
-(select  array_to_string( array_agg(uo.nombre_unidad), ''<br>'' )
- from sigefo.tplanificacion_uo puo join orga.tuo uo on puo.id_uo=uo.id_uo
- where puo.id_planificacion=sigefop.id_planificacion)::varchar as desc_uo
+
+sigefop.id_gerencia::INTEGER AS id_uo,
+(SELECT tu.nombre_unidad FROM sigefo.tplanificacion p  join orga.tuo tu ON p.id_gerencia=tu.id_uo where sigefop.id_gerencia=tu.id_uo and p.id_planificacion=sigefop.id_planificacion	)::VARCHAR as desc_uo
+
+ 
 						from sigefo.tplanificacion sigefop
 						inner join segu.tusuario usu1 on usu1.id_usuario = sigefop.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = sigefop.id_usuario_mod
@@ -140,7 +144,7 @@ where pp.id_planificacion=sigefop.id_planificacion)::varchar as id_proveedores,
       /*********************************
      #TRANSACCION:  'SIGEFO_SIGEFOCGU_SEL'
      #DESCRIPCION:	Mostrar los registro de los cargos
-     #AUTOR:		yac
+     #AUTOR:		JUAN
      #FECHA:		10-05-2017 20:37:24
     ***********************************/
 
@@ -149,11 +153,14 @@ where pp.id_planificacion=sigefop.id_planificacion)::varchar as id_proveedores,
 
       BEGIN
         --Sentencia de la consulta de conteo de registros
-        v_consulta:='select
+        
+       v_consulta:='select
                     uo.id_uo,
-                    uo.nombre_unidad
+                    uo.nombre_unidad,
+                    uo.id_uo::integer as cod_uo
                     from orga.tuo uo
-        where uo.gerencia=''si'' and ';
+        where uo.estado_reg=''activo'' and uo.gerencia=''si'' and ';
+        
 
         --Definicion de la respuesta
         v_consulta:=v_consulta || v_parametros.filtro;
@@ -174,7 +181,7 @@ where pp.id_planificacion=sigefop.id_planificacion)::varchar as id_proveedores,
       /*********************************
      #TRANSACCION:  'SIGEFO_SIGEFOCGU_CONT'
      #DESCRIPCION:	Conteo de registros del SIGEFO_SIGEFOCGU_SEL
-     #AUTOR:		YAC
+     #AUTOR:		JUAN
      #FECHA:		10-05-2017 20:37:24
     ***********************************/
 
@@ -186,7 +193,7 @@ where pp.id_planificacion=sigefop.id_planificacion)::varchar as id_proveedores,
         v_consulta:='select
                     count(uo.id_uo)
                     from orga.tuo uo
-        where uo.gerencia=''si'' and ';
+        where uo.estado_reg=''activo'' and uo.gerencia=''si'' and ';
 
         --Definicion de la respuesta
         v_consulta:=v_consulta || v_parametros.filtro;

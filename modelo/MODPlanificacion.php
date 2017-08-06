@@ -37,15 +37,19 @@ class MODPlanificacion extends MODbase{
 		$this->captura('usr_reg','varchar');
 		$this->captura('usr_mod','varchar');
 		$this->captura('gestion','int4');
-		$this->captura('desc_cargos','varchar');
-		$this->captura('id_cargos','varchar');
+		
+		$this->captura('unidad_organizacional','varchar');
+		$this->captura('id_unidad_organizacional','int4');
+		
 		$this->captura('cod_criterio','varchar');
 		$this->captura('desc_criterio','varchar');
         $this->captura('desc_competencia','varchar');
         $this->captura('id_competencias','varchar');
-        $this->captura('desc_proveedores','varchar');
-        $this->captura('id_proveedores','varchar');
-        $this->captura('id_uo','varchar');
+		
+        $this->captura('desc_proveedor','varchar');
+		$this->captura('id_proveedor','int4');
+		
+        $this->captura('id_uo','int4');
         $this->captura('desc_uo','varchar');
 
         //Ejecuta la instruccion
@@ -72,9 +76,12 @@ class MODPlanificacion extends MODbase{
 		$this->setParametro('horas_previstas','horas_previstas','int4');
         $this->setParametro('cod_criterio', 'cod_criterio', 'varchar');
         $this->setParametro('id_competencias', 'id_competencias', 'varchar');
-        $this->setParametro('id_cargos', 'id_cargos', 'varchar');
-        $this->setParametro('id_proveedores', 'id_proveedores', 'varchar');
-        $this->setParametro('id_uo', 'id_uo', 'varchar');
+        $this->setParametro('id_unidad_organizacional', 'id_unidad_organizacional', 'int4');
+        $this->setParametro('id_proveedor', 'id_proveedor', 'int4');
+        $this->setParametro('id_uo', 'id_uo', 'int4');
+		
+		$this->captura('id_uo','int4');
+        $this->captura('id_unidad_organizacional','int4');
         //Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -100,11 +107,10 @@ class MODPlanificacion extends MODbase{
 		$this->setParametro('horas_previstas','horas_previstas','int4');
 
         $this->setParametro('cod_criterio', 'cod_criterio', 'varchar');
-        $this->setParametro('id_cargos', 'id_cargos', 'varchar');
+        $this->setParametro('id_unidad_organizacional', 'id_unidad_organizacional', 'int4');
         $this->setParametro('id_competencias', 'id_competencias', 'varchar');
-        $this->setParametro('id_proveedores', 'id_proveedores', 'varchar');
+        $this->setParametro('id_proveedor', 'id_proveedor', 'int4');
         $this->setParametro('id_uo', 'id_uo', 'varchar');
-
         //Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -139,13 +145,15 @@ class MODPlanificacion extends MODbase{
        // $this->setParametro('id_uo','id_uo','integer');
         //Definicion de la lista del resultado del query
         $this->captura('id_cargo','int4');
-        $this->captura('id_uo','int4');
-        $this->captura('id_tipo_contrato','int4');
-        $this->captura('id_lugar','int4');
+        //$this->captura('id_uo','int4');
+        //$this->captura('id_tipo_contrato','int4');
+        //$this->captura('id_lugar','int4');
         $this->captura('nombre','varchar');
-        $this->captura('identificador','int4');
-        $this->captura('id_uo_padre','int4');
-        $this->captura('nombre_unidad_padre','varchar');
+		
+		$this->captura('cod_cargo','int4');
+        //$this->captura('identificador','int4');
+        //$this->captura('id_uo_padre','int4');
+        //$this->captura('nombre_unidad_padre','varchar');
 
         //Ejecuta la instruccion
         $this->armarConsulta();
@@ -164,7 +172,9 @@ class MODPlanificacion extends MODbase{
        // $this->setParametro('id_uo','id_uo','integer');
         //Definicion de la lista del resultado del query
         $this->captura('id_uo','int4');
+		
         $this->captura('nombre_unidad','varchar');
+		$this->captura('cod_uo','int4');
 
         //Ejecuta la instruccion
         $this->armarConsulta();
