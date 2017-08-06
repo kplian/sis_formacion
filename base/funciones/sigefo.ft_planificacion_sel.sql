@@ -87,13 +87,10 @@ where pco.id_planificacion=sigefop.id_planificacion)::varchar as desc_competenci
 from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
 where pco.id_planificacion=sigefop.id_planificacion)::varchar as id_competencias,
 
-									(select  array_to_string( array_agg(prov.desc_proveedor), ''<br>'' )
-from sigefo.tplanificacion_proveedor pp join param.vproveedor prov ON pp.id_proveedor=prov.id_proveedor
-where pp.id_planificacion=sigefop.id_planificacion)::varchar as desc_proveedores,
-
-									(select  array_to_string( array_agg(pp.id_proveedor), '','' )
-from sigefo.tplanificacion_proveedor pp
-where pp.id_planificacion=sigefop.id_planificacion)::varchar as id_proveedores,
+									(select prov.desc_proveedor 
+from sigefo.tplanificacion pp join param.vproveedor prov ON pp.id_proveedor=prov.id_proveedor
+where pp.id_planificacion=sigefop.id_planificacion)::varchar as desc_proveedor,
+									sigefop.id_proveedor::INTEGER,
 
 sigefop.id_gerencia::INTEGER AS id_uo,
 (SELECT tu.nombre_unidad FROM sigefo.tplanificacion p  join orga.tuo tu ON p.id_gerencia=tu.id_uo where sigefop.id_gerencia=tu.id_uo and p.id_planificacion=sigefop.id_planificacion	)::VARCHAR as desc_uo
