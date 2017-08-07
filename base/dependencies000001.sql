@@ -414,4 +414,25 @@ select pxp.f_delete_testructura_gui ('CUPL', 'SIGEFO');
 select pxp.f_delete_testructura_gui ('CUFU', 'SIGEFO');
 /***********************************F-DEP-JUAN-SIGEFO-0-28/09/2017****************************************/
 
-  
+/***********************************I-DEP-JUAN-SIGEFO-0-17/11/2017****************************************/ 
+select pxp.f_delete_testructura_gui ('SIGEFOCU', 'SIGEFO');
+select pxp.f_delete_testructura_gui ('CUPL', 'SIGEFO');
+select pxp.f_delete_testructura_gui ('CUFU', 'SIGEFO');
+select pxp.f_delete_testructura_gui ('SIGEFOCO', 'SIGEFOPAR');
+select pxp.f_delete_testructura_gui ('CACO', 'SIGEFOPAR');
+select pxp.f_delete_testructura_gui ('SIGEFOCUE', 'SIGEFO');
+select pxp.f_delete_testructura_gui ('SIGECOCAT', 'SIGEFOCUE');
+select pxp.f_delete_testructura_gui ('SIGECOPRE', 'SIGEFOCUE');
+select pxp.f_delete_testructura_gui ('CUE', 'SIGEFOCUE');
+select pxp.f_insert_testructura_gui ('PARCOM', 'SIGEFOPAR');
+select pxp.f_insert_testructura_gui ('PAREVAL', 'SIGEFOPAR');
+select pxp.f_delete_testructura_gui ('SIGEFOCO', 'PARCOM');
+select pxp.f_delete_testructura_gui ('CACO', 'PARCOM');
+select pxp.f_delete_testructura_gui ('SIGECOCAT', 'PAREVAL');
+select pxp.f_insert_testructura_gui ('SIGECOPRE', 'PAREVAL');
+select pxp.f_delete_testructura_gui ('SIGECOCAT', 'SIGECOPRE');
+select pxp.f_insert_testructura_gui ('SIGECOCAT', 'PAREVAL');
+select pxp.f_insert_testructura_gui ('SIGEFOCO', 'PARCOM');
+select pxp.f_insert_testructura_gui ('CACO', 'PARCOM');
+select pxp.f_insert_testructura_gui ('CUE', 'SIGEFO');
+/***********************************F-DEP-JUAN-SIGEFO-0-17/11/2017****************************************/
