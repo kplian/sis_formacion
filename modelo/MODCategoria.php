@@ -32,6 +32,7 @@ class MODCategoria extends MODbase{
 		$this->captura('id_usuario_mod','int4');
 		$this->captura('usr_reg','varchar');
 		$this->captura('usr_mod','varchar');
+		$this->captura('habilitado','bool');
 		
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -51,7 +52,7 @@ class MODCategoria extends MODbase{
 		$this->setParametro('categoria','categoria','varchar');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('tipo','tipo','varchar');
-
+        $this->setParametro('habilitado','habilitado','bool');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -71,7 +72,7 @@ class MODCategoria extends MODbase{
 		$this->setParametro('categoria','categoria','varchar');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('tipo','tipo','varchar');
-
+        $this->setParametro('habilitado','habilitado','bool');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

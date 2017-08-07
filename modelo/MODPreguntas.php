@@ -25,7 +25,6 @@ class MODPreguntas extends MODbase{
 		$this->captura('tipo','varchar');
 		$this->captura('pregunta','varchar');
 		$this->captura('habilitado','bool');
-		$this->captura('seccion','int4');
 		$this->captura('estado_reg','varchar');
 		$this->captura('id_usuario_ai','int4');
 		$this->captura('id_usuario_reg','int4');
@@ -91,9 +90,13 @@ class MODPreguntas extends MODbase{
 		$this->setParametro('tipo','tipo','varchar');
 		$this->setParametro('pregunta','pregunta','varchar');
 		$this->setParametro('habilitado','habilitado','bool');
-		$this->setParametro('seccion','seccion','int4');
 		$this->setParametro('estado_reg','estado_reg','varchar');
-
+		$this->setParametro('usuario_ai','usuario_ai','varchar');
+		$this->setParametro('fecha_reg','fecha_reg','timestamp');
+		$this->setParametro('fecha_mod','fecha_mod','timestamp');
+		$this->setParametro('id_usuario_mod','id_usuario_mod','int4');
+		$this->setParametro('usr_reg','usr_reg','varchar');
+		$this->setParametro('usr_mod','usr_mod','varchar');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -114,9 +117,13 @@ class MODPreguntas extends MODbase{
 		$this->setParametro('tipo','tipo','varchar');
 		$this->setParametro('pregunta','pregunta','varchar');
 		$this->setParametro('habilitado','habilitado','bool');
-		$this->setParametro('seccion','seccion','int4');
 		$this->setParametro('estado_reg','estado_reg','varchar');
-
+		$this->setParametro('usuario_ai','usuario_ai','varchar');
+		$this->setParametro('fecha_reg','fecha_reg','timestamp');
+		$this->setParametro('fecha_mod','fecha_mod','timestamp');
+		$this->setParametro('id_usuario_mod','id_usuario_mod','int4');
+		$this->setParametro('usr_reg','usr_reg','varchar');
+		$this->setParametro('usr_mod','usr_mod','varchar');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

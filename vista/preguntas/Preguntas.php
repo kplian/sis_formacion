@@ -70,7 +70,7 @@ Phx.vista.Preguntas=Ext.extend(Phx.gridInterfaz,{
 			config: {
 				name: 'id_categoria',
 				fieldLabel: 'Categoria',
-				allowBlank: true,
+				allowBlank: false,
 				emptyText: 'Elija una opción...',
 				store: new Ext.data.JsonStore({
 					url: '../../sis_formacion/control/Categoria/listarCategoria',
@@ -113,7 +113,7 @@ Phx.vista.Preguntas=Ext.extend(Phx.gridInterfaz,{
 			config:{
 				name: 'pregunta',
 				fieldLabel: 'Pregunta',
-				allowBlank: true,
+				allowBlank: false,
 				anchor: '80%',
 				gwidth: 400,
 				maxLength:1500
@@ -130,7 +130,15 @@ Phx.vista.Preguntas=Ext.extend(Phx.gridInterfaz,{
 				fieldLabel: 'Habilitar',
 				allowBlank: true,
 				anchor: '80%',
-				gwidth: 100
+				gwidth: 100,
+                renderer: function (value, p, record, rowIndex, colIndex){
+                    if(record.data.habilitado =='t'){
+                        return  String.format('<div style="vertical-align:middle;text-align:center;"><input style="height:37px;width:37px;" type="checkbox"  {0} {1}></div>','checked', 'disabled');
+                    }
+                    else{
+                        return  String.format('<div style="vertical-align:middle;text-align:center;"><input style="height:37px;width:37px;" type="checkbox"  {0} {1}></div>','', 'disabled');
+                    }
+                }
 			},
 				type:'Checkbox',
 				filters:{pfiltro:'pre.habilitado',type:'boolean'},
@@ -138,48 +146,41 @@ Phx.vista.Preguntas=Ext.extend(Phx.gridInterfaz,{
 				grid:true,
 				form:true
 		},
-		{
-			config:{
-				name: 'seccion',
-				fieldLabel: 'Seccion',
-				allowBlank: true,
-				anchor: '80%',
-				gwidth: 100,
-				maxLength:4
-			},
-				type:'NumberField',
-				filters:{pfiltro:'pre.seccion',type:'numeric'},
-				id_grupo:1,
-				grid:true,
-				form:true
-		},
-		{
-            config: {
-                name: 'tipo',
-                fieldLabel: 'Tipo',
-                tinit: false,
-                allowBlank: false,
-                emptyText: 'Elija una opción...',
-                origen: 'CATALOGO',
-                gdisplayField: 'tipo',
-                gwidth: 100,
-                anchor: '80%',
-                baseParams: {
-                    cod_subsistema: 'SIGEFO',
-                    catalogo_tipo: 'tipo_pregunta'
+        {
+                config: {
+                       name: 'tipo',
+                       fieldLabel: 'Tipo',
+                       allowBlank: false,
+                       emptyText: 'Elija una opción...',
+                       store: new Ext.data.ArrayStore({
+	                        id: 0,
+	                        fields: [
+	                            'tipo'
+	                        ],
+	                        data: [['Selección'], ['Multiple']]
+                       }),
+                       valueField: 'tipo',
+                       displayField: 'tipo',
+                       gdisplayField: 'tipo',
+                       hiddenName: 'tipo',
+                       //forceSelection: true,
+                       typeAhead: false,
+                       triggerAction: 'all',
+                       lazyRender: true,
+                       mode: 'local',
+                       pageSize: 15,
+                       queryDelay: 1000,
+                       anchor: '80%',
+                       gwidth: 150,
+                       minChars: 2,
+
                 },
-                renderer: function (value, p, record) {
-                    return String.format('{0}', record.data['tipo']);
-                }
-            },
-            type: 'ComboRec',
-            id_grupo: 0,
-            filters: {
-                pfiltro: 'sigefoco.tipo',
-                type: 'string'
-            },
-            grid: true,
-            form: true
+                type: 'ComboBox',
+                id_grupo: 0,
+                filters: {pfiltro: 'sigefoco.tipo',type: 'string'},
+                grid: true,
+                form: true
+                //,egrid:true,
         }
 	],
 	tam_pag:50,	
@@ -194,15 +195,28 @@ Phx.vista.Preguntas=Ext.extend(Phx.gridInterfaz,{
 		{name:'categoria', type: 'string'},
 		{name:'tipo', type: 'string'},
 		{name:'pregunta', type: 'string'},
-		{name:'habilitado', type: 'boolean'},
-		{name:'seccion', type: 'numeric'}		
+		{name:'habilitado', type: 'string'}	
 	],
 	sortInfo:{
 		field: 'id_pregunta',
 		direction: 'ASC'
 	},
 	bdel:true,
-	bsave:true
+	bsave:true,
+    onButtonEdit: function () {
+        Phx.vista.Preguntas.superclass.onButtonEdit.call(this);
+        //console.log("ver editar ",this.Cmp.habilitado);
+        //console.log("ver editar2 ",this.sm.selections.items[0].data.habilitado);
+        if(this.sm.selections.items[0].data.habilitado=='t'){
+        	this.Cmp.habilitado.setValue(true);
+        }
+    },
+    onButtonNew: function() {
+       	Phx.vista.Preguntas.superclass.onButtonNew.call(this);
+        this.Cmp.habilitado.setValue(true);
+    },
+    
+    
 	}
 )
 </script>

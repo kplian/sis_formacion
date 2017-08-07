@@ -1,3 +1,5 @@
+--------------- SQL ---------------
+
 CREATE OR REPLACE FUNCTION sigefo.ft_categoria_ime (
   p_administrador integer,
   p_id_usuario integer,
@@ -56,7 +58,8 @@ BEGIN
 			usuario_ai,
 			id_usuario_ai,
 			fecha_mod,
-			id_usuario_mod
+			id_usuario_mod,
+            habilitado
           	) values(
 			v_parametros.categoria,
 			'activo',
@@ -66,10 +69,8 @@ BEGIN
 			v_parametros._nombre_usuario_ai,
 			v_parametros._id_usuario_ai,
 			null,
-			null
-							
-			
-			
+			null,
+			v_parametros.habilitado::BOOLEAN
 			)RETURNING id_categoria into v_id_categoria;
 			
 			--Definicion de la respuesta
@@ -98,7 +99,8 @@ BEGIN
 			fecha_mod = now(),
 			id_usuario_mod = p_id_usuario,
 			id_usuario_ai = v_parametros._id_usuario_ai,
-			usuario_ai = v_parametros._nombre_usuario_ai
+			usuario_ai = v_parametros._nombre_usuario_ai,
+            habilitado = v_parametros.habilitado
 			where id_categoria=v_parametros.id_categoria;
                
 			--Definicion de la respuesta

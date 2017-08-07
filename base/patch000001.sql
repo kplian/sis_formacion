@@ -256,3 +256,10 @@ ALTER TABLE sigefo.tcurso
   ALTER COLUMN peso TYPE NUMERIC;
 /***********************************F-SCP-JUAN-SIGEFO-0-10/11/2017****************************************/
 
+
+/***********************************I-SCP-JUAN-SIGEFO-0-17/11/2017****************************************/
+ALTER TABLE sigefo.tcategoria
+  ADD COLUMN habilitado BOOLEAN;
+/***********************************F-SCP-JUAN-SIGEFO-0-17/11/2017****************************************/
+  
+  

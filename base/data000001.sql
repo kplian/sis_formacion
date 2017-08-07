@@ -96,3 +96,19 @@ select pxp.f_insert_tgui ('Avance Real', 'Avance Real', 'AR', 'si', 4, 'sis_form
 select pxp.f_insert_tgui ('Cuestionario', 'Cuestionario', 'SIGEFOCUE', 'si', 5, '', 2, '', '', 'SIGEFO');
 /********************************************F-DAT-JUAN-SIGEFO-1-28/09/2017********************************************/
 
+/********************************************I-DAT-JUAN-SIGEFO-1-17/11/2017********************************************/
+select pxp.f_insert_tgui ('Planificación', 'Planificación', 'SIGEFOP', 'si', 2, 'sis_formacion/vista/planificacion/Planificacion.php', 2, '', 'Planificacion', 'SIGEFO');
+select pxp.f_insert_tgui ('Competencias', 'Competencias', 'SIGEFOCO', 'si', 3, 'sis_formacion/vista/competencia/Competencia.php', 2, '', 'Competencia', 'SIGEFO');
+select pxp.f_delete_tgui ('SIGEFOCU');
+select pxp.f_delete_tgui ('CUPL');
+select pxp.f_delete_tgui ('CUFU');
+select pxp.f_insert_tgui ('Curso', 'Curso', 'CUR', 'si', 3, 'sis_formacion/vista/curso/Curso.php', 2, '', 'Curso', 'SIGEFO');
+select pxp.f_insert_tgui ('Cargo competencia', 'Cargo competencia', 'CACO', 'si', 4, 'sis_formacion/vista/competencia/FormCargo.php', 2, '', 'FormCargo', 'SIGEFO');
+select pxp.f_insert_tgui ('Avance Real', 'Avance Real', 'AR', 'si', 4, 'sis_formacion/vista/curso/FormCursoAvanceReal.php', 2, '', 'FormCursoAvanceReal', 'SIGEFO');
+select pxp.f_insert_tgui ('Categoria', 'Categoria', 'SIGECOCAT', 'si', 1, 'sis_formacion/vista/categoria/Categoria.php', 3, '', 'Categoria', 'SIGEFO');
+select pxp.f_delete_tgui ('SIGEFOCUE');
+select pxp.f_insert_tgui ('Preguntas', 'Preguntas', 'SIGECOPRE', 'si', 2, 'sis_formacion/vista/preguntas/Preguntas.php', 3, '', 'Preguntas', 'SIGEFO');
+select pxp.f_insert_tgui ('Evaluación de curso', 'Evaluación de curso', 'CUE', 'si', 6, 'sis_formacion/vista/preguntas/Generador.php', 3, '', 'Generador', 'SIGEFO');
+select pxp.f_insert_tgui ('Competencia', 'Lista de parametrizacion de competencia', 'PARCOM', 'si', 1, '', 3, '', '', 'SIGEFO');
+select pxp.f_insert_tgui ('Evaluación', 'Parametrizacion de evaluacion', 'PAREVAL', 'si', 2, '', 3, '', '', 'SIGEFO');
+/********************************************F-DAT-JUAN-SIGEFO-1-17/11/2017********************************************/

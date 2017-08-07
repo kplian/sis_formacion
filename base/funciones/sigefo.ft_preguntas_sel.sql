@@ -1,3 +1,5 @@
+--------------- SQL ---------------
+
 CREATE OR REPLACE FUNCTION sigefo.ft_preguntas_sel (
   p_administrador integer,
   p_id_usuario integer,
@@ -36,7 +38,7 @@ BEGIN
 	/*********************************    
  	#TRANSACCION:  'SIGEFO_PRE_SEL'
  	#DESCRIPCION:	Consulta de datos
- 	#AUTOR:		admin	
+ 	#AUTOR:		JUAN	
  	#FECHA:		20-04-2017 00:51:06
 	***********************************/
 
@@ -50,7 +52,6 @@ BEGIN
 						pre.tipo,
 						pre.pregunta,
 						pre.habilitado,
-						pre.seccion,
 						pre.estado_reg,
 						pre.id_usuario_ai,
 						pre.id_usuario_reg,

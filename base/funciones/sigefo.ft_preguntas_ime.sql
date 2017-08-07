@@ -1,3 +1,4 @@
+--------------- SQL ---------------
 CREATE OR REPLACE FUNCTION sigefo.ft_preguntas_ime (
   p_administrador integer,
   p_id_usuario integer,
@@ -52,7 +53,6 @@ BEGIN
 			tipo,
 			pregunta,
 			habilitado,
-			seccion,
 			estado_reg,
 			id_usuario_ai,
 			id_usuario_reg,
@@ -65,7 +65,6 @@ BEGIN
 			v_parametros.tipo,
 			v_parametros.pregunta,
 			v_parametros.habilitado,
-			v_parametros.seccion,
 			'activo',
 			v_parametros._id_usuario_ai,
 			p_id_usuario,
@@ -103,7 +102,6 @@ BEGIN
 			tipo = v_parametros.tipo,
 			pregunta = v_parametros.pregunta,
 			habilitado = v_parametros.habilitado,
-			seccion = v_parametros.seccion,
 			fecha_mod = now(),
 			id_usuario_mod = p_id_usuario,
 			id_usuario_ai = v_parametros._id_usuario_ai,
