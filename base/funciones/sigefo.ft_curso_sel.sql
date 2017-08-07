@@ -336,7 +336,7 @@ BEGIN
                                     c.nombre_curso :: VARCHAR,
                                     c.id_gestion ::INTEGER,
                                     c.cod_prioridad :: VARCHAR,                                            
-                                    c.horas :: INTEGER,                                                       
+                                    (CASE WHEN (c.horas is null or c.horas::VARCHAR='')THEN 0 ELSE c.horas::NUMERIC END)::NUMERIC AS horas,                                                       
                                     (CASE WHEN (c.peso is null or c.peso::VARCHAR='')THEN 0 ELSE c.peso::NUMERIC END)::NUMERIC AS peso                                                          
                                     FROM sigefo.tcurso c  WHERE c.id_gestion=v_parametros.id_gestion)LOOP
                                     
