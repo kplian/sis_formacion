@@ -157,7 +157,7 @@ Phx.vista.Preguntas=Ext.extend(Phx.gridInterfaz,{
 	                        fields: [
 	                            'tipo'
 	                        ],
-	                        data: [['Selección'], ['Multiple']]
+	                        data: [['Selección'], ['Texto']]
                        }),
                        valueField: 'tipo',
                        displayField: 'tipo',

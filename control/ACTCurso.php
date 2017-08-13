@@ -144,6 +144,38 @@ class ACTCurso extends ACTbase{
 		}
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
+	function listarPreguntas(){
+		$this->objParam->defecto('ordenacion','pregunta');
+
+       /*if ($this->objParam->getParametro('id_gestion')) {
+            //$this->objParam->addFiltro("scu.id_gestion  =". $this->objParam->getParametro('id_gestion'));
+        }
+		else{
+			//$this->objParam->addFiltro("scu.id_gestion  = 0");
+		}*/
+		
+		$this->objParam->defecto('dir_ordenacion','asc');
+		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
+			$this->objReporte = new Reporte($this->objParam,$this);
+			$this->res = $this->objReporte->generarReporteListado('MODCurso','listarPreguntas');
+		} else{
+			$this->objFunc=$this->create('MODCurso');
+			
+			$this->res=$this->objFunc->listarPreguntas($this->objParam);
+		}
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
+	function insertarCuestionario(){
+		$this->objFunc=$this->create('MODCurso');	
+		
+		$this->res=$this->objFunc->insertarCuestionario($this->objParam);		
+		/*if($this->objParam->insertar('id_curso')){
+			$this->res=$this->objFunc->insertarCurso($this->objParam);			
+		} else{			
+			$this->res=$this->objFunc->modificarCurso($this->objParam);
+		}*/
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
 			
 }
 

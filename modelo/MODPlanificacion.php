@@ -76,12 +76,10 @@ class MODPlanificacion extends MODbase{
 		$this->setParametro('horas_previstas','horas_previstas','int4');
         $this->setParametro('cod_criterio', 'cod_criterio', 'varchar');
         $this->setParametro('id_competencias', 'id_competencias', 'varchar');
-        $this->setParametro('id_unidad_organizacional', 'id_unidad_organizacional', 'int4');
         $this->setParametro('id_proveedor', 'id_proveedor', 'int4');
-        $this->setParametro('id_uo', 'id_uo', 'int4');
+
 		
-		$this->captura('id_uo','int4');
-        $this->captura('id_unidad_organizacional','int4');
+
         //Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -107,10 +105,9 @@ class MODPlanificacion extends MODbase{
 		$this->setParametro('horas_previstas','horas_previstas','int4');
 
         $this->setParametro('cod_criterio', 'cod_criterio', 'varchar');
-        $this->setParametro('id_unidad_organizacional', 'id_unidad_organizacional', 'int4');
         $this->setParametro('id_competencias', 'id_competencias', 'varchar');
         $this->setParametro('id_proveedor', 'id_proveedor', 'int4');
-        $this->setParametro('id_uo', 'id_uo', 'varchar');
+
         //Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

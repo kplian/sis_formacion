@@ -40,12 +40,6 @@ class ACTCompetencia extends ACTbase
             $this->res = $this->objReporte->generarReporteListado('MODCompetencia', 'listarCompetenciaCombo');
         } else {
 
-	        if ($this->objParam->getParametro('id_uo')) {
-	            $this->objParam->addFiltro("tu.id_uo=".$this->objParam->getParametro('id_uo')." OR "."eu.id_uo_padre=".$this->objParam->getParametro('id_uo'));
-	        }
-			else{
-                $this->objParam->addFiltro("tu.id_uo = 0");
-			} 
             $this->objFunc = $this->create('MODCompetencia');
 
             $this->res = $this->objFunc->listarCompetenciaCombo($this->objParam);

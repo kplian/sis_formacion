@@ -1,267 +1,266 @@
 <?php
 /**
-*@package pXP
-*@file gen-Preguntas.php
-*@author  (manu)
-*@date 20-04-2017 00:51:06
-*@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
-*/
+ * @package pXP
+ * @file gen-Curso.php
+ * @author  (manu)
+ * @date 23-01-2017 13:34:58
+ * @description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+ */
 
 header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
-var id_proveedor;
-var id_curso;
-var proveedor;
-var curso;
-var fecha;
-Phx.vista.FormProveedorEva = Ext.extend(Phx.frmInterfaz,{
-	
+var col_generado='';
+
+Phx.vista.FormProveedorEva= Ext.extend(Phx.gridInterfaz, {
+		
 	constructor:function(config)
-	{		
-		this.config=config;	
-		this.configMaestro=config;	
+	{
+		this.configMaestro=config;
+		this.config=config;
+                    		
 		Phx.CP.loadingShow();	
-		id_proveedor=this.configMaestro.data.id_proveedor;
-		id_curso=this.configMaestro.data.id_curso;	
-		proveedor=this.configMaestro.data.proveedor;
-		curso=this.configMaestro.data.curso;	
-		fecha=this.configMaestro.data.fecha;		
-		this.storeAtributos= new Ext.data.JsonStore({
-			url:'../../sis_formacion/control/Preguntas/listarPreguntasPro',			
-			id: 'id_pregunta',
-			root: 'datos',				
-			fields:  
+		this.storeAtributos= new Ext.data.JsonStore({	
+			url:'../../sis_formacion/control/Curso/listarPreguntas',	//llamamos a la misma lista de cursos 		
+			id: 'id_temporal',
+			root: 'datos',			
+			totalProperty: 'total',
+			fields: 
 			[
-				'id_pregunta',
-				{name:'tipo', type: 'string'},				
-				{name:'pregunta', type: 'string'},
-				{name:'habilitado', type: 'string'},
-				{name:'seccion', type: 'string'},
-				{name:'categoria', type: 'string'},
-				{name:'tipocat', type: 'string'},			
+				'id_temporal',
+				{name:'id_pregunta', type: 'string'},				
+				{name:'pregunta', type: 'numeric'},
+				{name:'respuesta', type: 'varchar'},
+				{name:'tipo', type: 'varchar'},
+				{name:'nivel', type: 'numeric'},
+				{name:'id_usuario_reg', type: 'numeric'},			
 			],
+			
 			sortInfo:{
-				field: 'id_pregunta',
+				field: 'id_temporal',
 				direction: 'ASC'
-			}	
-		});	
+			}
+		});
 		this.storeAtributos.on('loadexception',this.conexionFailure);				
 		this.storeAtributos.load({
 			params:
 			{
-				"sort":"id_pregunta",
-				"dir":"ASC",
+				"sort":"id_temporal",
+	  			"dir":"ASC",
 				start:0, 
-				limit:500
-			},
-			callback:this.successConstructor,
-			scope:this
-		});		
+			   	limit:500,
+			   	'id_gestion': this.configMaestro.data.id_gestion,
+			   	'tipo': this.configMaestro.data.tipo
+			},callback:this.successConstructor,scope:this
+		      
+		})		
+		
+
+		
 	},
 	//
 	successConstructor:function(rec,con,res)
-	{ 			
-		//
-		this.fields=[];
+	{ 
+
+		this.recColumnas = rec;
 		this.Atributos=[];
-		this.id_store='id_pregunta';	
+		this.fields=[];
+		this.id_store='id_temporal';	
 		this.sortInfo=
 		{
-			field: 'id_pregunta',
+			field: 'id_temporal',
 			direction: 'ASC'
 		};		
-		this.fields.push(this.id_store)
-		this.fields.push('id_pregunta')
-		this.fields.push({name:'tipo', type: 'TextField'})
-		this.fields.push({name:'pregunta', type: 'TextField'})
-		this.fields.push({name:'habilitado', type: 'Boolean'})
-		this.fields.push({name:'seccion', type: 'TextField'})
-		this.fields.push({name:'pregunta', type: 'TextField'})
-		this.fields.push({name:'categoria', type: 'TextField'})
-		this.fields.push({name:'tipocat', type: 'TextField'})	
-		//	
-		//
-		if(res){			
-			var i=0;
-			var cant = rec.length;
-			this.Atributos[0]=
-			{				
-				config:
-				{
-					labelSeparator:'',
-					inputType:'hidden',
-					name: this.id_store
-				},
-				type:'Field'
-			},			
-			this.Atributos[1]=
-			{
-				config:{
-					fieldLabel: 'Curso',
-					disabled: true,
-					value: curso,
-					name:'curso'
-				},
-				type:'TextField'
-			},
-			this.Atributos[2]=
-			{
-				config:{
-					fieldLabel: 'Proveedor',
-					disabled: true,
-					value: proveedor,
-					name:'proveedor'
-				},
-				type:'TextField'
-			}	
-			//	
-			this.Grupos = [{
-				
-			}];		
-			console.log('*-*-',this);						
-			//			
-			while(i<cant) {	
-				console.log('=>=>=>=> ',rec[i].data);
-				switch (rec[i].data.tipo) {
-					case 'Seleccion':																	
-						this.fields.push(i.toString())
-						this.Atributos.push({
-							config:{
-								labelSeparator:'',
-								name: i.toString(),
-								fieldLabel: rec[i].data.pregunta,
-								queryMode:'local',
-								store:['Muy Bueno','Bueno','Regular','Insuficiente'],
-								autoSelect:true,
-								forceSelection:true
-							},
-							type:'ComboBox'
-						});		
-					break;
-					case 'Texto':							
-						this.fields.push(i.toString())
-						this.Atributos.push({
-							config:{
-								labelSeparator:'',
-								name: i.toString(),
-								fieldLabel: rec[i].data.pregunta
-							},
-							type:'Field'
-						});					
-					break;
-					default:
-						console.log('error');
-					break;
-				}					
-				i++;
-			}
-			this.Atributos.push({
-				config:{
-					value:cant,
-					name:'cant',
-					fieldLabel: 'Cantidad',
-					hidden:true
-				},
-				type:'Field'
-			});		
-			//
-		}
 		
-		Phx.CP.loadingHide();
-		Phx.vista.FormProveedorEva.superclass.constructor.call(this, this.config);
-		this.init();
-	},
-	//
-    onSubmit: function(o, x, force) {
-		var me = this;
-		if (me.form.getForm().isValid() || force===true) {
-            Phx.CP.loadingShow();
-            Ext.apply(me.argumentSave, o.argument);                     	
-    		Ext.Ajax.request({
-				url: '../../sis_formacion/control/Preguntas/insertarPreguntaPro',
-				params: me.getValForm,
-				success: me.successSave,
-                argument: me.argumentSave,
-                failure: me.conexionFailure,
-                timeout: me.timeout,
-                scope: me
-			});		            				            			                     
-		}		
-    },
-    //
-    getValForm: function() {
-		var resp = {};
-	    for (var i = 0; i < this.Componentes.length; i++) {
-	        var ac = this.Atributos[i];
-	        var cmp = this.Componentes[i]
-	        var swc = true;
-	        if (ac.vista) {
-	            swc = false;
-	            for (var _p in ac.vista) {
-	                if (this.nombreVista == ac.vista[_p]) {
-	                    swc = true;
-	                    break;
-	                }
-	            }
-	        }		
-	        if (ac.form != false && swc) {                
-	            var _name = ac.config.name;
-	            if (cmp.getValue() != '' && ac.type == 'DateField' && ac.config.format) {
-	                resp[_name] = cmp.getValue().dateFormat(ac.config.format)
-	                } 
-	          else {
-	          	    if(ac.type == 'ComboBox' && ac.config.rawValueField){
-	          	    	resp[_name] =cmp.getValue();
-	          	    	if ( cmp.getRawValue()==resp[_name] ){
-	          	    		resp[ac.config.rawValueField] = cmp.getRawValue();
-	          	    		resp[_name]=null;
-	          	    	}
-	          	    }
-	          	    else{
-	                    resp[_name] = cmp.getValue();
-	          	    }
-	            }
-	        }
-	    }
-	    this.agregarArgsExtraSubmit();
-	    this.agregarArgsBaseSubmit();
-	    Ext.apply(resp, this.argumentExtraSubmit);
-	    Ext.apply(resp, this.argumentBaseSubmit);
-	    console.log(resp);
-	    return resp
-	},  	
-	//
-	title: 'Formulario Funcionario',
+		this.fields.push(this.id_store)
+		this.fields.push('id_temporal')
+		this.fields.push('id_pregunta')
+		this.fields.push({name:'pregunta', type: 'TextField'})
+		this.fields.push({name:'respuesta', type: 'TextField'})
+		this.fields.push({name:'tipo', type: 'TextField'})
+        this.fields.push({name:'nivel', type: 'TextField'})
+        this.fields.push({name:'id_usuario_reg', type: 'TextField'})
 
-	topBar: true,//barra de herramientas
-	bottomBar: true,//barra de herramientas en la parte inferior
-	botones: true,//Botones del formulario
-	tipoInterfaz: 'frmInterfaz',		
-	argumentSave: {},
-	//
-	bsubmit: true,
-	breset: false,
-	bcancel: false,
-	borientacion: false,
-	bformato: false,
-	btamano: false,
-	//
-	tipo: 'proceso',
-	mensajeExito: 'Proceso generado!',
-	//Para los botones de la barra de herramientas
-	labelSubmit: '<i class="fa fa-check"></i> Guardar',
-	labelReset: '<i class="fa fa-times"></i> Reset',
-	labelCancel: '<i class="fa fa-times"></i> Declinar',
-	tooltipSubmit: '<b>Guardar</b>',
-	tooltipReset: '<b>Reset</b>',
-	tooltipCancel: '<b>Declinar</b>',
-	iconSubmit: '../../../lib/imagenes/print.gif',
-	iconReset: '../../../lib/imagenes/act.png',
-	iconCancel: '../../../lib/imagenes/cancel.png',
-	clsSubmit: 'bsave',
-	clsReset:  'breload2',
-	clsCancel: 'bcancel',
-	
+		if(res)
+		{
+
+			this.Atributos[0]={
+			//configuracion del componente
+								config:{
+										labelSeparator:'',
+										inputType:'hidden',
+										name: this.id_store
+								},
+								type:'Field',
+								form:true 
+						};
+			this.Atributos[1]={
+			//configuracion del componente
+								config:{
+										labelSeparator:'',
+										inputType:'hidden',
+										name: this.id_temporal
+								},
+								type:'Field',
+								form:true 
+						};
+			this.Atributos[2]={
+			//configuracion del componente
+								config:{
+										labelSeparator:'',
+										inputType:'hidden',
+										name: this.id_pregunta
+								},
+								type:'Field',
+								form:true 
+						};
+			this.Atributos[3]={
+			//configuracion del componente
+								config:{
+	                                    name: 'pregunta',
+										fieldLabel: 'Preguntas',
+										allowBlank: false,
+										//anchor: '80%',
+						                renderer: function (value, p, record, rowIndex, colIndex){
+						
+						                   var espacion_blanco="";
+						                   var duplicar="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+						                   var nivel = record.data.nivel==null?0:record.data.nivel;
+						                   var espacion_blanco = duplicar.repeat(nivel);
+						
+						                  
+						                   if(record.data.nivel ==1){
+						                   	    //p.style="background-color:#F9E4C4; text-aling:left";
+						                   	    return  String.format('<div style="vertical-align:middle;text-align:left;"> '+''+' <img src="../../../lib/imagenes/a_form_edit.png"> '+ record.data.pregunta+' </div>');
+						                   }
+						                   else{
+						                   	    return  String.format('<div style="vertical-align:middle;text-align:left;"> '+espacion_blanco+' <img src="../../../lib/imagenes/a_form.png"> '+ record.data.pregunta+' </div>');
+						                   }
+						                },
+										anchor: '80%',
+										gwidth: 500,
+								},
+								type:'TextField',
+								filters:{pfiltro:'pregunta',type:'string'},
+								grid:true,
+								form:true
+						};
+						
+			this.Atributos[4]={
+	                    config: {
+	                           name: 'respuesta',
+	                           fieldLabel: 'Respuesta',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'respuesta'
+			                        ],
+			                        data: [['Muy bueno'], ['Bueno'], ['Regular'], ['Insuficiente']]
+	                           }),
+	                           valueField: 'respuesta',
+	                           displayField: 'respuesta',
+	                           gdisplayField: 'respuesta',
+	                           hiddenName: 'respuesta',
+	                           //forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           renderer : function(value, p, record) {
+	                                  return String.format('{0}', record.data['respuesta']);
+	                           }
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'respuesta',type: 'string'},
+	                    grid: true,
+	                    form: true,
+	                    egrid:true
+						};
+						
+			this.Atributos[5]={
+								config:{
+	                                    name: 'tipo',
+										fieldLabel: 'tipo',
+										allowBlank: false,
+										anchor: '80%',
+								},
+								type:'TextField',
+								filters:{pfiltro:'tipo',type:'string'},
+								grid:true,
+								form:true
+						};
+			this.Atributos[6]={
+			//configuracion del componente
+								config:{
+										labelSeparator:'',
+										inputType:'hidden',
+										name: this.nivel
+								},
+								type:'Field',
+								form:true 
+						};
+			this.Atributos[7]={
+			//configuracion del componente
+								config:{
+										labelSeparator:'',
+										inputType:'hidden',
+										name: this.id_usuario_reg
+								},
+								type:'Field',
+								form:true 
+						};
+
+
+		}	
+
+        for (var i=0;i<rec.length;i++){
+            console.log('ver preguntas ',rec[i]);	
+        }
+		
+	        
+		Phx.CP.loadingHide();
+		this.initButtons = [this.contenidoImagen];
+		Phx.vista.FormProveedorEva.superclass.constructor.call(this, this.config);
+		this.argumentExtraSubmit={'datos': col_generado};
+		this.init();
+        this.store.baseParams={'id_gestion': this.configMaestro.data.id_gestion , 'datos': this.configMaestro.data.id_gestion,'tipo': this.configMaestro.data.tipo};			               
+		this.load();	
+		this.CargarEncabezado();	   
+
+	},	
+    contenidoImagen: new Ext.form.FormPanel({
+     name: 'encabezado',
+     id:'encabezado'
+     //inputType: 'hidden',
+    }),
+    CargarEncabezado:function(){
+    	var encab='<br><div style="margin: 0 auto;  width: 400px; padding: 1em; border: 1px solid #CCC; border-radius: 1em;">';
+    	var encab=encab+'<div> <label for="name"><b>NOMBRE CURSO &nbsp;:</b></label> <label for="name">'+this.configMaestro.data.curso+'</label> </div>';
+    	var encab=encab+'<div> <label for="name"><b>FECHA INICIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :<b> </label><label for="name">'+this.configMaestro.data.fecha_inicio+'</label> </div>';
+    	var encab=encab+'<div> <label for="name"><b>FECHA FIN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+this.configMaestro.data.fecha_fin+'</label> </div>';
+    	var encab=encab+'<div> <label for="name"><b>FUNCIONARIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+this.configMaestro.data.usuario+'</label> </div>  </div><br>';
+    	document.getElementById("encabezado").innerHTML = encab;
+    	//alert(Phx.CP.config_ini.id_usuario);
+    },
+
+	tam_pag:500,	
+	title:'Avance Real',
+	ActSave:'../../sis_formacion/control/Curso/insertarAvanceReal',
+	//ActList:'../../sis_formacion/control/Curso/listarCursoAvanceDinamico',
+	ActList:'../../sis_formacion/control/Curso/listarPreguntas',
+	bdel:false,
+	bsave:true, 
+	bedit:false, 
+	bnew:false,
 })
 </script>
+		
+		

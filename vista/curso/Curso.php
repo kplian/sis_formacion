@@ -95,142 +95,70 @@ header("content-type: text/javascript; charset=UTF-8");
 			                        timeout: this.timeout,
 			                        scope: this
 			            });
-			            
-		                this.Cmp.id_uo.setValue('');  
-		                this.Cmp.id_unidad_organizacional.setValue(''); 
+
 		                this.Cmp.id_competencias.setValue(''); 
                         this.Cmp.nombre_curso.setValue('');
                         this.Cmp.contenido.setValue('');
                         this.Cmp.horas.setValue('');
                         this.Cmp.id_proveedor.setValue('');
 		                
-					    this.Cmp.id_uo.store.load({params:{start:0,limit:this.tam_pag}, 
-				           callback : function (r) {
+								 this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag}, 
+							           callback : function (y) {
+							           	       var concatenarCompetencias='';
+							           	       var concatenarIduo='';
+							           	       var banderaInicio=0;
+									              for(cont1=0;cont1<y.length;cont1++){
 
-				                      
-						              for(i=0;i<r.length;i++){
-						              	   // console.log('conteo id uo',r[i].data.cod_uo);
-							              	 if(String(r[i].data.cod_uo).trim()==String(v_gerencia).trim()){
-							              		
-								              		 this.Cmp.id_uo.setValue(r[i].data.id_uo);
-								              		 
-		                                             this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', r[i].data.id_uo);
-		                                             this.Cmp.id_unidad_organizacional.modificado = true;
-	
-													 this.Cmp.id_unidad_organizacional.store.load({params:{start:0,limit:this.tam_pag}, 
-												           callback : function (x) {
-												           	
-														              for(cont=0;cont<x.length;cont++){
-														              	    //console.log('conteo id_unidad_organizacional',x);
-															              	if(String(x[cont].data.cod_cargo).trim()==String(v_unidad_organizacional).trim()){
-															              		
-															              		 this.Cmp.id_unidad_organizacional.setValue(x[cont].data.id_cargo);  
-	
-															              		 this.Cmp.id_competencias.store.setBaseParam('id_uo', this.Cmp.id_unidad_organizacional.value);
-									                                             this.Cmp.id_competencias.modificado = true;
-									                                             
-                                                                                  //filtrar funcionarios
-									                                              this.Cmp.id_funcionarios.store.setBaseParam('id_uo', this.Cmp.id_unidad_organizacional.value);
-		                                                                          this.Cmp.id_funcionarios.modificado = true;
-									                                              //
-									                                             
-																				 this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag}, 
-																			           callback : function (y) {
-																			           	       var concatenarCompetencias='';
-																			           	       var concatenarIduo='';
-																			           	       var banderaInicio=0;
-																					              for(cont1=0;cont1<y.length;cont1++){
+									              	    for (c=0;c<v_competencias.length;c++){
+									              	    	if(String(y[cont1].data.cod_competencia).trim() == String(v_competencias[c]).trim()){
+									              	    		banderaInicio++;
+									              	    		if(banderaInicio==1){
+									              	    			concatenarCompetencias+=y[cont1].data.id_competencia;
+									              	    			//concatenarIduo+=y[cont1].data.id_uo;
+									              	    			concatenarIduo+=y[cont1].data.id_competencia;
+									              	    			
+									              	    		}
+									              	    		else{
+									              	    			concatenarCompetencias+=','+y[cont1].data.id_competencia;
+									              	    			//concatenarIduo+=','+y[cont1].data.id_uo;
+									              	    			concatenarIduo+=','+y[cont1].data.id_competencia;
+									              	    			
+									              	    		}
+									              	    		
+									              	    		//
+																 this.Cmp.id_proveedor.store.load({params:{start:0,limit:this.tam_pag}, 
+															           callback : function (z) {
+															           	  for(cc=0;cc<z.length;cc++){
+																           	    if(String(z[cc].data.cod_proveedor).trim()==String(v_id_proveedor).trim()){   
+																           	         
+																		             this.Cmp.id_proveedor.setValue(z[cc].data.id_proveedor);  
+																		        }
+																	      }
+																	       
+															            }, scope : this
+															     }); 
+									              	    		//
+									              	    		
+									              	    	}
+									              	    	
+									              	    }
+									              }
+									              this.Cmp.id_competencias.setValue(concatenarCompetencias);  
 
-																					              	    for (c=0;c<v_competencias.length;c++){
-																					              	    	if(String(y[cont1].data.cod_competencia).trim() == String(v_competencias[c]).trim()){
-																					              	    		banderaInicio++;
-																					              	    		if(banderaInicio==1){
-																					              	    			concatenarCompetencias+=y[cont1].data.id_competencia;
-																					              	    			//concatenarIduo+=y[cont1].data.id_uo;
-																					              	    			concatenarIduo+=y[cont1].data.id_competencia;
-																					              	    			
-																					              	    		}
-																					              	    		else{
-																					              	    			concatenarCompetencias+=','+y[cont1].data.id_competencia;
-																					              	    			//concatenarIduo+=','+y[cont1].data.id_uo;
-																					              	    			concatenarIduo+=','+y[cont1].data.id_competencia;
-																					              	    			
-																					              	    		}
-																					              	    		
-																					              	    		//
-																												 this.Cmp.id_proveedor.store.load({params:{start:0,limit:this.tam_pag}, 
-																											           callback : function (z) {
-																											           	  for(cc=0;cc<z.length;cc++){
-																												           	    if(String(z[cc].data.cod_proveedor).trim()==String(v_id_proveedor).trim()){   
-																												           	         
-																														             this.Cmp.id_proveedor.setValue(z[cc].data.id_proveedor);  
-																														        }
-																													      }
-																													       
-																											            }, scope : this
-																											     }); 
-																					              	    		//
-																					              	    		
-																					              	    	}
-																					              	    	
-																					              	    }
-																					              }
-																					              this.Cmp.id_competencias.setValue(concatenarCompetencias);  
-
-																			                      this.Cmp.nombre_curso.setValue(v_nombre_planificacion);
-                                                                                                  this.Cmp.contenido.setValue(v_contenido_basico);
-                                                                                                  this.Cmp.horas.setValue(v_horas_previstas);
-                                                                                                  
-                                                                                                  this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
-		                                                                                          this.Cmp.id_funcionarios.modificado = true;
-																			                   
-																			            }, scope : this
-																			     }); 
-																			     
-									                                             return cont;
-															              	}
-														              }
-														               
-												                   
-												            }, scope : this
-												     }); 
-		                                             return i;
-							              	}
-						              }
-				                                  
-				                   
-				            }, scope : this
-				        }); 
+							                      this.Cmp.nombre_curso.setValue(v_nombre_planificacion);
+                                                  this.Cmp.contenido.setValue(v_contenido_basico);
+                                                  this.Cmp.horas.setValue(v_horas_previstas);
+                                                  
+                                                  this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
+                                                  this.Cmp.id_funcionarios.modificado = true;
+							                   
+							            }, scope : this
+							     }); 
+							     
 
 
                 }, this);
                 
-
-                this.Cmp.id_uo.on('select', function (Combo, dato) {
-
-                	 this.Cmp.id_unidad_organizacional.setValue(''); 
-
-                     this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', Combo.getValue());
-                     this.Cmp.id_unidad_organizacional.modificado = true;
-               
-                     this.Cmp.id_funcionarios.reset();
-                     this.Cmp.id_competencias.reset();
-                     
-                     this.Cmp.id_funcionarios.store.setBaseParam('id_uo',null);
-		             this.Cmp.id_funcionarios.modificado = true;
-                     
-                }, this);
-                this.Cmp.id_unidad_organizacional.on('select', function (Combo, dato) {
-
-                	    this.Cmp.id_competencias.reset();
-                	    this.Cmp.id_funcionarios.reset();
-                        this.Cmp.id_competencias.store.setBaseParam('id_uo', Combo.getValue());
-                        this.Cmp.id_competencias.modificado = true;
-                        
-                        this.Cmp.id_funcionarios.store.setBaseParam('id_uo',null);
-		                this.Cmp.id_funcionarios.modificado = true;
-        
-                }, this);
                 
                 this.Cmp.id_competencias.on('select', function (Combo, dato) {
 
@@ -262,11 +190,9 @@ header("content-type: text/javascript; charset=UTF-8");
 	       RespuestaPlanificacion: function (s,m){
 	          this.maestro = m;
 	          var respuesta_planificacion = s.responseText.split('%');
-	          //console.log('repuesta planificacion ',respuesta_planificacion[1]);
-	          //console.log('repuesta planificacion ',respuesta_planificacion[2]);
-	          
-	          v_unidad_organizacional=respuesta_planificacion[1];
-	          v_gerencia=respuesta_planificacion[2];
+
+	          //v_unidad_organizacional=respuesta_planificacion[1];
+	          //v_gerencia=respuesta_planificacion[2];
 	          try{
 	          	v_competencias=respuesta_planificacion[3].split(',');
 	          }catch(error){
@@ -287,14 +213,6 @@ header("content-type: text/javascript; charset=UTF-8");
 	            Phx.vista.Curso.superclass.onButtonEdit.call(this);
 	            this.cargarPaiseLugares(this.Cmp.id_lugar_pais);
 	            
-
-                this.Cmp.id_unidad_organizacional.modificado = true;
-                this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', this.Cmp.id_uo.getValue());
-                
-                //console.log("id de unidad",this.Cmp.id_unidad_organizacional);
-                this.Cmp.id_competencias.modificado = true;
-                this.Cmp.id_competencias.store.setBaseParam('id_uo', this.Cmp.id_unidad_organizacional.value);
-                
                 this.window.show();
 		        this.loadForm(this.sm.getSelected())
 		       
@@ -667,97 +585,6 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: true
                 },
-                
-                {
-                    config: {
-                        name: 'id_uo',
-                        fieldLabel: 'Gerencia',
-                        allowBlank: false,
-                        emptyText: 'Unidad...',
-                        blankText: 'Debe seleccionar una unidad',
-                        store: new Ext.data.JsonStore({
-                            url: '../../sis_formacion/control/Planificacion/listarGerenciauo',
-                            id: 'id_uo',
-                            root: 'datos',
-                            sortInfo: {
-                                field: 'nombre_unidad',
-                                direction: 'ASC'
-                            },
-                            totalProperty: 'total',
-                            fields: ['id_uo', 'nombre_unidad','cod_uo'],
-                            remoteSort: true,
-                            baseParams: {par_filtro: 'nombre_unidad'}
-                        }),
-                        valueField: 'id_uo',
-                        displayField: 'nombre_unidad',
-                        gdisplayField: 'desc_uo',
-                        hiddenName: 'id_uo',
-                        forceSelection: true,
-                        typeAhead: false,
-                        triggerAction: 'all',
-                        lazyRender: true,
-                        mode: 'remote',
-                        pageSize: 15,
-                        queryDelay: 1000,
-                        anchor: '80%',
-                        gwidth: 50,
-                        minChars: 2,
-                        gtpl: function (p){
-                            	return this.desc_uo;
-						}
-                    },
-                    type: 'ComboBox',
-                    id_grupo: 0,
-                    filters: {pfiltro: 'desc_uo', type: 'string'},
-                    grid: true,
-                    form: true
-                },
-                {
-                    config: {
-                        name: 'id_unidad_organizacional',
-                        fieldLabel: 'Unidad organizacional',
-                        allowBlank: false,
-                        emptyText: 'Unidad...',
-                        blankText: 'Debe seleccionar una unidad',
-                        store: new Ext.data.JsonStore({
-                            url: '../../sis_formacion/control/Planificacion/listarCargo',
-                            id: 'id_cargo',
-                            root: 'datos',
-                            sortInfo: {
-                                field: 'unidad_organizacional',
-                                direction: 'ASC'
-                            },
-                            totalProperty: 'total',
-                            fields: ['id_cargo', 'nombre','cod_cargo'],
-                            remoteSort: true,
-                            baseParams: {par_filtro: 'uo.nombre_cargo'},
-                            
-                        }),
-                        valueField: 'id_cargo',
-                        displayField: 'nombre',
-                        gdisplayField: 'unidad_organizacional',
-                        hiddenName: 'id_unidad_organizacional',
-                        forceSelection: true,
-                        typeAhead: false,
-                        triggerAction: 'all',
-                        lazyRender: true,
-                        mode: 'remote',
-                        pageSize: 15,
-                        queryDelay: 1000,
-                        anchor: '80%',
-                        gwidth: 50,
-                        minChars: 2,
-                        gtpl: function (p){
-                            return this.unidad_organizacional;
-						}
-                    },
-                    type: 'ComboBox',
-                    id_grupo: 0,
-                    filters: {pfiltro: 'unidad_organizacional', type: 'string'},
-                    grid: true,
-                    form: true
-                },
-                
                 {
                     config: {
                         name: 'id_competencias',
@@ -1315,10 +1142,6 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'planificacion', type: 'string'},
                 {name: 'id_funcionarios', type: 'string'},
                 {name: 'funcionarios', type: 'string'},
-                'id_uo',
-                'desc_uo',
-                'id_unidad_organizacional',
-                'unidad_organizacional',
                 {name: 'peso', type: 'numeric'},
             ],
             sortInfo: {
@@ -1344,8 +1167,6 @@ header("content-type: text/javascript; charset=UTF-8");
 			        }
 		       	}
 
-
-
 		    },
 
             loadValoresIniciales: function () {
@@ -1357,14 +1178,9 @@ header("content-type: text/javascript; charset=UTF-8");
 				this.Cmp.id_planificacion.modificado = true;
 				
 
-                this.Cmp.id_unidad_organizacional.store.setBaseParam('id_uo', null);
-				this.Cmp.id_unidad_organizacional.modificado = true;
-                this.Cmp.id_competencias.store.setBaseParam('id_uo', null);
-                this.Cmp.id_competencias.modificado = true;
-                this.Cmp.id_funcionarios.store.setBaseParam('id_uo','');
-		        this.Cmp.id_funcionarios.modificado = true;
-           
-									                                             
+                //this.Cmp.id_funcionarios.store.setBaseParam('id_uo','');
+		        //this.Cmp.id_funcionarios.modificado = true;
+           				                                             
             },
         }
     )

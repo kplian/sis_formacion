@@ -53,9 +53,11 @@ DECLARE
   v_consulta_temporal TEXT;
   item                RECORD;
   
-  v_id_gestion INTEGER;
+  v_id_gestion            INTEGER;
 
-
+  v_id_cuestionario       INTEGER;
+  v_id_pregunta           VARCHAR;
+  v_id_pregunta_texto     VARCHAR;
 BEGIN
 
   v_nombre_funcion = 'sigefo.ft_curso_ime';
@@ -99,8 +101,6 @@ BEGIN
         fecha_mod,
         evaluacion,
         certificacion,
-        id_gerencia,
-        id_unidad_organizacional,
         id_planificacion
       ) VALUES (
         v_parametros.id_gestion,
@@ -127,8 +127,6 @@ BEGIN
         NULL,
         v_parametros.evaluacion,
         v_parametros.certificacion,
-        v_parametros.id_uo::INTEGER,
-        v_parametros.id_unidad_organizacional::INTEGER,
         v_parametros.id_planificacion::INTEGER
       )
       RETURNING id_curso
@@ -375,8 +373,6 @@ BEGIN
           usuario_ai        = v_parametros._nombre_usuario_ai,
           evaluacion        = v_parametros.evaluacion,
           certificacion     = v_parametros.certificacion,
-          id_gerencia       =v_parametros.id_uo::INTEGER,
-          id_unidad_organizacional =v_parametros.id_unidad_organizacional::INTEGER,
           id_planificacion = v_parametros.id_planificacion::INTEGER
         WHERE id_curso = v_parametros.id_curso;
 
@@ -689,6 +685,67 @@ WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR ||'
         RETURN v_resp;
 
       END;
+
+	/*********************************    
+ 	#TRANSACCION:  'CUESTIO_INS'
+ 	#DESCRIPCION:	Insercion de registro de cuestionario
+ 	#AUTOR:		JUAN	
+ 	#FECHA:		21-11-2017 00:51:02
+	***********************************/
+
+	ELSIF(p_transaccion='CUESTIO_INS')then
+					
+        begin
+        --RAISE EXCEPTION 'VERIFICAR PARAMETROS  %', v_parametros.id_curso;
+        	--Sentencia de la insercion
+            v_id_pregunta_texto:=NULL;
+            v_id_pregunta:=NULL;
+            if(v_parametros.tipo='Selección')then
+                    if(v_parametros.respuesta='Muy bueno')then
+                         v_id_pregunta:='1';
+                         ELSE
+                         if(v_parametros.respuesta='Bueno')then
+                              v_id_pregunta:='2';
+                              else
+                              if(v_parametros.respuesta='Regular')then
+                                  v_id_pregunta:='3';
+                                  else
+                                  if(v_parametros.respuesta='Insuficiente')then
+                                      v_id_pregunta:='4';
+                                  end if;
+                              end if;
+                         end if;
+                    end if;
+              ELSE
+              v_id_pregunta_texto:=v_parametros.respuesta;
+            end if;
+
+            IF(select count(id_curso) from sigefo.tcurso_funcionario_eval where id_curso=v_parametros.id_curso::INTEGER and id_funcionario=v_parametros.id_curso and id_pregunta=v_parametros.id_pregunta::INTEGER)then
+            
+            ELSE
+                insert into sigefo.tcurso_funcionario_eval(
+                id_pregunta,
+                cod_respuesta,
+                id_funcionario,
+                id_curso,
+                respuesta_texto
+                ) values(
+                v_parametros.id_pregunta,
+                v_id_pregunta::INTEGER,
+                v_parametros.id_usuario,
+                v_parametros.id_curso,
+                v_id_pregunta_texto::VARCHAR
+                )RETURNING id_curso_funcionario_eval into v_id_cuestionario;
+            END IF;
+			
+			--Definicion de la respuesta
+			v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Categoria almacenado(a) con exito (id_categoria'||v_id_cuestionario||')'); 
+            v_resp = pxp.f_agrega_clave(v_resp,'id_categoria',v_id_cuestionario::varchar);
+
+            --Devuelve la respuesta
+            return v_resp;
+
+		end;
 
   ELSE
 

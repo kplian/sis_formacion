@@ -49,42 +49,9 @@ BEGIN
 
     BEGIN
       --Sentencia de la consulta
-      /* v_consulta:='select DISTINCT
-						sigefoco.id_competencia,
-						--tc.descripcion as tipo,
-                        sigefoco.tipo,
-						sigefoco.estado_reg,
-						sigefoco.competencia,
-						sigefoco.id_usuario_ai,
-						sigefoco.id_usuario_reg,
-						sigefoco.fecha_reg,
-						sigefoco.usuario_ai,
-						sigefoco.id_usuario_mod,
-						sigefoco.fecha_mod,
-						usu1.cuenta as usr_reg,
-						usu2.cuenta as usr_mod,
-						sigefoco.id_competencia as cod_competencia
-						from sigefo.tcompetencia sigefoco
-						inner join segu.tusuario usu1 on usu1.id_usuario = sigefoco.id_usuario_reg
-						left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod
-						left join param.tcatalogo tc on tc.codigo = sigefoco.tipo
-						left join sigefo.tcargo_competencia cp on cp.id_competencia=sigefoco.id_competencia
-				        where  ';*/
+
                         
-           v_consulta:='SELECT 
-                        DISTINCT 
-                        comp.competencia,
-                        tu.id_uo,
-                        comp.id_competencia,
-                        comp.id_competencia::INTEGER as cod_competencia,
-                        comp.tipo,
-                        comp.competencia::VARCHAR as desc_competencia
-                        from 
-                        sigefo.tcargo_competencia cc 
-                        join sigefo.tcompetencia comp on comp.id_competencia=cc.id_competencia
-                        join orga.tcargo c on cc.id_cargo=c.id_cargo
-                        join orga.tuo tu on tu.id_uo=c.id_uo
-                        join orga.testructura_uo eu on eu.id_uo_hijo=tu.id_uo
+           v_consulta:='SELECT c.id_competencia,c.competencia,c.tipo,c.competencia::varchar as desc_competencia  FROM sigefo.tcompetencia c
 				        where  ';
 
       --Definicion de la respuesta
@@ -247,12 +214,7 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
 
       BEGIN
         --Sentencia de la consulta de conteo de registros
-        v_consulta:='SELECT  count(DISTINCT tu.id_uo) from 
-sigefo.tcargo_competencia cc 
-join sigefo.tcompetencia comp on comp.id_competencia=cc.id_competencia
-join orga.tcargo c on cc.id_cargo=c.id_cargo
-join orga.tuo tu on tu.id_uo=c.id_uo
-join orga.testructura_uo eu on eu.id_uo_hijo=tu.id_uo
+        v_consulta:='SELECT count(id_competencia) FROM sigefo.tcompetencia
 					    where ';
 
         --Definicion de la respuesta

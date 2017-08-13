@@ -47,28 +47,11 @@ class MODCompetencia extends MODbase{
 		$this->procedimiento='sigefo.ft_competencia_sel';
 		$this->transaccion='SIGEFO_COMCOMBO_SEL';
 		$this->tipo_procedimiento='SEL';//tipo de transaccion
-			 	
-		//Definicion de la lista del resultado del query
-		/*$this->captura('id_competencia','int4');
-		$this->captura('tipo','varchar');
-		$this->captura('estado_reg','varchar');*/
-		
-		$this->captura('competencia','varchar');
-		$this->captura('id_uo','int4');
+
 		$this->captura('id_competencia','int4');
-		$this->captura('cod_competencia','int4');
+		$this->captura('competencia','varchar');
 		$this->captura('tipo','varchar');
-		$this->captura('desc_competencia','varchar');
-		/*$this->captura('id_usuario_ai','int4');
-		$this->captura('id_usuario_reg','int4');
-		$this->captura('fecha_reg','timestamp');
-		$this->captura('usuario_ai','varchar');
-		$this->captura('id_usuario_mod','int4');
-		$this->captura('fecha_mod','timestamp');
-		$this->captura('usr_reg','varchar');
-		$this->captura('usr_mod','varchar');
-		$this->captura('cod_competencia','int4');*/
-		
+        $this->captura('desc_competencia','varchar');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

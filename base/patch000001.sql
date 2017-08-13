@@ -262,4 +262,15 @@ ALTER TABLE sigefo.tcategoria
   ADD COLUMN habilitado BOOLEAN;
 /***********************************F-SCP-JUAN-SIGEFO-0-17/11/2017****************************************/
   
-  
+/***********************************I-SCP-JUAN-SIGEFO-0-21/11/2017****************************************/
+CREATE TABLE sigefo.tcurso_funcionario_eval (
+  id_curso_funcionario_eval SERIAL NOT NULL,
+  id_pregunta INTEGER,
+  cod_respuesta INTEGER,
+  id_funcionario INTEGER,
+  id_curso INTEGER,
+  respuesta_texto TEXT,
+  PRIMARY KEY(id_curso_funcionario_eval)
+) 
+WITH (oids = false);
+/***********************************F-SCP-JUAN-SIGEFO-0-21/11/2017****************************************/

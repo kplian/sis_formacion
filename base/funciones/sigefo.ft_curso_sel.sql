@@ -437,7 +437,133 @@ BEGIN
       return v_consulta;
 
     end;
-                                               
+    /*********************************    
+  #TRANSACCION:  'CUESTIONARIO_SEL'
+  #DESCRIPCION: Lista de cuestionario
+  #AUTOR:   JUAN 
+  #FECHA:   20-11-2017 10:44:58
+  ***********************************/    
+        
+          
+  elseif(p_transaccion='CUESTIONARIO_SEL')then
+            
+      begin
+                --RAISE EXCEPTION 'error provocado por juan %',v_parametros.id_curso;
+				v_consulta1 :='';
+                v_consulta1 := v_consulta1 || 'CREATE TEMP TABLE ttemporal(id_temporal SERIAL,
+                                                                                id_pregunta INTEGER,
+                                                                                pregunta VARCHAR,  
+                                                                                respuesta VARCHAR,                                                        
+                                                                                tipo VARCHAR,                                                                                
+                                                                                nivel VARCHAR,
+                                                                                id_usuario_reg INTEGER,
+                                                                                id_curso INTEGER,
+                                                                                id_usuario INTEGER) ON COMMIT DROP';   
+                EXECUTE(v_consulta1);
+                
+                FOR item IN(SELECT c.id_categoria,c.categoria,c.tipo,1 as nivel ,c.id_usuario_reg,usu1.cuenta
+                            FROM sigefo.tcategoria c
+                            inner join segu.tusuario usu1 on usu1.id_usuario = c.id_usuario_reg
+                            where c.tipo=''||v_parametros.tipo||'' and c.habilitado=TRUE) LOOP
+                            
+                          v_consulta2 :='';
+                          v_consulta2 := v_consulta2 ||'INSERT INTO ttemporal (id_pregunta,
+                                                                                pregunta,
+                                                                                respuesta,
+                                                                                tipo,
+                                                                                nivel,
+                                                                                id_usuario_reg,
+                                                                                id_curso,
+                                                                                id_usuario)VALUES';  
+                                                                                              
+                          v_consulta2 :=v_consulta2||'('||item.id_categoria||','''|| item.categoria||''','''||''||''','''||item.tipo||''','''||item.nivel||''','''|| item.id_usuario_reg||''','||v_parametros.id_curso||','||v_parametros.id_usuario||')';           
+                           execute(v_consulta2);   
+                             
+                           FOR item1 IN(SELECT p.id_pregunta,p.pregunta,p.tipo,2 as nivel,p.id_usuario_reg,usu1.cuenta,
+                                                (SELECT 
+                                                (case WHEN (cfe.cod_respuesta=1 and pp.tipo='Selección')then
+                                                'Muy bueno' 
+                                                ELSE
+                                                    case when (cfe.cod_respuesta=2 and pp.tipo='Selección')then
+                                                    'Bueno' 
+                                                    else
+                                                        case when (cfe.cod_respuesta=3 and pp.tipo='Selección')then
+                                                        'Regular' 
+                                                        else
+                                                            case when (cfe.cod_respuesta=4 and pp.tipo='Selección')then
+                                                            'Insuficiente' 
+                                                            else
+                                                                case when (pp.tipo='Texto')then
+                                                                cfe.respuesta_texto
+                                                                else
+                                                                ''
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end)
+                                                FROM sigefo.tcurso_funcionario_eval  cfe
+                                                join sigefo.tpreguntas pp on pp.id_pregunta=cfe.id_pregunta
+                                                where cfe.id_pregunta=p.id_pregunta)::varchar as respuesta
+                                        from sigefo.tpreguntas p 
+                                        inner join segu.tusuario usu1 on usu1.id_usuario = p.id_usuario_reg
+                                        where p.id_categoria=item.id_categoria and p.habilitado=TRUE) LOOP
+                
+                                    v_consulta2 :='';
+                                    v_consulta2 := v_consulta2 || 'INSERT INTO ttemporal (id_pregunta,
+                                                                                          pregunta,
+                                                                                          respuesta,
+                                                                                          tipo,
+                                                                                          nivel,
+                                                                                          id_usuario_reg,
+                                                                                          id_curso,
+                                                                                          id_usuario)values';  
+                                    v_consulta1:='';
+                                    if(item1.respuesta is null)then
+                                       v_consulta1:='';
+                                       else
+                                       v_consulta1:=item1.respuesta;
+                                    end if;                                                          
+                                    v_consulta2 :=v_consulta2||'('||item1.id_pregunta||','''|| item1.pregunta||''','''||v_consulta1::varchar||''','''||item1.tipo||''','''||item1.nivel||''','''|| item1.id_usuario_reg||''','||v_parametros.id_curso||','||v_parametros.id_usuario||')';      
+                                    execute(v_consulta2);                                                          
+                           END LOOP; 
+           		END LOOP;
+                
+                
+      	--Sentencia de la consulta
+     	 v_consulta:='SELECT * FROM ttemporal WHERE ';
+      
+      --Definicion de la respuesta
+      v_consulta:=v_consulta||v_parametros.filtro;
+      v_consulta:=v_consulta||' order by ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit ' || v_parametros.cantidad || ' offset ' || v_parametros.puntero;
+
+      --Devuelve la respuesta
+      return v_consulta;
+            
+    end; 
+  /*********************************    
+  #TRANSACCION:  'CUESTIONARIO_CONT'
+  #DESCRIPCION: Conteo de registros de cuestionario
+  #AUTOR:   JUAN 
+  #FECHA:   20-11-2017 10:44:58
+  ***********************************/
+
+  elsif(p_transaccion='CUESTIONARIO_CONT')then
+
+    begin
+      --Sentencia de la consulta de conteo de registros
+      v_consulta:='SELECT COUNT(c.id_categoria)
+                  FROM sigefo.tcategoria c
+                  inner join segu.tusuario usu1 on usu1.id_usuario = c.id_usuario_reg
+                  JOIN sigefo.tpreguntas p ON P.id_categoria=C.id_categoria
+                  where c.tipo= '''||v_parametros.tipo||''' and c.habilitado=TRUE AND ';
+      
+      --Definicion de la respuesta        
+      v_consulta:=v_consulta||v_parametros.filtro;
+      --Devuelve la respuesta
+      return v_consulta;
+
+    end;                                       
     /*********************************
     #TRANSACCION:  'SIGEFO_SCU_ARB_SEL'
     #DESCRIPCION:	Seleccion de datos del arbol

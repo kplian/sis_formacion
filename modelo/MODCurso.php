@@ -417,6 +417,62 @@ class MODCurso extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}*/
+	function listarPreguntas(){
+		//Definicion de variables para ejecucion del procedimientp
+		$this->procedimiento='sigefo.ft_curso_sel';
+		$this->transaccion='CUESTIONARIO_SEL';
+		$this->tipo_procedimiento='SEL';//tipo de transaccion
+		
+		
+		
+		$this->setParametro('tipo', 'tipo', 'varchar');
+		$this->setParametro('id_curso', 'id_curso', 'int4');
+		$this->setParametro('id_usuario', 'id_usuario', 'int4');
+		
+		//Definicion de la lista del resultado del query
+		$this->captura('id_temporal','int4');
+		$this->captura('id_pregunta','int4');
+		$this->captura('pregunta','varchar');
+		$this->captura('respuesta','varchar');
+		$this->captura('tipo','varchar');
+		$this->captura('nivel','varchar');
+		$this->captura('id_usuario_reg','int4');
+        $this->captura('id_curso','int4');
+		$this->captura('id_usuario','int4');
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+		
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
+	function insertarCuestionario(){
+		//Definicion de variables para ejecucion del procedimiento
+		$this->procedimiento='sigefo.ft_curso_ime';
+		$this->transaccion='CUESTIO_INS';
+		$this->tipo_procedimiento='IME';
+				
+
+		$this->setParametro('id_usuario', 'id_curso', 'int4');
+		$this->setParametro('id_curso', 'id_curso', 'int4');
+		
+		$this->setParametro('id_temporal','id_temporal','int4');
+		$this->setParametro('id_pregunta','id_pregunta','int4');
+		
+		$this->setParametro('pregunta','pregunta','varchar');
+		$this->setParametro('respuesta','respuesta','varchar');
+		$this->setParametro('tipo','tipo','varchar');
+		
+		$this->setParametro('nivel','nivel','varchar');
+		$this->setParametro('id_usuario_reg','id_usuario_reg','int4');
+
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
 	
 }
 ?>

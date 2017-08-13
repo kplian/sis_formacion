@@ -78,8 +78,6 @@ BEGIN
         id_usuario_ai,
         id_usuario_mod,
         fecha_mod,
-        id_gerencia,
-        id_unidad_organizacional,
         id_proveedor
       ) VALUES (
         v_parametros.id_gestion,
@@ -95,8 +93,6 @@ BEGIN
         v_parametros._id_usuario_ai,
         NULL,
         NULL,
-        v_parametros.id_uo,
-        v_parametros.id_unidad_organizacional,
         v_parametros.id_proveedor::INTEGER
       )
       RETURNING id_planificacion
@@ -235,7 +231,7 @@ BEGIN
     /*********************************
      #TRANSACCION:  'SIGEFO_SIGEFOP_MOD'
      #DESCRIPCION:	Modificacion de registros
-     #AUTOR:		admin
+     #AUTOR:		JUAN
      #FECHA:		26-04-2017 20:37:24
     ***********************************/
 
@@ -256,8 +252,6 @@ BEGIN
           fecha_mod            = now(),
           id_usuario_ai        = v_parametros._id_usuario_ai,
           usuario_ai           = v_parametros._nombre_usuario_ai,
-          id_gerencia          = v_parametros.id_uo::INTEGER,
-          id_unidad_organizacional = v_parametros.id_unidad_organizacional::INTEGER,
           id_proveedor = v_parametros.id_proveedor::INTEGER
         WHERE id_planificacion = v_parametros.id_planificacion;
 
@@ -293,8 +287,8 @@ BEGIN
 
         -- PLANIFICACION UOS(gerencias)
         -- Eliminando
-        DELETE FROM sigefo.tplanificacion_uo puo
-        WHERE puo.id_planificacion = v_parametros.id_planificacion;
+        /*DELETE FROM sigefo.tplanificacion_uo puo
+        WHERE puo.id_planificacion = v_parametros.id_planificacion;*/
         -- Insertando
       /*  va_id_uos := string_to_array(v_parametros.id_uo, ',');
 
