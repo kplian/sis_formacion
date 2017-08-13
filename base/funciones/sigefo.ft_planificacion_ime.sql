@@ -423,7 +423,7 @@ BEGIN
 		
       BEGIN
         --Sentencia de la eliminacion        
-	    v_total = (SELECT COUNT(*) FROM sigefo.tcurso_planificacion WHERE id_planificacion=v_parametros.id_planificacion);    
+	    v_total = (SELECT COUNT(*) FROM sigefo.tcurso WHERE id_planificacion=v_parametros.id_planificacion);    
         v_sw :='';
         IF (v_total = 0)
         	THEN
