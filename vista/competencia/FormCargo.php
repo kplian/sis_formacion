@@ -137,7 +137,12 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 10
                     },
                     type: 'TextField',
-                    filters: {pfiltro: 'funcionario', type: 'string'},
+                    bottom_filter: true,
+                    filters: {
+                        pfiltro: 'p.nombre',
+                        type: 'string'
+                    },
+                    filters: {pfiltro: 'p.nombre#p.ap_paterno#p.ap_materno', type: 'string'},
                     id_grupo: 1,
                     grid: true,
                     form: false

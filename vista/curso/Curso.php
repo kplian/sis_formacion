@@ -603,7 +603,7 @@ header("content-type: text/javascript; charset=UTF-8");
                             totalProperty: 'total',
                             fields: ['id_competencia', 'competencia', 'tipo','cod_competencia','id_uo','desc_competencia'],
                             remoteSort: true,
-                            baseParams: {par_filtro: 'comp.competencia'}
+                            baseParams: {par_filtro: 'c.competencia'}
                         }),
                         valueField: 'id_competencia',
                         displayField: 'desc_competencia',
@@ -627,7 +627,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     type: 'AwesomeCombo',
                     id_grupo: 0,
-                    filters: {pfiltro: 'competencia', type: 'string'},
+                    filters: {pfiltro: 'c.competencia', type: 'string'},
                     grid: true,
                     form: true
                 },

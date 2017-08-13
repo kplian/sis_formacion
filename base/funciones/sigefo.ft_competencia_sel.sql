@@ -77,7 +77,7 @@ BEGIN
 
       BEGIN
         --Sentencia de la consulta
-        v_consulta:='SELECT c.id_cargo, c.id_cargo::integer as cod_cargo, c.nombre::varchar as nombre_cargo, (COALESCE(p.ap_paterno, '''') || '''' || COALESCE(p.ap_materno, '''') || '', '' || COALESCE(p.nombre, ''''))::varchar as funcionario,
+        v_consulta:='SELECT c.id_cargo, c.id_cargo::integer as cod_cargo, c.nombre::varchar as nombre_cargo, (COALESCE(p.ap_paterno, '''') || '' '' || COALESCE(p.ap_materno, '''') || '', '' || COALESCE(p.nombre, ''''))::varchar as funcionario,
       
         (CASE WHEN  cc.id_competencia ISNULL THEN 0::INTEGER ELSE  cc.id_competencia END)::integer as id_competencia
 FROM orga.tcargo c
@@ -214,7 +214,7 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
 
       BEGIN
         --Sentencia de la consulta de conteo de registros
-        v_consulta:='SELECT count(id_competencia) FROM sigefo.tcompetencia
+        v_consulta:='SELECT count(c.id_competencia) FROM sigefo.tcompetencia c
 					    where ';
 
         --Definicion de la respuesta
