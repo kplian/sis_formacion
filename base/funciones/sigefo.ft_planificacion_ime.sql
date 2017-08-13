@@ -427,27 +427,6 @@ BEGIN
         v_sw :='';
         IF (v_total = 0)
         	THEN
-            
-              DELETE
-              FROM  sigefo.tplanificacion_proveedor sigefop
-              WHERE sigefop.id_planificacion=v_parametros.id_planificacion;
-              
-              DELETE
-              FROM  sigefo.tplanificacion_cargo pc 
-              WHERE pc.id_planificacion=v_parametros.id_planificacion;
-
-              DELETE
-              FROM sigefo.tplanificacion_criterio pcr 
-              WHERE pcr.id_planificacion=v_parametros.id_planificacion; 
-
-              DELETE
-              FROM sigefo.tplanificacion_competencia pco 
-              WHERE pco.id_planificacion=v_parametros.id_planificacion; 
-
-              DELETE
-              FROM sigefo.tplanificacion_uo puo
-              WHERE puo.id_planificacion=v_parametros.id_planificacion;	
-              
               DELETE
               FROM  sigefo.tplanificacion sigefop
               WHERE sigefop.id_planificacion=v_parametros.id_planificacion;
@@ -455,7 +434,7 @@ BEGIN
               v_resp = pxp.f_agrega_clave(v_resp, 'mensaje', 'Planificación eliminado(a)');
        		  v_resp = pxp.f_agrega_clave(v_resp, 'id_planificacion', v_parametros.id_planificacion :: VARCHAR);              
         ELSE
-        	RAISE EXCEPTION 'Error: ';      
+        	RAISE EXCEPTION 'Error!! La planificacion esta registrado en curso ';      
 		END IF;
 	                   
 		RETURN v_resp;

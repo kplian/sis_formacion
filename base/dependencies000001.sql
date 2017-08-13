@@ -436,3 +436,13 @@ select pxp.f_insert_testructura_gui ('SIGEFOCO', 'PARCOM');
 select pxp.f_insert_testructura_gui ('CACO', 'PARCOM');
 select pxp.f_insert_testructura_gui ('CUE', 'SIGEFO');
 /***********************************F-DEP-JUAN-SIGEFO-0-17/11/2017****************************************/
+
+/***********************************I-DEP-JUAN-SIGEFO-0-23/11/2017****************************************/ 
+
+ALTER TABLE sigefo.tplanificacion_criterio
+  ADD CONSTRAINT tplanificacion_criterio_fk FOREIGN KEY (id_planificacion)
+    REFERENCES sigefo.tplanificacion(id_planificacion)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE;
+/***********************************F-DEP-JUAN-SIGEFO-0-23/11/2017****************************************/
