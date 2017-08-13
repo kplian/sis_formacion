@@ -623,7 +623,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         enableMultiSelect: true,
                         /*renderer: function (value, p, record) {
                             return String.format('{0}', (record.data['desc_competencia']) ? record.data['desc_competencia'] : '');                   
-                        }*/
+                        }*/ 
                     },
                     type: 'AwesomeCombo',
                     id_grupo: 0,
