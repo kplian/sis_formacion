@@ -208,7 +208,7 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
        #AUTOR:		admin
        #FECHA:		04-05-2017 19:30:13
       ***********************************/
-
+ 
   ELSIF (p_transaccion = 'SIGEFO_COMCOMBO_CONT')
     THEN
 
