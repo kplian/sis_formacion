@@ -696,7 +696,7 @@ WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR ||'
 	ELSIF(p_transaccion='CUESTIO_INS')then
 					
         begin
-        --RAISE EXCEPTION 'VERIFICAR PARAMETROS  %', v_parametros.id_curso;
+        --RAISE EXCEPTION 'VERIFICAR PARAMETROS  %', v_parametros.id_curso ||' id usuario '|| v_parametros.id_usuario;
         	--Sentencia de la insercion
             v_id_pregunta_texto:=NULL;
             v_id_pregunta:=NULL;
@@ -720,22 +720,32 @@ WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR ||'
               v_id_pregunta_texto:=v_parametros.respuesta;
             end if;
 
-            IF(select count(id_curso) from sigefo.tcurso_funcionario_eval where id_curso=v_parametros.id_curso::INTEGER and id_funcionario=v_parametros.id_curso and id_pregunta=v_parametros.id_pregunta::INTEGER)then
-            
-            ELSE
-                insert into sigefo.tcurso_funcionario_eval(
-                id_pregunta,
-                cod_respuesta,
-                id_funcionario,
-                id_curso,
-                respuesta_texto
-                ) values(
-                v_parametros.id_pregunta,
-                v_id_pregunta::INTEGER,
-                v_parametros.id_usuario,
-                v_parametros.id_curso,
-                v_id_pregunta_texto::VARCHAR
-                )RETURNING id_curso_funcionario_eval into v_id_cuestionario;
+            IF(select count(id_curso) from sigefo.tcurso_funcionario_eval where id_curso = v_parametros.id_curso::INTEGER and id_funcionario=(select cff.id_funcionario from sigefo.tcurso_funcionario cff  
+                                                                                                                                              join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
+                                                                                                                                              join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
+                                                                                                                                              join segu.vpersona pp on pp.id_persona=ff.id_persona 
+                                                                                                                                              join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
+                                                                                                                                              where usu11.id_usuario=v_parametros.id_usuario::INTEGER  and scuu.id_curso= v_parametros.id_curso::INTEGER) and id_pregunta=v_parametros.id_pregunta::INTEGER)then
+                      --por if no hacer nada
+                  ELSE
+                      insert into sigefo.tcurso_funcionario_eval(
+                      id_pregunta,
+                      cod_respuesta,
+                      id_funcionario,
+                      id_curso,
+                      respuesta_texto
+                      ) values(
+                      v_parametros.id_pregunta,
+                      v_id_pregunta::INTEGER,
+                      (select cff.id_funcionario from sigefo.tcurso_funcionario cff  
+                      join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
+                      join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
+                      join segu.vpersona pp on pp.id_persona=ff.id_persona 
+                      join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
+                      where usu11.id_usuario =v_parametros.id_usuario::INTEGER and scuu.id_curso=v_parametros.id_curso::INTEGER),
+                      v_parametros.id_curso,
+                      v_id_pregunta_texto::VARCHAR
+                      )RETURNING id_curso_funcionario_eval into v_id_cuestionario;
             END IF;
 			
 			--Definicion de la respuesta

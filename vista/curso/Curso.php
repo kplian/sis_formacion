@@ -107,10 +107,14 @@ header("content-type: text/javascript; charset=UTF-8");
 							           	       var concatenarCompetencias='';
 							           	       var concatenarIduo='';
 							           	       var banderaInicio=0;
+							           	      
 									              for(cont1=0;cont1<y.length;cont1++){
-
+                                                        //console.log(v_competencias);
 									              	    for (c=0;c<v_competencias.length;c++){
+									              	    	
+									              	    	console.log(v_competencias[c]);
 									              	    	if(String(y[cont1].data.cod_competencia).trim() == String(v_competencias[c]).trim()){
+									              	    		
 									              	    		banderaInicio++;
 									              	    		if(banderaInicio==1){
 									              	    			concatenarCompetencias+=y[cont1].data.id_competencia;
@@ -151,6 +155,8 @@ header("content-type: text/javascript; charset=UTF-8");
                                                   
                                                   this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
                                                   this.Cmp.id_funcionarios.modificado = true;
+                                                  
+                                             
 							                   
 							            }, scope : this
 							     }); 
@@ -162,28 +168,25 @@ header("content-type: text/javascript; charset=UTF-8");
                 
                 this.Cmp.id_competencias.on('select', function (Combo, dato) {
 
+		                  var concatenarIduo=''; 
+		                  this.Cmp.id_funcionarios.reset();
+		                  this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag},  callback : function (y) {
+		      	    		   concatenarIduo=''; 
+		      	    		    for(c=0;c<y.length;c++){
+		      	    		    	if(y[c].data.checked.trim()=='checked'){
+								            if(concatenarIduo==''){
+						      	    			concatenarIduo+=y[c].data.id_competencia;
+						      	    		}
+						      	    		else{
+						      	    			concatenarIduo+=','+y[c].data.id_competencia;
+						      	    		}
+		      	    		    	}
+		      	    		    }
+		                        this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
+				                this.Cmp.id_funcionarios.modificado = true;
+		                      
+		                    }, scope : this }); 
       	    		
-                  var concatenarIduo=''; 
-                  this.Cmp.id_funcionarios.reset();
-                  this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag},  callback : function (y) {
-      	    		   concatenarIduo=''; 
-      	    		    for(c=0;c<y.length;c++){
-      	    		    	if(y[c].data.checked.trim()=='checked'){
-						            if(concatenarIduo==''){
-				      	    			concatenarIduo+=y[c].data.id_competencia;
-				      	    		}
-				      	    		else{
-				      	    			concatenarIduo+=','+y[c].data.id_competencia;
-				      	    		}
-      	    		    	}
-      	    		    }
-                        this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
-		                this.Cmp.id_funcionarios.modificado = true;
-                      
-                    }, scope : this }); 
-      	    		
-                 
-                
                 }, this);
                 
             },
@@ -193,11 +196,18 @@ header("content-type: text/javascript; charset=UTF-8");
 
 	          //v_unidad_organizacional=respuesta_planificacion[1];
 	          //v_gerencia=respuesta_planificacion[2];
+	          v_competencias=[];
 	          try{
 	          	v_competencias=respuesta_planificacion[3].split(',');
+	          	//console.log("entro aaaa11 ",v_competencias.length);
+	          	
 	          }catch(error){
-	          	v_competencias='';
+	          	v_competencias[0]=[respuesta_planificacion[3]];
+	          	//console.log("entro aaaa11 ",v_competencias.length);
+	          
 	          }
+	          console.log("entro aaaa11 ",v_competencias);
+	          
 			  v_nombre_planificacion=respuesta_planificacion[4];
 			  v_contenido_basico=respuesta_planificacion[5];
 			  v_horas_previstas=respuesta_planificacion[6];
@@ -654,7 +664,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         valueField: 'id_funcionario',
                         displayField: 'desc_person',
                         tpl: '<tpl for="."> <div class="x-combo-list-item" ><div class="awesomecombo-item {checked}">{codigo}</div> <p>{desc_person}</p> <p>CI:{ci}</p> </div></tpl>',
-                        gdisplayField: 'desc_person',
+                        gdisplayField: 'funcionarios',
                         hiddenName: 'id_funcionario',
                         forceSelection: true,
                         typeAhead: false,
@@ -1178,8 +1188,25 @@ header("content-type: text/javascript; charset=UTF-8");
 				this.Cmp.id_planificacion.modificado = true;
 				
 
-                //this.Cmp.id_funcionarios.store.setBaseParam('id_uo','');
-		        //this.Cmp.id_funcionarios.modificado = true;
+	             var concatenarIduo=''; 
+	             //this.Cmp.id_funcionarios.reset();
+	             this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag},  callback : function (y) {
+	  	    		   concatenarIduo=''; 
+	  	    		    for(c=0;c<y.length;c++){
+	  	    		    	if(y[c].data.checked.trim()=='checked'){
+						            if(concatenarIduo==''){
+				      	    			concatenarIduo+=y[c].data.id_competencia;
+				      	    		}
+				      	    		else{
+				      	    			concatenarIduo+=','+y[c].data.id_competencia;
+				      	    		}
+	  	    		    	}
+	  	    		    }
+	                    this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
+		                this.Cmp.id_funcionarios.modificado = true;
+	                  
+	              }, scope : this }); 
+	              
            				                                             
             },
         }

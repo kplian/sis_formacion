@@ -187,6 +187,148 @@ BEGIN
                 v_consulta:=v_consulta || v_parametros.filtro;
                 RETURN v_consulta;
             END;
+/*********************************
+   #TRANSACCION:  'SIGEFO_CURCUEST_SEL'
+   #DESCRIPCION:	Consulta de datos
+   #AUTOR:		JUAN
+   #FECHA:		22-01-2017 15:35:03
+  ***********************************/
+
+  ELSIF (p_transaccion = 'SIGEFO_CURCUEST_SEL')
+		THEN
+          BEGIN 
+          --RAISE EXCEPTION 'Error provocado por juan %',v_parametros.id_usuario;
+              v_consulta:='SELECT 
+                          scu.id_curso,
+                          scu.id_gestion,
+                          scu.id_lugar,
+                          scu.id_lugar_pais,
+                          scu.id_proveedor,
+                          scu.origen,
+                          scu.fecha_inicio,
+                          scu.objetivo,
+                          scu.estado_reg,
+                          scu.cod_tipo,
+                          scu.cod_prioridad,
+                          scu.horas,
+                          scu.nombre_curso,
+                          scu.cod_clasificacion,
+                          scu.expositor,
+                          scu.contenido,
+                          scu.fecha_fin,
+                          scu.fecha_reg,
+                          scu.usuario_ai,
+                          scu.id_usuario_reg,
+                          scu.id_usuario_ai,
+                          scu.id_usuario_mod,
+                          scu.fecha_mod,
+                          scu.evaluacion,
+                          scu.certificacion,
+                          g.gestion AS gestion,
+
+                          (SELECT lp.nombre
+                          FROM param.tlugar lp
+                          WHERE lp.id_lugar=scu.id_lugar_pais ) :: VARCHAR  AS nombre_pais,
+
+                          (SELECT lp.nombre
+                          FROM param.tlugar lp
+                          WHERE lp.id_lugar=scu.id_lugar ) :: VARCHAR  AS nombre,
+
+                          (SELECT p.desc_proveedor
+                          FROM param.vproveedor p
+                          WHERE p.id_proveedor=scu.id_proveedor ) :: VARCHAR  AS desc_proveedor,
+
+                     
+                          (SELECT usu1.cuenta
+                          FROM segu.tusuario usu1
+                          WHERE usu1.id_usuario =scu.id_usuario_reg )  :: VARCHAR  AS usr_reg, 
+
+                          (SELECT usu2.cuenta
+                          FROM segu.tusuario usu2
+                          WHERE usu2.id_usuario =scu.id_usuario_mod )  :: VARCHAR  AS usr_mod,
+              
+          
+                          (SELECT array_to_string( array_agg( cc.id_competencia), '','' ) 
+                          FROM sigefo.tcurso_competencia cc 
+                          JOIN sigefo.tcurso c ON c.id_curso=cc.id_curso 
+                          WHERE cc.id_curso=scu.id_curso)::VARCHAR AS id_competencias,
+                                                                                                                                  
+                          (SELECT array_to_string( array_agg( co.competencia), ''<br>'' ) 
+                          FROM sigefo.tcurso_competencia cc 
+                          JOIN sigefo.tcurso c ON c.id_curso=cc.id_curso 
+                          JOIN sigefo.tcompetencia co ON co.id_competencia=cc.id_competencia
+                          WHERE cc.id_curso=scu.id_curso)::VARCHAR AS desc_competencia,
+
+
+                          scu.id_planificacion::INTEGER,
+                                                                                                                                  
+                          (SELECT  pl.nombre_planificacion
+                          FROM sigefo.tplanificacion pl
+                          WHERE pl.id_planificacion=scu.id_planificacion)::VARCHAR AS planificacion,
+
+
+
+                          (SELECT array_to_string( array_agg( cf.id_funcionario), '','' ) 
+                          FROM sigefo.tcurso_funcionario cf 
+                          JOIN sigefo.tcurso c ON c.id_curso=cf.id_curso 
+                          WHERE cf.id_curso=scu.id_curso)::VARCHAR AS id_funcionarios,
+                                                                                                                                  
+                          (SELECT array_to_string( array_agg(PERSON.nombre_completo2), ''<br>'' ) 
+                          FROM sigefo.tcurso_funcionario cf 
+                          JOIN sigefo.tcurso c ON c.id_curso=cf.id_curso 
+                          JOIN orga.tfuncionario FUNCIO ON FUNCIO.id_funcionario=cf.id_funcionario
+                          JOIN SEGU.vpersona PERSON ON PERSON.id_persona=FUNCIO.id_persona                                                   
+                          WHERE cf.id_curso=scu.id_curso)::VARCHAR AS funcionarios,
+                          
+                          scu.id_gerencia::INTEGER AS id_uo,
+                          (SELECT tu.nombre_unidad FROM sigefo.tcurso p  join orga.tuo tu ON p.id_gerencia=tu.id_uo where scu.id_gerencia=tu.id_uo and p.id_curso=scu.id_curso	)::VARCHAR as desc_uo,
+
+                          scu.id_unidad_organizacional::INTEGER,
+                          (SELECT tu.nombre_cargo from sigefo.tcurso  pl
+                          join orga.tuo tu on tu.id_uo=pl.id_unidad_organizacional
+                          where pl.id_curso=scu.id_curso)::varchar as unidad_organizacional,
+                          scu.peso::NUMERIC,
+                          (SELECT count(cfuncio.id_funcionario) from sigefo.tcurso_funcionario cfuncio where cfuncio.id_curso=scu.id_curso)::INTEGER as cantidad_personas,
+                          (SELECT p.nombre_completo2 from segu.tusuario usu1 join segu.vpersona p on p.id_persona=usu1.id_persona where usu1.id_usuario ='||v_parametros.id_usuario::INTEGER||')::VARCHAR as funcionario_eval,
+                          cf.id_funcionario
+                          FROM sigefo.tcurso scu
+                          JOIN param.tgestion g ON g.id_gestion=scu.id_gestion         
+                          JOIN sigefo.tcurso_funcionario cf on cf.id_curso=scu.id_curso 
+                        
+                          join orga.tfuncionario f on f.id_funcionario=cf.id_funcionario
+                          join segu.vpersona p on p.id_persona=f.id_persona 
+                          join segu.tusuario usu1 on usu1.id_persona = p.id_persona 
+     
+                          WHERE (usu1.id_usuario = '||v_parametros.id_usuario::INTEGER||' or cf.id_usuario_reg='||v_parametros.id_usuario::INTEGER||') and ';
+                          
+                --raise NOTICE 'raise juan %',v_consulta;          
+                --raise exception 'error provocado %' ,v_consulta;          
+                v_consulta:=v_consulta || v_parametros.filtro;
+                v_consulta:=
+                v_consulta || ' order by ' || v_parametros.ordenacion || ' ' || v_parametros.dir_ordenacion || ' limit ' ||
+                v_parametros.cantidad || ' offset ' || v_parametros.puntero;
+
+              RETURN v_consulta;
+          END;
+
+    /*********************************
+     #TRANSACCION:  'SIGEFO_CURCUEST_CONT'
+     #DESCRIPCION:	Conteo de registros
+     #AUTOR:		admin
+     #FECHA:		22-01-2017 15:35:03
+    ***********************************/
+
+	ELSIF (p_transaccion = 'SIGEFO_CURCUEST_CONT')
+    	THEN
+      		BEGIN
+        		v_consulta:='select count(id_curso)
+					    from sigefo.tcurso scu
+					    inner join segu.tusuario usu1 on usu1.id_usuario = scu.id_usuario_reg
+						left join segu.tusuario usu2 on usu2.id_usuario = scu.id_usuario_mod
+					    where ';
+                v_consulta:=v_consulta || v_parametros.filtro;
+                RETURN v_consulta;
+            END;
             
     /*********************************
     #TRANSACCION:  'PM_LUG_SEL'
@@ -365,14 +507,14 @@ BEGIN
         RETURN v_consulta;       	
     END;                                    
     /*********************************    
-  #TRANSACCION:  'PM_PROVEEV_SEL'
+  #TRANSACCION:  'SIGEFO_PROV_SEL'
   #DESCRIPCION: Consulta de datos de proveedores a partir de una vista de base de datos
   #AUTOR:   rac 
   #FECHA:   08-12-2011 10:44:58
   ***********************************/    
         
           
-  elseif(p_transaccion='PM_PROVEEV_SEL')then
+  elseif(p_transaccion='SIGEFO_PROV_SEL')then
             
       begin
       	
@@ -410,13 +552,13 @@ BEGIN
             
     end;
   /*********************************    
-  #TRANSACCION:  'PM_PROVEEV_CONT'
+  #TRANSACCION:  'SIGEFO_PROV_CONT'
   #DESCRIPCION: Conteo de registros de proveedores en la vista vproveedor
   #AUTOR:   rac 
   #FECHA:   09-12-2011 10:44:58
   ***********************************/
 
-  elsif(p_transaccion='PM_PROVEEV_CONT')then
+  elsif(p_transaccion='SIGEFO_PROV_CONT')then
 
     begin
       --Sentencia de la consulta de conteo de registros
@@ -448,7 +590,7 @@ BEGIN
   elseif(p_transaccion='CUESTIONARIO_SEL')then
             
       begin
-                --RAISE EXCEPTION 'error provocado por juan %',v_parametros.id_curso;
+                --RAISE EXCEPTION 'error provocado por juan %',v_parametros.id_usuario;
 				v_consulta1 :='';
                 v_consulta1 := v_consulta1 || 'CREATE TEMP TABLE ttemporal(id_temporal SERIAL,
                                                                                 id_pregunta INTEGER,
@@ -467,7 +609,7 @@ BEGIN
                             where c.tipo=''||v_parametros.tipo||'' and c.habilitado=TRUE) LOOP
                             
                           v_consulta2 :='';
-                          v_consulta2 := v_consulta2 ||'INSERT INTO ttemporal (id_pregunta,
+                          v_consulta2 := v_consulta2 ||'INSERT INTO ttemporal  (id_pregunta,
                                                                                 pregunta,
                                                                                 respuesta,
                                                                                 tipo,
@@ -476,7 +618,7 @@ BEGIN
                                                                                 id_curso,
                                                                                 id_usuario)VALUES';  
                                                                                               
-                          v_consulta2 :=v_consulta2||'('||item.id_categoria||','''|| item.categoria||''','''||''||''','''||item.tipo||''','''||item.nivel||''','''|| item.id_usuario_reg||''','||v_parametros.id_curso||','||v_parametros.id_usuario||')';           
+                          v_consulta2 :=v_consulta2||'('||item.id_categoria||','''|| item.categoria||''','''||''||''','''||item.tipo||''','''||item.nivel||''','''|| item.id_usuario_reg||''','||v_parametros.id_curso||','||v_parametros.id_usuario::INTEGER ||')';           
                            execute(v_consulta2);   
                              
                            FOR item1 IN(SELECT p.id_pregunta,p.pregunta,p.tipo,2 as nivel,p.id_usuario_reg,usu1.cuenta,
@@ -504,7 +646,13 @@ BEGIN
                                                 end)
                                                 FROM sigefo.tcurso_funcionario_eval  cfe
                                                 join sigefo.tpreguntas pp on pp.id_pregunta=cfe.id_pregunta
-                                                where cfe.id_pregunta=p.id_pregunta)::varchar as respuesta
+                                                join sigefo.tcurso cc on cc.id_curso=cfe.id_curso
+                                                where cfe.id_pregunta=p.id_pregunta and cfe.id_curso=v_parametros.id_curso::INTEGER  and cfe.id_funcionario=(select cff.id_funcionario from sigefo.tcurso_funcionario cff  
+                                                                                                                                                              join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
+                                                                                                                                                              join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
+                                                                                                                                                              join segu.vpersona pp on pp.id_persona=ff.id_persona 
+                                                                                                                                                              join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
+                                                                                                                                                              where usu11.id_usuario=v_parametros.id_usuario::INTEGER  and scuu.id_curso=v_parametros.id_curso::INTEGER))::varchar as respuesta
                                         from sigefo.tpreguntas p 
                                         inner join segu.tusuario usu1 on usu1.id_usuario = p.id_usuario_reg
                                         where p.id_categoria=item.id_categoria and p.habilitado=TRUE) LOOP
@@ -524,7 +672,7 @@ BEGIN
                                        else
                                        v_consulta1:=item1.respuesta;
                                     end if;                                                          
-                                    v_consulta2 :=v_consulta2||'('||item1.id_pregunta||','''|| item1.pregunta||''','''||v_consulta1::varchar||''','''||item1.tipo||''','''||item1.nivel||''','''|| item1.id_usuario_reg||''','||v_parametros.id_curso||','||v_parametros.id_usuario||')';      
+                                    v_consulta2 :=v_consulta2||'('||item1.id_pregunta||','''|| item1.pregunta||''','''||v_consulta1::varchar||''','''||item1.tipo||''','''||item1.nivel||''','''|| item1.id_usuario_reg||''','||v_parametros.id_curso||','||v_parametros.id_usuario::INTEGER||')';      
                                     execute(v_consulta2);                                                          
                            END LOOP; 
            		END LOOP;

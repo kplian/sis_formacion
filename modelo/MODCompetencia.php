@@ -52,6 +52,7 @@ class MODCompetencia extends MODbase{
 		$this->captura('competencia','varchar');
 		$this->captura('tipo','varchar');
         $this->captura('desc_competencia','varchar');
+		$this->captura('cod_competencia','int4');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

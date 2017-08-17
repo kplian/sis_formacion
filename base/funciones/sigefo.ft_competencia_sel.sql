@@ -51,7 +51,7 @@ BEGIN
       --Sentencia de la consulta
 
                         
-           v_consulta:='SELECT c.id_competencia,c.competencia,c.tipo,c.competencia::varchar as desc_competencia  FROM sigefo.tcompetencia c
+           v_consulta:='SELECT c.id_competencia,c.competencia,c.tipo,c.competencia::varchar as desc_competencia,c.id_competencia::integer as cod_competencia  FROM sigefo.tcompetencia c
 				        where  ';
 
       --Definicion de la respuesta

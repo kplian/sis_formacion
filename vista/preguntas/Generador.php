@@ -26,6 +26,7 @@ header("content-type: text/javascript; charset=UTF-8");
 				v_maestro = config.maestro;
 				//llama al constructor de la clase padre
 				Phx.vista.Generador.superclass.constructor.call(this, config);
+				
 				this.init();
 				this.load({params: {start: 0, limit: this.tam_pag}})
 				this.addButton('btnAvances', {
@@ -33,17 +34,20 @@ header("content-type: text/javascript; charset=UTF-8");
 		            iconCls: 'bchecklist',
 		            disabled: false,
 		            handler: this.EvaluarFuncionario,
-		            tooltip: '<b>Este cuestionario esta habilitado unicamente para funcionarios</b>'
+		            tooltip: '<b>Este cuestionario esta habilitado unicamente para funcionarios que tomarón algún curso</b>'
 		        });	
 						
 				this.iniciarEventos();            
             },
             iniciarEventos: function () {
             	
+            	this.store.baseParams = {id_usuario: Phx.CP.config_ini.id_usuario};
+            	this.load({params: {start: 0, limit: this.tam_pag}})
+            	
                 this.cmbGestion.on('select',
                        function (cmb, dat) {
                        	this.sm.clearSelections();
-		                this.store.baseParams = {id_gestion: dat.data.id_gestion};
+		                this.store.baseParams = {id_gestion: dat.data.id_gestion, id_usuario: Phx.CP.config_ini.id_usuario};
 		                v_id_gestion=dat.data.id_gestion;
 		                this.store.reload();
                 }, this);
@@ -76,10 +80,10 @@ header("content-type: text/javascript; charset=UTF-8");
 		                		'fecha_inicio': me.sm.selections.items[0].data.fecha_inicio,
 		                		'fecha_fin': me.sm.selections.items[0].data.fecha_fin,
 		                		'id_gestion':me.sm.selections.items[0].data.id_gestion,
-		                		'id_usuario': null,
-		                		'usuario': 'Admin',
+		                		'id_usuario': Phx.CP.config_ini.id_usuario,
+		                		'usuario': me.sm.selections.items[0].data.funcionario_eval,
+		                		//'tipo':'Proveedor'
 		                		'tipo':'Funcionario'
-		                		
 							}
 						},
 						this.idContenedor,
@@ -193,6 +197,15 @@ header("content-type: text/javascript; charset=UTF-8");
                     config: {
                         labelSeparator: '',
                         inputType: 'hidden',
+                        name: 'id_funcionario'
+                    },
+                    type: 'Field',
+                    form: true
+                },
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
                         name: 'fecha_inicio'
                     },
                     type: 'Field',
@@ -212,6 +225,15 @@ header("content-type: text/javascript; charset=UTF-8");
                         fieldLabel: 'id_gestion',
                         inputType: 'hidden',
                         name: 'id_gestion'
+                    },
+                    type: 'Field',
+                    form: true
+                },
+                {
+                    config: {
+                        fieldLabel: 'funcionario_eval',
+                        inputType: 'hidden',
+                        name: 'funcionario'
                     },
                     type: 'Field',
                     form: true
@@ -316,15 +338,16 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: false
                 },
+                
             ],
             tam_pag: 50,
             argumentSave: {},
             timeout: Phx.CP.config_ini.timeout,
     		conexionFailure: Phx.CP.conexionFailure,
             title: 'Curso',
-            ActSave: '../../sis_formacion/control/Curso/insertarCurso',
-            ActDel: '../../sis_formacion/control/Curso/eliminarCurso',
-            ActList: '../../sis_formacion/control/Curso/listarCurso',
+            //ActSave: '../../sis_formacion/control/Curso/insertarCurso',
+            //ActDel: '../../sis_formacion/control/Curso/eliminarCurso',
+            ActList: '../../sis_formacion/control/Curso/listarCursoEvaluacion',
             id_store: 'id_curso',
             fields: [
                 {name: 'id_curso', type: 'numeric'},
@@ -337,8 +360,8 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'gestion', type: 'string'},
                 {name: 'fecha_inicio', type: 'string'},
                 {name: 'fecha_fin', type: 'string'},
-                
-                
+                {name: 'funcionario_eval', type: 'string'},
+                {name: 'id_funcionario', type: 'numeric'},
                 
             ],
             sortInfo: {

@@ -23,7 +23,7 @@ header("content-type: text/javascript; charset=UTF-8");
 				
 				this.init();
 				this.grid.addListener('cellclick', this.oncellclick,this);
-				this.grid.addListener('cellclick', this.selectNext,this);
+				//this.grid.addListener('cellclick', this.selectNext,this);
 				this.store.baseParams = {id_gestion: v_maestro.data.id_gestion,tipo: v_maestro.data.tipo,id_curso: v_maestro.data.id_curso, id_usuario: Phx.CP.config_ini.id_usuario};//agregado para filtro y enviar parametro
 				this.load({params: {start: 0, limit: this.tam_pag}})
 				
@@ -59,7 +59,7 @@ header("content-type: text/javascript; charset=UTF-8");
 		            this.selectRow(ds.indexOf(records[i]), true);
 		        }
 		    },
-		    selectNext : function(keepExisting){
+		    /*selectNext : function(keepExisting){
 		    	console.log('entro al record juan seleccionado ',keepExisting);
 		        if(this.hasNext()){
 		            this.selectRow(this.last+1, keepExisting);
@@ -67,7 +67,7 @@ header("content-type: text/javascript; charset=UTF-8");
 		            return true;
 		        }
 		        return false;
-		    },
+		    },*/
 	       	oncellclick : function(grid, rowIndex, columnIndex, e) {
 		        var record = this.store.getAt(rowIndex),
 		            fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name

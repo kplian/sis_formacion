@@ -126,7 +126,6 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: true
                 },
-
                 {
                     config: {
                         name: 'funcionario',
@@ -134,12 +133,14 @@ header("content-type: text/javascript; charset=UTF-8");
                         allowBlank: true,
                         anchor: '80%',
                         gwidth: 100,
-                        maxLength: 10
+                        maxLength: 10,
+
+                
                     },
                     type: 'TextField',
                     bottom_filter: true,
                     filters: {
-                        pfiltro: 'p.nombre',
+                        pfiltro: 'p.ap_paterno',
                         type: 'string'
                     },
                     filters: {pfiltro: 'p.nombre#p.ap_paterno#p.ap_materno', type: 'string'},
