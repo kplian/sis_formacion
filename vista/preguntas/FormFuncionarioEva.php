@@ -82,7 +82,7 @@ header("content-type: text/javascript; charset=UTF-8");
 		     //inputType: 'hidden',
 		    }),
 		    CargarEncabezado:function(){
-		    	var encab='<br><div style="margin: 0 auto;  width: 400px; padding: 1em; border: 1px solid #CCC; border-radius: 1em;">';
+		    	var encab='<br><div style="margin: 0 auto;  width: 600px; padding: 1em; border: 1px solid #CCC; border-radius: 1em;">';
 		    	var encab=encab+'<div> <label for="name"><b>NOMBRE CURSO &nbsp;:</b></label> <label for="name">'+v_maestro.data.curso+'</label> </div>';
 		    	var encab=encab+'<div> <label for="name"><b>FECHA INICIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :<b> </label><label for="name">'+v_maestro.data.fecha_inicio+'</label> </div>';
 		    	var encab=encab+'<div> <label for="name"><b>FECHA FIN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+v_maestro.data.fecha_fin+'</label> </div>';
