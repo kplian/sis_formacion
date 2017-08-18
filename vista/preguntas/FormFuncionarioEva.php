@@ -11,6 +11,7 @@ header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
     var v_maestro=null;
+
     Phx.vista.FormFuncionarioEva  = Ext.extend(Phx.gridInterfaz, {
 
             constructor: function (config) {
@@ -23,16 +24,58 @@ header("content-type: text/javascript; charset=UTF-8");
 				
 				this.init();
 				this.grid.addListener('cellclick', this.oncellclick,this);
+				this.grid.addListener('afteredit', this.onAfterEdit, this);
+
+				
+				
 				//this.grid.addListener('cellclick', this.selectNext,this);
 				this.store.baseParams = {id_gestion: v_maestro.data.id_gestion,tipo: v_maestro.data.tipo,id_curso: v_maestro.data.id_curso, id_usuario: Phx.CP.config_ini.id_usuario};//agregado para filtro y enviar parametro
 				this.load({params: {start: 0, limit: this.tam_pag}})
 				
-				this.iniciarEventos();      
+				this.iniciarEventos();    
+				
+
+
             },
 
             iniciarEventos: function(){
                 this.CargarEncabezado();	
             },
+            getDatosKeyPres:function(){
+            	return tipo_pregunta;
+            },
+		    onAfterEdit:function(prueba,x){
+		
+		       var columna=prueba.field;
+		       /*var cod_id_linea=prueba.record.data['respuesta'];
+		       var cod_linea_padre=prueba.record.data['cod_linea_padre'];
+		       var peso=prueba.record.data['peso'];
+		       var array_hijos=(prueba.record.data['cod_hijos']).split(',');
+		       var sum_avance_padre=0;*/
+		
+		       //console.log("me", prueba.record.data['feb17']);
+
+		       
+		       console.log("probar stores  ", prueba);
+		
+		       console.log("probar respuesta  ",prueba.record.data['respuesta']);
+		       
+		        console.log("probar tiop  ",prueba.record.data['tipo']);
+		        console.log("probar nivel  ",prueba.record.data['nivel']);
+		        if(prueba.record.data['nivel']=='2' && prueba.record.data['tipo'] == 'Selección'){
+		        	if(prueba.record.data['respuesta']=='Muy bueno'|| prueba.record.data['respuesta']=='Bueno' || prueba.record.data['respuesta']=='Regular'|| prueba.record.data['respuesta']=='Insuficiente'){
+		        		
+		        	}
+		        	else{
+		        		prueba.record.set('respuesta',prueba.originalValue);
+		        		alert("ALERTA!! No puede escribir, tiene que seleccionar una respuesta. Se borrara la ultima respuesta cambiada");
+		        	}
+		        }
+		
+		    },
+		    validarTipoInput:function(record){
+		    	prueba.record.set('respuesta','');
+		    },
 		    contenidoImagen: new Ext.form.FormPanel({
 		     name: 'encabezado',
 		     id:'encabezado'
@@ -48,7 +91,7 @@ header("content-type: text/javascript; charset=UTF-8");
 		    	//alert(Phx.CP.config_ini.id_usuario);
 		    },
 		    selectRecords : function(records, keepExisting){
-		    	
+		    	console.log("entro");
 		        if(!keepExisting){
 		            this.clearSelections();
 		        }
@@ -148,7 +191,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     filters: {pfiltro: 'pregunta', type: 'string'},
                     id_grupo: 1,
                     grid: true,
-                    form: true
+                    form: true,
                 },
 	            {
 	                    config: {
@@ -185,6 +228,21 @@ header("content-type: text/javascript; charset=UTF-8");
                                    return String.format('{0}', record.data['respuesta']);
 	                           },
 	                           gwidth: 200,
+	                           /*enableKeyEvents: true,
+						       onKeyPress : function(e,w,r){
+						       		
+						       	  console.log("entro " ,r);
+
+							       if(tipo_pregunta=='seleccion'){
+							       	   alert('Seleccione una respuesta');
+							       }
+							       else{
+							        
+							       }
+						         
+						       },*/
+	                           //regex: '/^[1-9]\d*$|^[0-9]+([.]\d+)$|^-?\d+$|^-?\d+([.]\d+)$/',
+	                           //maskRe: '/^[1-9]\d*$|^[0-9]+([.]\d+)$|^-?\d+$|^-?\d+([.]\d+)$/',
 	                    },
 	                    type: 'ComboBox',
 	                    id_grupo: 0,

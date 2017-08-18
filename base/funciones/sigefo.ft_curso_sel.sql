@@ -606,7 +606,7 @@ BEGIN
                 FOR item IN(SELECT c.id_categoria,c.categoria,c.tipo,1 as nivel ,c.id_usuario_reg,usu1.cuenta
                             FROM sigefo.tcategoria c
                             inner join segu.tusuario usu1 on usu1.id_usuario = c.id_usuario_reg
-                            where c.tipo=''||v_parametros.tipo||'' and c.habilitado=TRUE) LOOP
+                            where c.tipo=''||v_parametros.tipo||'' and c.habilitado=TRUE order by c.categoria asc) LOOP
                             
                           v_consulta2 :='';
                           v_consulta2 := v_consulta2 ||'INSERT INTO ttemporal  (id_pregunta,
@@ -652,7 +652,7 @@ BEGIN
                                                                                                                                                               join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
                                                                                                                                                               join segu.vpersona pp on pp.id_persona=ff.id_persona 
                                                                                                                                                               join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
-                                                                                                                                                              where usu11.id_usuario=v_parametros.id_usuario::INTEGER  and scuu.id_curso=v_parametros.id_curso::INTEGER))::varchar as respuesta
+                                                                                                                                                              where usu11.id_usuario=v_parametros.id_usuario::INTEGER  and scuu.id_curso=v_parametros.id_curso::INTEGER) order by pp.pregunta)::varchar as respuesta
                                         from sigefo.tpreguntas p 
                                         inner join segu.tusuario usu1 on usu1.id_usuario = p.id_usuario_reg
                                         where p.id_categoria=item.id_categoria and p.habilitado=TRUE) LOOP
