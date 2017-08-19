@@ -20,9 +20,105 @@ header("content-type: text/javascript; charset=UTF-8");
                 //llama al constructor de la clase padre
                 Phx.vista.Planificacion.superclass.constructor.call(this, config);
                 this.init();
+                this.grid.addListener('cellclick', this.oncellclick,this);
                 this.load({params: {start: 0, limit: this.tam_pag}})
                 this.iniciarEventos();
+                
+				this.addButton('btnAprobado', {
+	                text: 'Aprobar',
+	                iconCls: 'block',
+	                disabled: false,
+	                handler: function () {
+	                    this.aprobarPlanificacion(1)
+	                },
+	                tooltip: '<b>Aprobar</b>'
+	            });
+	
+	            this.addButton('btnDesAprobado', {
+	                text: 'Desaprobar',
+	                iconCls: 'bunlock',
+	                disabled: false,
+	                handler: function () {
+	                    this.aprobarPlanificacion(0)
+	                },	
+	                tooltip: '<b>Desaprobar</b>'
+	            });
+                this.getBoton('btnAprobado').hide();
+                this.getBoton('btnDesAprobado').hide();
             },
+	        aprobarPlanificacion: function (valorAprobado) {
+	        	
+	        	
+	        	
+	            var me = this; 	
+	            if(valorAprobado==1){
+	 		         this.getBoton('btnDesAprobado').show();
+	 		         this.getBoton('btnAprobado').hide();
+	 		     }
+	 		     else{
+	 		     	 this.getBoton('btnDesAprobado').hide();
+	 		     	 this.getBoton('btnAprobado').show();
+	 		     }
+	            var me = this;
+	            if (this.cmbGestion.getValue()) {
+	            	Phx.CP.loadingShow();
+	                Ext.Ajax.request({
+	                    url: '../../sis_formacion/control/Planificacion/aprobarPlanificacion',
+	                    params: {
+	                        'id_planificacion': me.sm.selections.items[0].data.id_planificacion,
+	                        'aprobado': valorAprobado,
+	                        'transaccion':'SIGEFO_APROB_PLA',
+	                        'id_usuario': Phx.CP.config_ini.id_usuario
+	                    },
+	                    success: me.successSaveAprobar,
+	                    failure: me.conexionFailureAprobarPlanificacion,
+	                    timeout: me.timeout,
+	                    scope: me
+	                });
+	            }
+	            else {
+	                Ext.MessageBox.alert('ERROR!!!', 'Seleccione primero una gestion.');
+	            }
+                this.reload();
+                
+                
+                
+	        },
+	        //
+	        successSaveAprobar: function () {
+	            Phx.CP.loadingHide();
+	            Ext.MessageBox.alert('EXITO!!!', 'Se realizo con exito la operación.');
+	        },  
+	        conexionFailureAprobarPlanificacion: function () {
+	        	var me = this; 	
+	        	if(this.sm.selections.items[0].data.aprobado=='t'){
+	        		 this.getBoton('btnDesAprobado').show();
+	 		         this.getBoton('btnAprobado').hide();
+	        	}
+	        	else{
+	        	     this.getBoton('btnDesAprobado').hide();
+	 		     	 this.getBoton('btnAprobado').show();
+	        	}
+	            Phx.CP.loadingHide(); 		
+	            this.reload();
+	            alert('ALERTA!! Sr(a) Usuario no tiene permiso para aprobar la planificacion, contactese con el administrador')
+	        },  
+	        
+	       	oncellclick : function(grid, rowIndex, columnIndex, e) {
+		        var record = this.store.getAt(rowIndex),
+		            fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+		
+		         //alert(record.data['aprobado']);
+		         if(record.data['aprobado']=='t'){
+	 		         this.getBoton('btnDesAprobado').show();
+	 		         this.getBoton('btnAprobado').hide();
+	 		     }
+	 		     else{
+	 		     	 this.getBoton('btnDesAprobado').hide();
+	 		     	 this.getBoton('btnAprobado').show();
+	 		     	 //this.getBoton('btnAprobado').disable();
+	 		     }
+	       },
             //
             cmbGestion: new Ext.form.ComboBox({
                 fieldLabel: 'Gestion',
@@ -53,10 +149,6 @@ header("content-type: text/javascript; charset=UTF-8");
                 listWidth: '280',
                 width: 80
             }),
-            onButtonEdit: function () {
-                Phx.vista.Planificacion.superclass.onButtonEdit.call(this);                
-
-            },
             //
             onButtonDel:function(){	
             	if(confirm('¿Está seguro de eliminar el registro?')){
@@ -139,7 +231,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 {
                     config: {
                         name: 'contenido_basico',
-                        fieldLabel: 'Contenido basico',
+                        fieldLabel: 'Contenido básico',
                         allowBlank: true,
                         anchor: '80%',
                         gwidth: 150,
@@ -428,7 +520,28 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: false
                 },
-
+				{
+					config:{
+						name: 'aprobado',
+						fieldLabel: 'Aprobado',
+						allowBlank: true,
+						anchor: '80%',
+						gwidth: 100,
+		                renderer: function (value, p, record, rowIndex, colIndex){
+		                    if(record.data.aprobado =='t'){
+		                        return  String.format('<div style="vertical-align:middle;text-align:center;"><input style="height:37px;width:37px;" type="checkbox"  {0} {1}></div>','checked', 'disabled');
+		                    }
+		                    else{
+		                        return  String.format('<div style="vertical-align:middle;text-align:center;"><input style="height:37px;width:37px;" type="checkbox"  {0} {1}></div>','', 'disabled');
+		                    }
+		                }
+					},
+						type:'Checkbox',
+						filters:{pfiltro:'sigefop.aprobado',type:'boolean'},
+						id_grupo:1,
+						grid:true,
+						form:false
+				},
                 {
                     config: {
                         name: 'fecha_reg',
@@ -478,6 +591,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 'desc_competencia',
                 'id_proveedor',
                 'desc_proveedor',
+                {name: 'aprobado', type: 'string'},
             ],            
             sortInfo: {
                 field: 'id_planificacion',
@@ -499,10 +613,20 @@ header("content-type: text/javascript; charset=UTF-8");
 			        if(this.getValidComponente(0)){
 			        	this.getValidComponente(0).focus(false,100);
 			        }
+			        //this.Cmp.aprobado.setValue(false);
 		       	}
 
 
 		    },
+            onButtonEdit: function () {
+                Phx.vista.Planificacion.superclass.onButtonEdit.call(this);                
+		        /*if(this.sm.selections.items[0].data.aprobado=='t'){
+		        	this.Cmp.aprobado.setValue(true);
+		        }
+		        else{
+		        	this.Cmp.aprobado.setValue(false);
+		        }*/
+            },
             loadValoresIniciales: function () {
                 Phx.vista.Planificacion.superclass.loadValoresIniciales.call(this);
                 this.getComponente('id_gestion').setValue(this.cmbGestion.getValue());   

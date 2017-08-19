@@ -439,6 +439,47 @@ BEGIN
 	                   
 		RETURN v_resp;
       END;
+      /*********************************
+       #TRANSACCION:  'SIGEFO_APROB_PLA'
+       #DESCRIPCION:	Aprobar planificacion
+       #AUTOR:		JUAN
+       #FECHA:		29-11-2017 20:37:24
+      ***********************************/
+
+      ELSIF (p_transaccion = 'SIGEFO_APROB_PLA')
+        THEN
+    		
+          BEGIN
+            --Sentencia de la eliminacion   
+                 
+           
+            IF(SELECT count(p.codigo) from segu.tusuario u
+              join segu.tusuario_rol ur on ur.id_usuario=u.id_usuario
+              join segu.trol r on r.id_rol=ur.id_rol
+              join segu.trol_procedimiento_gui rpg on rpg.id_rol=r.id_rol
+              join segu.tprocedimiento_gui pg on pg.id_procedimiento_gui=rpg.id_procedimiento_gui
+              join segu.tprocedimiento p on p.id_procedimiento=pg.id_procedimiento
+              join segu.tgui g on g.id_gui= pg.id_gui
+              where u.id_usuario=v_parametros.id_usuario::INTEGER and p.codigo=v_parametros.transaccion::VARCHAR)then
+
+                  IF (v_parametros.aprobado=1)THEN
+                        UPDATE  sigefo.tplanificacion 
+                        SET aprobado=TRUE
+                        WHERE id_planificacion=v_parametros.id_planificacion;
+                  ELSE
+                        UPDATE  sigefo.tplanificacion 
+                        SET aprobado=FALSE
+                        WHERE id_planificacion=v_parametros.id_planificacion;      
+                  END IF;
+            ELSE
+                  RAISE EXCEPTION 'El usuario no tiene permiso a la funcion % ',v_parametros.transaccion; 
+            end if;
+
+            v_resp = pxp.f_agrega_clave(v_resp, 'mensaje', 'Planificación aprobado(a)');
+            v_resp = pxp.f_agrega_clave(v_resp, 'id_planificacion', v_parametros.id_planificacion :: VARCHAR);  
+                               
+            RETURN v_resp;
+          END;
 
   ELSE
   	

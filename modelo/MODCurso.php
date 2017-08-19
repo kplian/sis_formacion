@@ -72,7 +72,7 @@ class MODCurso extends MODbase{
 		$this->captura('unidad_organizacional','varchar');
 		$this->captura('peso','numeric');
         $this->captura('cantidad_personas','int4');
-		
+		$this->captura('comite_etica','varchar');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -191,7 +191,7 @@ class MODCurso extends MODbase{
 	
         $this->setParametro('id_uo','id_uo','varchar');	
 		$this->setParametro('id_unidad_organizacional','id_unidad_organizacional','int4');	
-
+        $this->setParametro('comite_etica','comite_etica','varchar');	
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -233,6 +233,7 @@ class MODCurso extends MODbase{
 		
         $this->setParametro('id_uo','id_uo','varchar');	
 		$this->setParametro('id_unidad_organizacional','id_unidad_organizacional','int4');		
+		$this->setParametro('comite_etica','comite_etica','varchar');	
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

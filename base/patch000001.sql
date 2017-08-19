@@ -287,3 +287,14 @@ CREATE TABLE sigefo.tcurso_proveedor_eval (
 ) 
 WITH (oids = false);
 /***********************************F-SCP-JUAN-SIGEFO-0-28/11/2017****************************************/
+
+/***********************************I-SCP-JUAN-SIGEFO-0-29/11/2017****************************************/
+ALTER TABLE sigefo.tcurso
+  ADD COLUMN comite_etica BOOLEAN;
+  
+ALTER TABLE sigefo.tcurso
+  ALTER COLUMN comite_etica TYPE VARCHAR(50);
+
+ALTER TABLE sigefo.tplanificacion
+  ADD COLUMN aprobado BOOLEAN;
+/***********************************F-SCP-JUAN-SIGEFO-0-29/11/2017****************************************/

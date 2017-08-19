@@ -153,7 +153,8 @@ BEGIN
                           join orga.tuo tu on tu.id_uo=pl.id_unidad_organizacional
                           where pl.id_curso=scu.id_curso)::varchar as unidad_organizacional,
                           scu.peso::NUMERIC,
-                          (SELECT count(cfuncio.id_funcionario) from sigefo.tcurso_funcionario cfuncio where cfuncio.id_curso=scu.id_curso)::INTEGER as cantidad_personas
+                          (SELECT count(cfuncio.id_funcionario) from sigefo.tcurso_funcionario cfuncio where cfuncio.id_curso=scu.id_curso)::INTEGER as cantidad_personas,
+                          scu.comite_etica
 
                           FROM sigefo.tcurso scu
                           JOIN param.tgestion g ON g.id_gestion=scu.id_gestion         

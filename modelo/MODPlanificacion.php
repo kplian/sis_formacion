@@ -51,6 +51,7 @@ class MODPlanificacion extends MODbase{
 		
         $this->captura('id_uo','int4');
         $this->captura('desc_uo','varchar');
+		$this->captura('aprobado','bool');
 
         //Ejecuta la instruccion
 		$this->armarConsulta();
@@ -181,6 +182,24 @@ class MODPlanificacion extends MODbase{
         //Devuelve la respuesta
         return $this->respuesta;
     }
+	function aprobarPlanificacion(){
+		//Definicion de variables para ejecucion del procedimiento
+		$this->procedimiento='sigefo.ft_planificacion_ime';
+		$this->transaccion='SIGEFO_APROB_PLA';
+		$this->tipo_procedimiento='IME';
+				
+		//Define los parametros para la funcion
+		$this->setParametro('id_planificacion','id_planificacion','int4');
+		$this->setParametro('aprobado','aprobado','int4');
+		$this->setParametro('transaccion','transaccion','varchar');
+		$this->setParametro('id_usuario','id_usuario','int4');
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
 			
 }
 ?>

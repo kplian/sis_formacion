@@ -86,7 +86,11 @@ class ACTPlanificacion extends ACTbase{
         }
         $this->res->imprimirRespuesta($this->res->generarJson());
     }
-	
+	function aprobarPlanificacion(){
+		$this->objFunc=$this->create('MODPlanificacion');	
+		$this->res=$this->objFunc->aprobarPlanificacion($this->objParam);
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
 
 
 }

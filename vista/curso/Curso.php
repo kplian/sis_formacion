@@ -431,7 +431,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 {
                     config: {
                         name: 'id_planificacion',
-                        fieldLabel: 'Planificacion',
+                        fieldLabel: 'Planificación',
                         allowBlank: true,
                         emptyText: 'Planificacion...',
                         blankText: 'Planificacion',
@@ -813,7 +813,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 {
                     config: {
                         name: 'id_lugar_pais',
-                        fieldLabel: 'Pais',
+                        fieldLabel: 'País',
                         allowBlank: false,
                         emptyText: 'Elija una opción...',
                         store: new Ext.data.JsonStore({
@@ -996,7 +996,7 @@ header("content-type: text/javascript; charset=UTF-8");
 	            {
 	                    config: {
 	                           name: 'evaluacion',
-	                           fieldLabel: 'Evaluacion',
+	                           fieldLabel: 'Evaluación',
 	                           allowBlank: false,
 	                           emptyText: 'Elija una opción...',
 	                           store: new Ext.data.ArrayStore({
@@ -1020,14 +1020,11 @@ header("content-type: text/javascript; charset=UTF-8");
 	                           anchor: '80%',
 	                           gwidth: 150,
 	                           minChars: 2,
-	                           /*renderer : function(value, p, record) {
-	                                  return "";
-	                           }*/
-	                           /*,listeners: {
+	                           listeners: {
 								   'afterrender': function(combo){			  
-		    							combo.setValue('NO');       
+		    							combo.setValue('No');       
 								  	}
-								}*/
+								}
 	                    },
 	                    type: 'ComboBox',
 	                    id_grupo: 0,
@@ -1039,7 +1036,7 @@ header("content-type: text/javascript; charset=UTF-8");
 	            {
 	                    config: {
 	                           name: 'certificacion',
-	                           fieldLabel: 'Certificacion',
+	                           fieldLabel: 'Certificación',
 	                           allowBlank: false,
 	                           emptyText: 'Elija una opción...',
 	                           store: new Ext.data.ArrayStore({
@@ -1053,7 +1050,7 @@ header("content-type: text/javascript; charset=UTF-8");
 	                           displayField: 'certificacion',
 	                           gdisplayField: 'certificacion',
 	                           hiddenName: 'certificacion',
-	                           //forceSelection: true,
+	                           forceSelection: true,
 	                           typeAhead: false,
 	                           triggerAction: 'all',
 	                           lazyRender: true,
@@ -1063,18 +1060,55 @@ header("content-type: text/javascript; charset=UTF-8");
 	                           anchor: '80%',
 	                           gwidth: 150,
 	                           minChars: 2,
-	                           renderer : function(value, p, record) {
-	                                  return "";
-	                           }
-	                           ,listeners: {
+	                           listeners: {
 								   'afterrender': function(combo){			  
-		    							combo.setValue('NO');       
+		    							combo.setValue('No');       
 								  	}
-								}
+							  }
 	                    },
 	                    type: 'ComboBox',
 	                    id_grupo: 0,
 	                    filters: {pfiltro: 'scu.certificacion',type: 'string'},
+	                    grid: true,
+	                    form: true
+	                    //,egrid:true,
+	            },
+	            {
+	                    config: {
+	                           name: 'comite_etica',
+	                           fieldLabel: 'Comité de ética',
+	                           allowBlank: false,
+	                           emptyText: 'Elija una opción...',
+	                           store: new Ext.data.ArrayStore({
+			                        id: 0,
+			                        fields: [
+			                            'comite_etica'
+			                        ],
+			                        data: [['Si'], ['No']]
+	                           }),
+	                           valueField: 'comite_etica',
+	                           displayField: 'comite_etica',
+	                           gdisplayField: 'comite_etica',
+	                           hiddenName: 'comite_etica',
+	                           forceSelection: true,
+	                           typeAhead: false,
+	                           triggerAction: 'all',
+	                           lazyRender: true,
+	                           mode: 'local',
+	                           pageSize: 15,
+	                           queryDelay: 1000,
+	                           anchor: '80%',
+	                           gwidth: 150,
+	                           minChars: 2,
+	                           listeners: {
+								   'afterrender': function(combo){			  
+		    							combo.setValue('No');       
+								  	}
+							  }
+	                    },
+	                    type: 'ComboBox',
+	                    id_grupo: 0,
+	                    filters: {pfiltro: 'scu.comite_etica',type: 'string'},
 	                    grid: true,
 	                    form: true
 	                    //,egrid:true,
@@ -1239,6 +1273,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'id_funcionarios', type: 'string'},
                 {name: 'funcionarios', type: 'string'},
                 {name: 'peso', type: 'numeric'},
+                {name: 'comite_etica', type: 'string'},
             ],
             sortInfo: {
                 field: 'id_curso',
@@ -1261,6 +1296,9 @@ header("content-type: text/javascript; charset=UTF-8");
 			        if(this.getValidComponente(0)){
 			        	this.getValidComponente(0).focus(false,100);
 			        }
+			        this.Cmp.certificacion.setValue('No');
+			        this.Cmp.evaluacion.setValue('No');
+			        this.Cmp.comite_etica.setValue('No');
 		       	}
 
 		    },

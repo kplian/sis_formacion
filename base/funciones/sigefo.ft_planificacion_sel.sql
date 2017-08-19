@@ -93,7 +93,8 @@ where pp.id_planificacion=sigefop.id_planificacion)::varchar as desc_proveedor,
 									sigefop.id_proveedor::INTEGER,
 
 sigefop.id_gerencia::INTEGER AS id_uo,
-(SELECT tu.nombre_unidad FROM sigefo.tplanificacion p  join orga.tuo tu ON p.id_gerencia=tu.id_uo where sigefop.id_gerencia=tu.id_uo and p.id_planificacion=sigefop.id_planificacion	)::VARCHAR as desc_uo
+(SELECT tu.nombre_unidad FROM sigefo.tplanificacion p  join orga.tuo tu ON p.id_gerencia=tu.id_uo where sigefop.id_gerencia=tu.id_uo and p.id_planificacion=sigefop.id_planificacion	)::VARCHAR as desc_uo,
+sigefop.aprobado::boolean
 
  
 						from sigefo.tplanificacion sigefop

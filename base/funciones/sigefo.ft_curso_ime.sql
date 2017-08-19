@@ -101,7 +101,8 @@ BEGIN
         fecha_mod,
         evaluacion,
         certificacion,
-        id_planificacion
+        id_planificacion,
+        comite_etica
       ) VALUES (
         v_parametros.id_gestion,
         v_parametros.id_lugar,
@@ -127,7 +128,8 @@ BEGIN
         NULL,
         v_parametros.evaluacion,
         v_parametros.certificacion,
-        v_parametros.id_planificacion::INTEGER
+        v_parametros.id_planificacion::INTEGER,
+        v_parametros.comite_etica
       )
       RETURNING id_curso
         INTO v_id_curso;
@@ -373,8 +375,9 @@ BEGIN
           usuario_ai        = v_parametros._nombre_usuario_ai,
           evaluacion        = v_parametros.evaluacion,
           certificacion     = v_parametros.certificacion,
-          id_planificacion = v_parametros.id_planificacion::INTEGER
-        WHERE id_curso = v_parametros.id_curso;
+          id_planificacion  = v_parametros.id_planificacion::INTEGER,
+          comite_etica      = v_parametros.comite_etica
+          WHERE id_curso = v_parametros.id_curso;
 
         --Editar curso competencia
         DELETE FROM sigefo.tcurso_competencia cc
