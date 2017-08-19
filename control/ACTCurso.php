@@ -168,28 +168,54 @@ class ACTCurso extends ACTbase{
 	function listarPreguntas(){
 		$this->objParam->defecto('ordenacion','pregunta');
 
-       /*if ($this->objParam->getParametro('id_gestion')) {
-            //$this->objParam->addFiltro("scu.id_gestion  =". $this->objParam->getParametro('id_gestion'));
-        }
-		else{
-			//$this->objParam->addFiltro("scu.id_gestion  = 0");
-		}*/
 		
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);
-			$this->res = $this->objReporte->generarReporteListado('MODCurso','listarPreguntas');
+            if ($this->objParam->getParametro('tipo_cuestionario')=='Funcionario') {
+			    $this->res = $this->objReporte->generarReporteListado('MODCurso','listarPreguntas');
+			}
+			else{
+				$this->res = $this->objReporte->generarReporteListado('MODCurso','listarPreguntasProveedor');
+			}
 		} else{
 			$this->objFunc=$this->create('MODCurso');
+	        if ($this->objParam->getParametro('tipo')=='Funcionario') {
+	            $this->res=$this->objFunc->listarPreguntas($this->objParam);
+	        }
+			else{
+				$this->res=$this->objFunc->listarPreguntasProveedor($this->objParam);
+			}
 			
-			$this->res=$this->objFunc->listarPreguntas($this->objParam);
 		}
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
 	function insertarCuestionario(){
 		$this->objFunc=$this->create('MODCurso');	
+
+		$this->res=$this->objFunc->insertarCuestionario($this->objParam);			
+	
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
+	function listarPreguntasProveedor(){
+		$this->objParam->defecto('ordenacion','pregunta');
+
 		
-		$this->res=$this->objFunc->insertarCuestionario($this->objParam);		
+		$this->objParam->defecto('dir_ordenacion','asc');
+		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
+			$this->objReporte = new Reporte($this->objParam,$this);
+			$this->res = $this->objReporte->generarReporteListado('MODCurso','listarPreguntasProveedor');
+		} else{
+			$this->objFunc=$this->create('MODCurso');
+			
+			$this->res=$this->objFunc->listarPreguntasProveedor($this->objParam);
+		}
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
+	function insertarCuestionarioProveedor(){
+		$this->objFunc=$this->create('MODCurso');	
+		
+		$this->res=$this->objFunc->insertarCuestionarioProveedor($this->objParam);		
 		/*if($this->objParam->insertar('id_curso')){
 			$this->res=$this->objFunc->insertarCurso($this->objParam);			
 		} else{			

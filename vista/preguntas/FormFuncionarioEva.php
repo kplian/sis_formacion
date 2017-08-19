@@ -11,7 +11,7 @@ header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
     var v_maestro=null;
-
+    var v_id_usuario=null;
     Phx.vista.FormFuncionarioEva  = Ext.extend(Phx.gridInterfaz, {
 
             constructor: function (config) {
@@ -26,10 +26,17 @@ header("content-type: text/javascript; charset=UTF-8");
 				this.grid.addListener('cellclick', this.oncellclick,this);
 				this.grid.addListener('afteredit', this.onAfterEdit, this);
 
-				
-				
+
+				if(v_maestro.data.verBotonGuardar=='Si'){
+					Ext.getCmp('b-save-' + this.idContenedor).show();   
+					v_id_usuario=Phx.CP.config_ini.id_usuario;
+				}
+				else{
+					Ext.getCmp('b-save-' + this.idContenedor).hide();   
+					v_id_usuario=v_maestro.data.id_usuario;
+				}
 				//this.grid.addListener('cellclick', this.selectNext,this);
-				this.store.baseParams = {id_gestion: v_maestro.data.id_gestion,tipo: v_maestro.data.tipo,id_curso: v_maestro.data.id_curso, id_usuario: Phx.CP.config_ini.id_usuario};//agregado para filtro y enviar parametro
+				this.store.baseParams = {id_gestion: v_maestro.data.id_gestion,tipo: v_maestro.data.tipo,id_curso: v_maestro.data.id_curso, id_usuario: v_id_usuario, id_proveedor: v_maestro.data.id_proveedor};//agregado para filtro y enviar parametro
 				this.load({params: {start: 0, limit: this.tam_pag}})
 				
 				this.iniciarEventos();    
@@ -40,6 +47,7 @@ header("content-type: text/javascript; charset=UTF-8");
 
             iniciarEventos: function(){
                 this.CargarEncabezado();	
+
             },
             getDatosKeyPres:function(){
             	return tipo_pregunta;
@@ -86,7 +94,15 @@ header("content-type: text/javascript; charset=UTF-8");
 		    	var encab=encab+'<div> <label for="name"><b>NOMBRE CURSO &nbsp;:</b></label> <label for="name">'+v_maestro.data.curso+'</label> </div>';
 		    	var encab=encab+'<div> <label for="name"><b>FECHA INICIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :<b> </label><label for="name">'+v_maestro.data.fecha_inicio+'</label> </div>';
 		    	var encab=encab+'<div> <label for="name"><b>FECHA FIN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+v_maestro.data.fecha_fin+'</label> </div>';
-		    	var encab=encab+'<div> <label for="name"><b>FUNCIONARIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+v_maestro.data.usuario+'</label> </div>  </div><br>';
+		    	
+		    	if(v_maestro.data.tipo=='Funcionario'){
+		    		var encab=encab+'<div> <label for="name"><b>FUNCIONARIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+v_maestro.data.usuario+'</label> </div>  </div><br>';
+		    	}
+		    	else{
+		    		var encab=encab+'<div> <label for="name"><b>PROVEEDOR &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+v_maestro.data.proveedor+'</label> </div>  </div><br>';
+		    	}
+		    	
+		    	
 		    	document.getElementById("encabezado").innerHTML = encab;
 		    	//alert(Phx.CP.config_ini.id_usuario);
 		    },
@@ -324,6 +340,24 @@ header("content-type: text/javascript; charset=UTF-8");
                     type: 'Field',
                     form: true
                 },
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
+                        name: 'id_proveedor'
+                    },
+                    type: 'Field',
+                    form: true
+                },
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
+                        name: 'tipo_cuestionario'
+                    },
+                    type: 'Field',
+                    form: true
+                },
 						
             ],
             tam_pag: 50,
@@ -344,13 +378,15 @@ header("content-type: text/javascript; charset=UTF-8");
 				{name:'id_usuario_reg', type: 'numeric'},	
 				{name:'id_curso', type: 'numeric'},
 				{name:'id_usuario', type: 'numeric'},
+				{name:'id_proveedor', type: 'numeric'},
+				{name:'tipo_cuestionario', type: 'varchar'},
             ],
             sortInfo: {
                 field: 'id_temporal',
                 direction: 'ASC'
             },
 			bdel:false,
-			bsave:true, 
+		    bsave:true, 
 			bedit:false, 
 			bnew:false,
 	        onButtonNew: function() {

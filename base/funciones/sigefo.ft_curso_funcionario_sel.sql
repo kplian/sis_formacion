@@ -60,7 +60,14 @@ BEGIN
 						usu1.cuenta as usr_reg,
 						usu2.cuenta as usr_mod,
                         PERSON.nombre_completo2 AS desc_person,
-                        FUNCIO.codigo
+                        FUNCIO.codigo,
+                        (select usu11.id_usuario
+                        from sigefo.tcurso_funcionario cff  
+                        join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
+                        join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
+                        join segu.vpersona pp on pp.id_persona=ff.id_persona 
+                        join segu.tusuario usu11 on usu11.id_persona = pp.id_persona where ff.id_funcionario=cufu.id_funcionario limit 1)::integer as id_usuario
+                        
 						from sigefo.tcurso_funcionario cufu
 						inner join segu.tusuario usu1 on usu1.id_usuario = cufu.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = cufu.id_usuario_mod

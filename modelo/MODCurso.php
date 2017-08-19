@@ -499,6 +499,8 @@ class MODCurso extends MODbase{
 		$this->setParametro('tipo', 'tipo', 'varchar');
 		$this->setParametro('id_curso', 'id_curso', 'int4');
 		$this->setParametro('id_usuario', 'id_usuario', 'int4');
+		$this->setParametro('id_proveedor', 'id_proveedor', 'int4');
+		$this->setParametro('tipo_cuestionario', 'tipo_cuestionario', 'varchar');
 		
 		//Definicion de la lista del resultado del query
 		$this->captura('id_temporal','int4');
@@ -510,6 +512,8 @@ class MODCurso extends MODbase{
 		$this->captura('id_usuario_reg','int4');
         $this->captura('id_curso','int4');
 		$this->captura('id_usuario','int4');
+		$this->captura('tipo_cuestionario','varchar');
+		//$this->captura('id_proveedor','int4');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -524,6 +528,9 @@ class MODCurso extends MODbase{
 		$this->tipo_procedimiento='IME';
 				
 
+        $this->setParametro('tipo_cuestionario', 'tipo_cuestionario', 'varchar');
+		$this->setParametro('id_proveedor', 'id_proveedor', 'int4');
+		
 		$this->setParametro('id_usuario', 'id_usuario', 'int4');
 		$this->setParametro('id_curso', 'id_curso', 'int4');
 		
@@ -541,6 +548,35 @@ class MODCurso extends MODbase{
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
 
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
+	function listarPreguntasProveedor(){
+		//Definicion de variables para ejecucion del procedimientp
+		$this->procedimiento='sigefo.ft_curso_sel';
+		$this->transaccion='CUEST_PROV_SEL';
+		$this->tipo_procedimiento='SEL';//tipo de transaccion
+		
+		
+		
+		$this->setParametro('tipo', 'tipo', 'varchar');
+		$this->setParametro('id_curso', 'id_curso', 'int4');
+		$this->setParametro('id_proveedor', 'id_proveedor', 'int4');
+		
+		//Definicion de la lista del resultado del query
+		$this->captura('id_temporal','int4');
+		$this->captura('id_pregunta','int4');
+		$this->captura('pregunta','varchar');
+		$this->captura('respuesta','varchar');
+		$this->captura('tipo','varchar');
+		$this->captura('nivel','varchar');
+		$this->captura('id_usuario_reg','int4');
+        $this->captura('id_curso','int4');
+		$this->captura('id_proveedor','int4');
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+		
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}

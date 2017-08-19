@@ -34,7 +34,7 @@ class MODCursoFuncionario extends MODbase{
 		$this->captura('usr_mod','varchar');
 		$this->captura('desc_person','text');
 		$this->captura('codigo','varchar');
-		
+		$this->captura('id_usuario','int4');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -92,6 +92,37 @@ class MODCursoFuncionario extends MODbase{
 		//Define los parametros para la funcion
 		$this->setParametro('id_curso_funcionario','id_curso_funcionario','int4');
 
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
+	function limpiarCuestionario(){
+		//Definicion de variables para ejecucion del procedimiento
+		$this->procedimiento='sigefo.ft_curso_funcionario_ime';
+		$this->transaccion='SIGEFO_CFU_ELI';
+		$this->tipo_procedimiento='IME';
+				
+		//Define los parametros para la funcion
+		$this->setParametro('id_curso','id_curso','int4');
+	    $this->setParametro('id_funcionario','id_funcionario','int4');
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
+	function limpiarCuestionarioProveedor(){
+		//Definicion de variables para ejecucion del procedimiento
+		$this->procedimiento='sigefo.ft_curso_funcionario_ime';
+		$this->transaccion='SIGEFO_CFUPROV_ELI';
+		$this->tipo_procedimiento='IME';
+				
+		//Define los parametros para la funcion
+		$this->setParametro('id_curso','id_curso','int4');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

@@ -10,6 +10,10 @@
 header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
+var v_curso='';
+var v_fechaInicio='';
+var v_fechaFin='';
+var v_id_gestion='';
 Phx.vista.CursoFuncionario=Ext.extend(Phx.gridInterfaz,{
  
 	constructor:function(config){
@@ -18,24 +22,115 @@ Phx.vista.CursoFuncionario=Ext.extend(Phx.gridInterfaz,{
 		Phx.vista.CursoFuncionario.superclass.constructor.call(this,config);
 		this.init();
 		//this.load({params:{start:0, limit:this.tam_pag}})
+		this.addButton('btnVerEvaluacionFuncionario', {
+            text: 'Ver evaluación',
+            iconCls: 'bchecklist',
+            disabled: false,
+            handler: this.VerEvaluacionFuncionario,
+            tooltip: '<b>Ver respuestas del funcionario</b>'
+        });	
+		this.addButton('btnLimpiarEvaluacionFuncionario', {
+            text: 'Limpiar evaluación funcionario',
+            iconCls: 'x-btn-text bcancelfile',
+            disabled: false,
+            handler: this.LimpiarEvaluacionFuncionario,
+            tooltip: '<b>Limpiar cuestionario del funcionario seleccionado</b>'
+        });	
 	},
 	
-     onReloadPage: function (m) {     
-           this.maestro = m;
-           var aa=this;
-           this.store.baseParams = {id_curso: this.maestro.id_curso};
-           this.load({params: {start: 0, limit: 50}})
+    onReloadPage: function (m) {     
+       this.maestro = m;
+       this.store.baseParams = {id_curso: this.maestro.id_curso};
+       this.load({params: {start: 0, limit: 50}})
+	   
+	   v_curso=this.maestro.nombre_curso;
+	   v_fechaInicio=this.maestro.fecha_inicio;
+	   v_fechaFin=this.maestro.fecha_fin;
+	   v_id_gestion=this.maestro.id_gestion;
+       //console.log("ver id del curso ", this.maestro.id_curso);
 
-          	console.log("ver id del curso ", this.maestro.id_curso);
+     },
+     VerEvaluacionFuncionario: function (record) {
+        this.verPreguntasFuncionario('new', this);     
+        //this.openForm('new');   
+        
+    },
+    LimpiarEvaluacionFuncionario: function(){
+    	var me = this; 	
+    	if(me.sm.selections.items.length==1){	
+	    		var id_curso=me.sm.selections.items[0].data.id_curso;
+	    		var id_funcionario=me.sm.selections.items[0].data.id_funcionario;
+	    		if(confirm('¿Está seguro de limpiar el cuestionario?')){
+		    			Phx.CP.loadingShow();
+		                Ext.Ajax.request({
+		                    url: '../../sis_formacion/control/CursoFuncionario/limpiarCuestionario',
+		                    params: {
+		                        'id_curso': id_curso,
+		                        'id_funcionario': id_funcionario
+		                    },
+		                    success: me.successSaveLimpiarCuestionario,
+		                    failure: me.conexionFailureAprobar,
+		                    timeout: me.timeout,
+		                    scope: me
+		                });
+		                Phx.CP.loadingHide();
+		    	}
+    	}
+    	else{
+    		   alert('Seleccione un funcionario para limpiar las respuestas del cuestionario');
+    	}
+    },
+    successSaveLimpiarCuestionario:function(){
+    	 Phx.CP.loadingHide();
+    	 Ext.MessageBox.alert('EXITO!!!', 'Se realizo con exito la operación');
+    },
+	verPreguntasFuncionario: function () {  	  	              	        	
+		var me = this; 	
+		console.log(me.sm.selections.items.length);	
+		if(me.sm.selections.items.length==1){				
+			Phx.CP.loadingShow();
+			
+			//me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/preguntas/FormProveedorEva.php',
+			me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/preguntas/FormFuncionarioEva.php',
+				'Cuestionario-Funcionario',
+				{
+					modal: true,
+					width: '70%',
+					frame: true,
+					border: true
+				}, 
+				{
+					data: 
+					{
+                		'id_curso': me.sm.selections.items[0].data.id_curso,
+                		'curso': v_curso,
+                		'fecha_inicio': v_fechaInicio,
+                		'fecha_fin': v_fechaFin,
+                		'id_gestion':v_id_gestion,
+                		'id_usuario': me.sm.selections.items[0].data.id_usuario,
+                		'usuario': me.sm.selections.items[0].data.desc_person,
+                		'id_proveedor': me.sm.selections.items[0].data.id_proveedor,
+                		'tipo':'Funcionario',
+                		'verBotonGuardar':'No'
+					}
+				},
+				this.idContenedor,
+				//'FormProveedorEva',
+				'FormFuncionarioEva',
+			);
+		}
+		else {
+			alert('Seleccione un funcionario para ver las respuestas del cuestionario');
+		}
 
-         },
-	   loadValoresIniciales: function () {
-	    	//detalle
-           Phx.vista.CursoFuncionario.superclass.loadValoresIniciales.call(this);
-            //
-           this.Cmp.id_curso.setValue(this.maestro.id_curso);
+	 }, 	
+     loadValoresIniciales: function () {
+    	//detalle
+       Phx.vista.CursoFuncionario.superclass.loadValoresIniciales.call(this);
+        //
+       this.Cmp.id_curso.setValue(this.maestro.id_curso);
 
-        },	
+    },	
 			
 	Atributos:[
 		{
@@ -44,6 +139,26 @@ Phx.vista.CursoFuncionario=Ext.extend(Phx.gridInterfaz,{
 					labelSeparator:'',
 					inputType:'hidden',
 					name: 'id_curso_funcionario'
+			},
+			type:'Field',
+			form:true 
+		},
+		{
+			//configuracion del componente
+			config:{
+					labelSeparator:'',
+					inputType:'hidden',
+					name: 'id_usuario'
+			},
+			type:'Field',
+			form:true 
+		},
+		{
+			//configuracion del componente
+			config:{
+					labelSeparator:'',
+					inputType:'hidden',
+					name: 'desc_person'
 			},
 			type:'Field',
 			form:true 
@@ -237,14 +352,18 @@ Phx.vista.CursoFuncionario=Ext.extend(Phx.gridInterfaz,{
 		{name:'usr_mod', type: 'string'},
 		{name:'desc_person', type: 'string'},
 		{name:'codigo', type: 'string'},
+		{name:'desc_person', type: 'string'},
+		{name:'id_usuario', type: 'string'},
+		
 	],
 	sortInfo:{
 		field: 'id_curso_funcionario',
 		direction: 'ASC'
 	},
-	bdel:true,
+	bdel:false,
 	bsave:false,
-	bedit:false
+	bedit:false,
+	bnew:false,
 	}
 )
 </script>

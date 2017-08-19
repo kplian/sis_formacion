@@ -274,3 +274,16 @@ CREATE TABLE sigefo.tcurso_funcionario_eval (
 ) 
 WITH (oids = false);
 /***********************************F-SCP-JUAN-SIGEFO-0-21/11/2017****************************************/
+
+/***********************************I-SCP-JUAN-SIGEFO-0-28/11/2017****************************************/
+
+CREATE TABLE sigefo.tcurso_proveedor_eval (
+  id_curso_proveedor_eval SERIAL NOT NULL,
+  id_curso INTEGER,
+  id_pregunta INTEGER,
+  cod_respuesta INTEGER,
+  respuesta_texto TEXT,
+  PRIMARY KEY(id_curso_proveedor_eval)
+) 
+WITH (oids = false);
+/***********************************F-SCP-JUAN-SIGEFO-0-28/11/2017****************************************/

@@ -82,8 +82,10 @@ header("content-type: text/javascript; charset=UTF-8");
 		                		'id_gestion':me.sm.selections.items[0].data.id_gestion,
 		                		'id_usuario': Phx.CP.config_ini.id_usuario,
 		                		'usuario': me.sm.selections.items[0].data.funcionario_eval,
+		                		'id_proveedor': me.sm.selections.items[0].data.id_proveedor,
 		                		//'tipo':'Proveedor'
-		                		'tipo':'Funcionario'
+		                		'tipo':'Funcionario',
+		                		'verBotonGuardar':'Si'
 							}
 						},
 						this.idContenedor,
@@ -189,6 +191,15 @@ header("content-type: text/javascript; charset=UTF-8");
                         labelSeparator: '',
                         inputType: 'hidden',
                         name: 'id_curso'
+                    },
+                    type: 'Field',
+                    form: true
+                },
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
+                        name: 'id_proveedor'
                     },
                     type: 'Field',
                     form: true
@@ -362,6 +373,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'fecha_fin', type: 'string'},
                 {name: 'funcionario_eval', type: 'string'},
                 {name: 'id_funcionario', type: 'numeric'},
+                {name: 'id_proveedor', type: 'numeric'},
                 
             ],
             sortInfo: {

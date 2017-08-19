@@ -609,7 +609,8 @@ BEGIN
 	   --Sentencia de la modificacion 
 
        -- RAISE NOTICE 'ver semaforo juan %',banderaAprobado;
-       -- RAISE EXCEPTION 'Error provocado por juan %', banderaAprobado;
+       --
+       --RAISE EXCEPTION 'Error provocado por juan %', v_parametros.id_planificacion;
        
         --Devuelve la respuesta
           v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Dato Probado por juan'); 
@@ -619,7 +620,7 @@ BEGIN
 from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
 where pco.id_planificacion=pl.id_planificacion)::varchar as id_competencias 
 FROM sigefo.tplanificacion pl 
-WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR ||'%'
+WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR||'%'
 ||(SELECT nombre_planificacion FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
 ||(SELECT contenido_basico FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
 ||(SELECT horas_previstas FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER LIMIT 1)::VARCHAR ||'%'
@@ -696,10 +697,12 @@ WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR ||'
 	ELSIF(p_transaccion='CUESTIO_INS')then
 					
         begin
-        --RAISE EXCEPTION 'VERIFICAR PARAMETROS  %', v_parametros.id_curso ||' id usuario '|| v_parametros.id_usuario;
+            --RAISE EXCEPTION 'VERIFICAR PARAMETROS  %', v_parametros.tipo_cuestionario;
         	--Sentencia de la insercion
+            
             v_id_pregunta_texto:=NULL;
             v_id_pregunta:=NULL;
+            
             if(v_parametros.tipo='Selección')then
                     if(v_parametros.respuesta='Muy bueno')then
                          v_id_pregunta:='1';
@@ -719,35 +722,57 @@ WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR ||'
               ELSE
               v_id_pregunta_texto:=v_parametros.respuesta;
             end if;
+            
+            if(v_parametros.tipo_cuestionario='Funcionario')then
+                    --Insertamos tipo funcionario
+                    IF(select count(id_curso) from sigefo.tcurso_funcionario_eval where id_curso = v_parametros.id_curso::INTEGER and id_funcionario=(select cff.id_funcionario from sigefo.tcurso_funcionario cff  
+                                                                                                                                                      join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
+                                                                                                                                                      join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
+                                                                                                                                                      join segu.vpersona pp on pp.id_persona=ff.id_persona 
+                                                                                                                                                      join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
+                                                                                                                                                      where usu11.id_usuario=v_parametros.id_usuario::INTEGER  and scuu.id_curso= v_parametros.id_curso::INTEGER) and id_pregunta=v_parametros.id_pregunta::INTEGER)then
+                              --por if no hacer nada
+                          ELSE
+                              insert into sigefo.tcurso_funcionario_eval(
+                              id_pregunta,
+                              cod_respuesta,
+                              id_funcionario,
+                              id_curso,
+                              respuesta_texto
+                              ) values(
+                              v_parametros.id_pregunta,
+                              v_id_pregunta::INTEGER,
+                              (select cff.id_funcionario from sigefo.tcurso_funcionario cff  
+                              join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
+                              join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
+                              join segu.vpersona pp on pp.id_persona=ff.id_persona 
+                              join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
+                              where usu11.id_usuario =v_parametros.id_usuario::INTEGER and scuu.id_curso=v_parametros.id_curso::INTEGER),
+                              v_parametros.id_curso,
+                              v_id_pregunta_texto::VARCHAR
+                              )RETURNING id_curso_funcionario_eval into v_id_cuestionario;
+                    END IF;
+            else
+                    --Insertamos tipo proveedor
+                    IF(select count(cpe.id_curso) from sigefo.tcurso_proveedor_eval cpe join sigefo.tcurso c on cpe.id_curso=c.id_curso where cpe.id_curso = v_parametros.id_curso::INTEGER and c.id_proveedor=v_parametros.id_proveedor::INTEGER and cpe.id_pregunta=v_parametros.id_pregunta::INTEGER)then
+                              --por if no hacer nada
+                          ELSE
+                              insert into sigefo.tcurso_proveedor_eval(
+                              id_pregunta,
+                              cod_respuesta,
+                              id_curso,
+                              respuesta_texto
+                              ) values(
+                              v_parametros.id_pregunta,
+                              v_id_pregunta::INTEGER,
+                              v_parametros.id_curso,
+                              v_id_pregunta_texto::VARCHAR
+                              )RETURNING id_curso_proveedor_eval into v_id_cuestionario;
+                    END IF;
+            
+            end if;
 
-            IF(select count(id_curso) from sigefo.tcurso_funcionario_eval where id_curso = v_parametros.id_curso::INTEGER and id_funcionario=(select cff.id_funcionario from sigefo.tcurso_funcionario cff  
-                                                                                                                                              join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
-                                                                                                                                              join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
-                                                                                                                                              join segu.vpersona pp on pp.id_persona=ff.id_persona 
-                                                                                                                                              join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
-                                                                                                                                              where usu11.id_usuario=v_parametros.id_usuario::INTEGER  and scuu.id_curso= v_parametros.id_curso::INTEGER) and id_pregunta=v_parametros.id_pregunta::INTEGER)then
-                      --por if no hacer nada
-                  ELSE
-                      insert into sigefo.tcurso_funcionario_eval(
-                      id_pregunta,
-                      cod_respuesta,
-                      id_funcionario,
-                      id_curso,
-                      respuesta_texto
-                      ) values(
-                      v_parametros.id_pregunta,
-                      v_id_pregunta::INTEGER,
-                      (select cff.id_funcionario from sigefo.tcurso_funcionario cff  
-                      join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
-                      join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
-                      join segu.vpersona pp on pp.id_persona=ff.id_persona 
-                      join segu.tusuario usu11 on usu11.id_persona = pp.id_persona
-                      where usu11.id_usuario =v_parametros.id_usuario::INTEGER and scuu.id_curso=v_parametros.id_curso::INTEGER),
-                      v_parametros.id_curso,
-                      v_id_pregunta_texto::VARCHAR
-                      )RETURNING id_curso_funcionario_eval into v_id_cuestionario;
-            END IF;
-			
+
 			--Definicion de la respuesta
 			v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Categoria almacenado(a) con exito (id_categoria'||v_id_cuestionario||')'); 
             v_resp = pxp.f_agrega_clave(v_resp,'id_categoria',v_id_cuestionario::varchar);

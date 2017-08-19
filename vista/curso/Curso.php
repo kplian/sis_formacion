@@ -34,9 +34,99 @@ header("content-type: text/javascript; charset=UTF-8");
 				this.init();
 				this.load({params: {start: 0, limit: this.tam_pag}})
 				
-				
+				this.addButton('btnEvaluarProveedor', {
+		            text: 'Cuestionario proveedor',
+		            iconCls: 'bchecklist',
+		            disabled: false,
+		            handler: this.EvaluarProveedor,
+		            tooltip: '<b>Este cuestionario esta habilitado unicamente para evaluar a proveedores</b>'
+		        });	
+				this.addButton('btnLimpiarEvaluacionProveedor', {
+		            text: 'Limpiar evaluación proveedor',
+		            iconCls: 'x-btn-text bcancelfile',
+		            disabled: false,
+		            handler: this.LimpiarEvaluacionProveedor,
+		            tooltip: '<b>Limpiar cuestionario del proveedor asociado al curso seleccionado</b>'
+		        });	
+		        
 				this.iniciarEventos();            
             },
+		    EvaluarProveedor: function (record) {
+		        this.GenerarPreguntas('new', this);     
+		        //this.openForm('new');   
+		    },
+		    LimpiarEvaluacionProveedor: function(){
+		    	var me = this; 	
+		    	if(me.sm.selections.items.length==1){	
+			    		var id_curso=me.sm.selections.items[0].data.id_curso;
+			    		if(confirm('¿Está seguro de limpiar el cuestionario?')){
+				    			Phx.CP.loadingShow();
+				                Ext.Ajax.request({
+				                    url: '../../sis_formacion/control/CursoFuncionario/limpiarCuestionarioProveedor',
+				                    params: {
+				                        'id_curso': id_curso,
+				                    },
+				                    success: me.successSaveLimpiarCuestionarioProveedor,
+				                    failure: me.conexionFailureAprobar,
+				                    timeout: me.timeout,
+				                    scope: me
+				                });
+				                Phx.CP.loadingHide();
+				    	}
+		    	}
+		    	else{
+		    		    alert('Seleccione un funcionario para limpiar las respuestas del cuestionario');
+		    	}
+		    },
+		    successSaveLimpiarCuestionarioProveedor:function(){
+		    	 Phx.CP.loadingHide();
+		    	 Ext.MessageBox.alert('EXITO!!!', 'Se realizo con exito la operación');
+		    },
+			GenerarPreguntas: function () {  	  	              	        	
+				var me = this; 	
+				console.log(me.sm.selections.items.length);	
+				if(me.sm.selections.items.length==1){	
+					if(me.sm.selections.items[0].data.desc_proveedor==''){
+						    alert('ALERTA!! El curso seleccionado no tiene un proveedor asociado para evaluar');
+					}
+					else{
+							Phx.CP.loadingShow();
+							me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/preguntas/FormFuncionarioEva.php',
+								'Cuestionario-Proveedor',
+								{
+									modal: true,
+									width: '60%',
+									frame: true,
+									border: true
+								}, 
+								{
+									data: 
+									{
+				                		'id_curso': me.sm.selections.items[0].data.id_curso,
+				                		'curso': me.sm.selections.items[0].data.nombre_curso,
+				                		'fecha_inicio': me.sm.selections.items[0].data.fecha_inicio,
+				                		'fecha_fin': me.sm.selections.items[0].data.fecha_fin,
+				                		'id_gestion':me.sm.selections.items[0].data.id_gestion,
+				                		'id_usuario': Phx.CP.config_ini.id_usuario,
+				                		'usuario': '',
+				                		'id_proveedor': me.sm.selections.items[0].data.id_proveedor,
+				                		'proveedor': me.sm.selections.items[0].data.desc_proveedor,
+				                		'id_proveedor': me.sm.selections.items[0].data.id_proveedor,
+				                		'tipo':'Proveedor',
+				                		'verBotonGuardar':'Si'
+									}
+								},
+								this.idContenedor,
+								'FormFuncionarioEva',
+							);
+					}
+					
+				}
+				else {
+					alert('Seleccione un curso para evaluar');
+				}
+
+			}, 	
             //
             cmbGestion: new Ext.form.ComboBox({
                 fieldLabel: 'Gestion',
@@ -695,9 +785,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         anchor: '80%',
                         gwidth: 100,
                         format: 'd/m/Y',
-                        renderer: function (value, p, record) {
-                            return value ? value.dateFormat('d/m/Y') : ''
-                        }
+
                     },
                     type: 'DateField',
                     filters: {pfiltro: 'cur.fecha_inicio', type: 'date'},
@@ -713,9 +801,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         anchor: '80%',
                         gwidth: 100,
                         format: 'd/m/Y',
-                        renderer: function (value, p, record) {
-                            return value ? value.dateFormat('d/m/Y') : ''
-                        }
+
                     },
                     type: 'DateField',
                     filters: {pfiltro: 'cur.fecha_fin', type: 'date'},
@@ -1129,11 +1215,11 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'nombre_curso', type: 'string'},
                 {name: 'expositor', type: 'string'},
                 {name: 'origen', type: 'string'},
-                {name: 'fecha_inicio', type: 'date', dateFormat: 'Y-m-d'},
+                {name: 'fecha_inicio',  type: 'string'},
                 {name: 'estado_reg', type: 'string'},
                 {name: 'objetivo', type: 'string'},
                 {name: 'contenido', type: 'string'},
-                {name: 'fecha_fin', type: 'date', dateFormat: 'Y-m-d'},
+                {name: 'fecha_fin',  type: 'string'},
                 {name: 'id_usuario_ai', type: 'numeric'},
                 {name: 'fecha_reg', type: 'date', dateFormat: 'Y-m-d H:i:s.u'},
                 {name: 'usuario_ai', type: 'string'},
@@ -1209,6 +1295,14 @@ header("content-type: text/javascript; charset=UTF-8");
 	              
            				                                             
             },
+         south: {
+                url: '../../../sis_formacion/vista/curso_funcionario/CursoFuncionario.php',
+                title: 'Funcionarios',
+                width: '50%',
+                height: '40%',
+                cls: 'CursoFuncionario',
+                collapsed: false
+            }
         }
     )
 </script>

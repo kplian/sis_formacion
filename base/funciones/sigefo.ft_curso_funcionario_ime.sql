@@ -138,6 +138,52 @@ BEGIN
             return v_resp;
 
 		end;
+	/*********************************    
+ 	#TRANSACCION:  'SIGEFO_CFU_ELI'
+ 	#DESCRIPCION:	Limpiar de registros del cuestionario segun curso y funcionario seleccionado
+ 	#AUTOR:		Juan	
+ 	#FECHA:		28-11-2017 16:26:09
+	***********************************/
+
+	elsif(p_transaccion='SIGEFO_CFU_ELI')then
+
+		begin
+			--Sentencia de la eliminacion
+            --RAISE EXCEPTION 'id_cu %',v_parametros.id_curso||' id_funcion '||v_parametros.id_funcionario;
+			delete from sigefo.tcurso_funcionario_eval
+            where id_curso=v_parametros.id_curso and id_funcionario=v_parametros.id_funcionario;
+               
+            --Definicion de la respuesta
+            v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Curso funcionario eliminado(a)'); 
+            v_resp = pxp.f_agrega_clave(v_resp,'id_curso_funcionario',v_parametros.id_curso::varchar);
+              
+            --Devuelve la respuesta
+            return v_resp;
+
+		end;
+	/*********************************    
+ 	#TRANSACCION:  'SIGEFO_CFUPROV_ELI'
+ 	#DESCRIPCION:	Limpiar de registros del cuestionario del proveedor 
+ 	#AUTOR:		Juan	
+ 	#FECHA:		28-11-2017 16:26:09
+	***********************************/
+
+	elsif(p_transaccion='SIGEFO_CFUPROV_ELI')then
+
+		begin
+			--Sentencia de la eliminacion
+            --RAISE EXCEPTION 'id_cu %',v_parametros.id_curso;
+			delete from sigefo.tcurso_proveedor_eval
+            where id_curso=v_parametros.id_curso;
+               
+            --Definicion de la respuesta
+            v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Curso funcionario eliminado(a)'); 
+            v_resp = pxp.f_agrega_clave(v_resp,'id_curso_funcionario',v_parametros.id_curso::varchar);
+              
+            --Devuelve la respuesta
+            return v_resp;
+
+		end;
          
 	else
      

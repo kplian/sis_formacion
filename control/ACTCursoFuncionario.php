@@ -37,10 +37,21 @@ class ACTCursoFuncionario extends ACTbase{
 	}
 						
 	function eliminarCursoFuncionario(){
-			$this->objFunc=$this->create('MODCursoFuncionario');	
+		$this->objFunc=$this->create('MODCursoFuncionario');	
 		$this->res=$this->objFunc->eliminarCursoFuncionario($this->objParam);
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
+	function limpiarCuestionario(){
+		$this->objFunc=$this->create('MODCursoFuncionario');	
+		$this->res=$this->objFunc->limpiarCuestionario($this->objParam);
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
+	function limpiarCuestionarioProveedor(){
+		$this->objFunc=$this->create('MODCursoFuncionario');	
+		$this->res=$this->objFunc->limpiarCuestionarioProveedor($this->objParam);
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	}
+
 			
 }
 
