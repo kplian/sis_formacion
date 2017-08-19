@@ -113,7 +113,7 @@ sigefop.aprobado::boolean
       RETURN v_consulta;
 
     END;
-
+ 
     /*********************************
      #TRANSACCION:  'SIGEFO_SIGEFOP_CONT'
      #DESCRIPCION:	Conteo de registros
