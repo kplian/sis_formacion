@@ -12,7 +12,7 @@ header("content-type: text/javascript; charset=UTF-8");
 <script>
 	var v_maestro = null;
     Phx.vista.Planificacion = Ext.extend(Phx.gridInterfaz, {
-
+ 
             constructor: function (config) {
                 this.maestro = config.maestro; 
                 this.initButtons = [this.cmbGestion];
