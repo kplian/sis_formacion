@@ -143,6 +143,7 @@ class MODCurso extends MODbase{
         $this->captura('cantidad_personas','int4');
 		$this->captura('funcionario_eval','varchar');
 		$this->captura('id_funcionario','int4');
+		$this->captura('usuario','varchar');
 		
 		//Ejecuta la instruccion
 		$this->armarConsulta();

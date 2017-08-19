@@ -61,6 +61,15 @@ header("content-type: text/javascript; charset=UTF-8");
 			GenerarPreguntas: function () {  	  	              	        	
 				var me = this; 	
 				console.log(me.sm.selections.items.length);	
+                var verBotonGuardarEnEvaluacion='';
+				//alert(me.sm.selections.items[0].data.usuario);
+				
+				if(me.sm.selections.items[0].data.usuario=='admin'){
+					verBotonGuardarEnEvaluacion='No';
+				}
+				else{
+					verBotonGuardarEnEvaluacion='Si';
+				}
 				if(me.sm.selections.items.length==1){				
 					Phx.CP.loadingShow();
 					//me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/preguntas/FormProveedorEva.php',
@@ -85,7 +94,7 @@ header("content-type: text/javascript; charset=UTF-8");
 		                		'id_proveedor': me.sm.selections.items[0].data.id_proveedor,
 		                		//'tipo':'Proveedor'
 		                		'tipo':'Funcionario',
-		                		'verBotonGuardar':'Si'
+		                		'verBotonGuardar':verBotonGuardarEnEvaluacion
 							}
 						},
 						this.idContenedor,
@@ -191,6 +200,15 @@ header("content-type: text/javascript; charset=UTF-8");
                         labelSeparator: '',
                         inputType: 'hidden',
                         name: 'id_curso'
+                    },
+                    type: 'Field',
+                    form: true
+                },
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
+                        name: 'usuario'
                     },
                     type: 'Field',
                     form: true
@@ -374,6 +392,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'funcionario_eval', type: 'string'},
                 {name: 'id_funcionario', type: 'numeric'},
                 {name: 'id_proveedor', type: 'numeric'},
+                {name: 'usuario', type: 'string'},
                 
             ],
             sortInfo: {

@@ -290,7 +290,8 @@ BEGIN
                           scu.peso::NUMERIC,
                           (SELECT count(cfuncio.id_funcionario) from sigefo.tcurso_funcionario cfuncio where cfuncio.id_curso=scu.id_curso)::INTEGER as cantidad_personas,
                           (SELECT p.nombre_completo2 from segu.tusuario usu1 join segu.vpersona p on p.id_persona=usu1.id_persona where usu1.id_usuario ='||v_parametros.id_usuario::INTEGER||')::VARCHAR as funcionario_eval,
-                          cf.id_funcionario
+                          cf.id_funcionario,
+                          (SELECT usu11.cuenta from segu.tusuario usu11 where usu11.id_usuario='||v_parametros.id_usuario||')::varchar AS usuario
                           FROM sigefo.tcurso scu
                           JOIN param.tgestion g ON g.id_gestion=scu.id_gestion         
                           JOIN sigefo.tcurso_funcionario cf on cf.id_curso=scu.id_curso 
