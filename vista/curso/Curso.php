@@ -643,7 +643,7 @@ header("content-type: text/javascript; charset=UTF-8");
 			                        fields: [
 			                            'cod_clasificacion'
 			                        ],
-			                        data: [['Formación'], ['Capacitación'], ['Entrenamiento'], ['Especialización']]
+			                        data: [['Formación'], ['Capacitación'], ['Entrenamiento'], ['Especialización'], ['Formación continua']]
 	                           }),
 	                           valueField: 'cod_clasificacion',
 	                           displayField: 'cod_clasificacion',
@@ -907,7 +907,7 @@ header("content-type: text/javascript; charset=UTF-8");
 			                        fields: [
 			                            'origen'
 			                        ],
-			                        data: [['Externo'], ['Interno'],['In Company']]
+			                        data: [['Externo'], ['Interno'],['In Company'],['Virtuales']]
 	                           }),
 	                           valueField: 'origen',
 	                           displayField: 'origen',
