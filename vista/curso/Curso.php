@@ -48,6 +48,17 @@ header("content-type: text/javascript; charset=UTF-8");
 		            handler: this.LimpiarEvaluacionProveedor,
 		            tooltip: '<b>Limpiar cuestionario del proveedor asociado al curso seleccionado</b>'
 		        });	
+		               //////////EGS-03/08/2018///////////// 
+		      this.addButton('btnenvioCorreo', {
+				text : 'Envio Correo',
+				iconCls : 'badjunto',
+				disabled : true,
+				//handler : this.envioCorreo,
+				handler : this.onEnvioCorreo,
+				tooltip : '<b>Envio Correo</b><br/>Envio Correo'
+			});
+			    //////////EGS-03/08/2018///////////// 
+		        
 		        
 				this.iniciarEventos();            
             },
@@ -256,7 +267,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 }, this);
                 
                 
-                this.Cmp.id_competencias.on('select', function (Combo, dato) {
+                /*this.Cmp.id_competencias.on('select', function (Combo, dato) {
 
 		                  var concatenarIduo=''; 
 		                  this.Cmp.id_funcionarios.reset();
@@ -277,7 +288,7 @@ header("content-type: text/javascript; charset=UTF-8");
 		                      
 		                    }, scope : this }); 
       	    		
-                }, this);
+                }, this);*/
                 
             },
 	       RespuestaPlanificacion: function (s,m){
@@ -296,7 +307,7 @@ header("content-type: text/javascript; charset=UTF-8");
 	          	//console.log("entro aaaa11 ",v_competencias.length);
 	          
 	          }
-	          console.log("entro aaaa11 ",v_competencias);
+	          console.log("entro aaaa11 ",respuesta_planificacion);
 	          
 			  v_nombre_planificacion=respuesta_planificacion[4];
 			  v_contenido_basico=respuesta_planificacion[5];
@@ -333,11 +344,12 @@ header("content-type: text/javascript; charset=UTF-8");
 		            Ext.apply(me.argumentSave, o.argument); 
 		            
 	            	var a = me.Cmp.origen.lastSelectionText;
-	            	if(a=='Externo' || a=='Interno'){
+	            	/*if(a=='Externo' || a=='Interno'){
 	            		if(me.Cmp.id_proveedor.lastSelectionText === undefined || me.Cmp.id_proveedor.lastSelectionText === ''){
 	            			alert("Seleccione algun proveedor");
 		            		Phx.CP.loadingHide();
-	            		}else{
+	            		}
+	            		else{
 	            			Ext.Ajax.request({
 								url: '../../sis_formacion/control/Curso/insertarCurso',
 								params: me.getValForm,
@@ -347,7 +359,8 @@ header("content-type: text/javascript; charset=UTF-8");
 								timeout: me.timeout,
 								scope: me
 							});	
-	            		}	
+	            		}
+	            			
 	            	}else{
 	            		Ext.Ajax.request({
 							url: '../../sis_formacion/control/Curso/insertarCurso',
@@ -358,7 +371,16 @@ header("content-type: text/javascript; charset=UTF-8");
 							timeout: me.timeout,
 							scope: me
 						});
-	            	}		
+	            	}*/
+                   Ext.Ajax.request({
+						url: '../../sis_formacion/control/Curso/insertarCurso',
+						params: me.getValForm,
+						success: me.successSave,
+						argument: me.argumentSave,
+						failure: me.conexionFailure,
+						timeout: me.timeout,
+						scope: me
+					});	
         		}					
 			},
 			//
@@ -506,7 +528,8 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 500
                     },
                     type: 'TextField',
-                    filters: {pfiltro: 'cur.nombre_curso', type: 'string'},
+                    bottom_filter: true,
+                    filters: {pfiltro: 'nombre_curso', type: 'string'},
                     id_grupo: 1,
                     grid: true,
                     form: true
@@ -688,26 +711,29 @@ header("content-type: text/javascript; charset=UTF-8");
                 {
                     config: {
                         name: 'id_competencias',
-                        fieldLabel: 'Competencias',
+                        fieldLabel: 'Competencia ',
                         allowBlank: false,
                         emptyText: 'Competencias...',
                         blankText: 'Debe seleccionar una competencia',
                         store: new Ext.data.JsonStore({
                             url: '../../sis_formacion/control/Competencia/listarCompetenciaCombo',
+                            //id: 'id_competencia_nivel',
                             id: 'id_competencia',
                             root: 'datos',
                             sortInfo: {
                                 field: 'desc_competencia',
+                                //field: 'competencia_nivel',
                                 direction: 'ASC'
                             },
                             totalProperty: 'total',
                             fields: ['id_competencia', 'competencia', 'tipo','cod_competencia','id_uo','desc_competencia'],
                             remoteSort: true,
-                            baseParams: {par_filtro: 'c.competencia'}
+                            baseParams: {par_filtro: 'competencia'}
                         }),
                         valueField: 'id_competencia',
                         displayField: 'desc_competencia',
-                        tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{competencia} </p> </div> </tpl>',
+                        //tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{competencia} </p> </div> </tpl>',
+                        tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{desc_competencia} </p> </div> </tpl>',
                         gdisplayField: 'desc_competencia',
                         hiddenName: 'id_competencias',
                         forceSelection: true,
@@ -715,7 +741,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         triggerAction: 'all',
                         lazyRender: true,
                         mode: 'remote',
-                        pageSize: 15,
+                        pageSize: 300,
                         queryDelay: 1000,
                         anchor: '80%',
                         gwidth: 150,
@@ -761,7 +787,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         triggerAction: 'all',
                         lazyRender: true,
                         mode: 'remote',
-                        pageSize: 15,
+                        pageSize: 100,
                         queryDelay: 1000,
                         anchor: '80%',
                         gwidth: 150,
@@ -1225,7 +1251,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     form: false
                 }
             ],
-            tam_pag: 50,
+            tam_pag: 300,
             argumentSave: {},
             timeout: Phx.CP.config_ini.timeout,
     		conexionFailure: Phx.CP.conexionFailure,
@@ -1274,6 +1300,8 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'funcionarios', type: 'string'},
                 {name: 'peso', type: 'numeric'},
                 {name: 'comite_etica', type: 'string'},
+                
+
             ],
             sortInfo: {
                 field: 'id_curso',
@@ -1333,6 +1361,74 @@ header("content-type: text/javascript; charset=UTF-8");
 	              
            				                                             
             },
+            
+               ////////////////EGS-I-07/08/2018///////////////
+          
+			      onEnvioCorreo: function () {
+	
+	                var filas = this.sm.getSelections();
+	                var data = [], aux = {};
+	                //arma una matriz de los identificadores de registros que se van a eliminar
+	                this.agregarArgsExtraSubmit();
+	                var rr = {};
+	                for (var i = 0; i < this.sm.getCount(); i++) {
+	                    aux = {};
+	                    aux[this.id_store] = filas[i].data[this.id_store];
+	                    aux.id_curso = filas[i].data.id_curso;
+	                    data.push(aux);
+	                }
+	     			var rec = {maestro: this.sm.getSelected().data, id_curso: Ext.util.JSON.encode(data)}
+	                 this.onSubmitC(rec);
+	                console.log("ver ooo ",rec);
+
+	            },
+	            onSubmitC: function(rec) {	
+					var data = rec;
+					var usuario_envio=Phx.CP.config_ini.id_usuario;
+					if (data) {
+	
+						Phx.CP.loadingShow();
+						Ext.Ajax.request({
+							url : '../../sis_formacion/control/Curso/envioCorreo',
+							params : {
+								'id_curso' : data.id_curso,
+								'usuario_envio':usuario_envio
+							},
+							success : this.successEnvioCorreo,
+							failure: this.conexionFailureEnvioCorreo,
+						    timeout: this.timeout,
+						   scope: this
+						})
+					}
+	        							
+				},
+				  
+      			
+				successEnvioCorreo : function(){
+										
+									 Ext.Msg.alert('mensaje', 'Correos Enviados');
+									 Phx.CP.loadingHide();//para ocultar el loading al cargar el sucess
+								},
+								
+			
+				preparaMenu: function(n) {
+			
+					var data = this.getSelectedData();
+					var tb = this.tbar;
+					Phx.vista.Curso.superclass.preparaMenu.call(this, n);
+			        //boton de recibo
+			        this.getBoton('btnenvioCorreo').enable();
+			   		return tb
+				},
+			
+					
+				liberaMenu: function() {
+					var tb = Phx.vista.Curso.superclass.liberaMenu.call(this);
+			            this.getBoton('btnenvioCorreo').disable(); 
+					return tb
+				},
+	////////////////EGS-F-07/08/2018///////////////////
+		
          south: {
                 url: '../../../sis_formacion/vista/curso_funcionario/CursoFuncionario.php',
                 title: 'Funcionarios',

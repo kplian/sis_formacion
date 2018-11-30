@@ -29,13 +29,16 @@ header("content-type: text/javascript; charset=UTF-8");
 
 				if(v_maestro.data.verBotonGuardar=='Si'){
 					Ext.getCmp('b-save-' + this.idContenedor).show();   
-					v_id_usuario=Phx.CP.config_ini.id_usuario;
+					// ultimos cambios v_id_usuario=Phx.CP.config_ini.id_usuario;
+					v_id_usuario=v_maestro.data.id_usuario;
 				}
 				else{
 					Ext.getCmp('b-save-' + this.idContenedor).hide();   
 					v_id_usuario=v_maestro.data.id_usuario;
 				}
+				
 				//this.grid.addListener('cellclick', this.selectNext,this);
+
 				this.store.baseParams = {id_gestion: v_maestro.data.id_gestion,tipo: v_maestro.data.tipo,id_curso: v_maestro.data.id_curso, id_usuario: v_id_usuario, id_proveedor: v_maestro.data.id_proveedor};//agregado para filtro y enviar parametro
 				this.load({params: {start: 0, limit: this.tam_pag}})
 				

@@ -51,7 +51,9 @@ BEGIN
       --Sentencia de la consulta
 
                         
-           v_consulta:='SELECT c.id_competencia,c.competencia,c.tipo,c.competencia::varchar as desc_competencia,c.id_competencia::integer as cod_competencia  FROM sigefo.tcompetencia c
+           v_consulta:='SELECT  cn.id_competencia_nivel as id_competencia,c.competencia,c.tipo,(c.competencia||'' -> ''||cn.nivel)::VARCHAR as desc_competencia,c.id_competencia::integer as cod_competencia
+                        from sigefo.tcompetencia c
+                        join sigefo.tcompetencia_nivel cn on cn.id_competencia=c.id_competencia
 				        where  ';
 
       --Definicion de la respuesta
@@ -215,6 +217,7 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
       BEGIN
         --Sentencia de la consulta de conteo de registros
         v_consulta:='SELECT count(c.id_competencia) FROM sigefo.tcompetencia c
+                     join sigefo.tcompetencia_nivel cn on cn.id_competencia=c.id_competencia
 					    where ';
 
         --Definicion de la respuesta
@@ -250,7 +253,8 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
 						sigefoco.fecha_mod,
 						usu1.cuenta as usr_reg,
 						usu2.cuenta as usr_mod,
-						sigefoco.id_competencia as cod_competencia
+						sigefoco.id_competencia as cod_competencia,
+                        sigefoco.descripcion
 						from sigefo.tcompetencia sigefoco
 						inner join segu.tusuario usu1 on usu1.id_usuario = sigefoco.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod

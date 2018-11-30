@@ -33,7 +33,7 @@ class MODCurso extends MODbase{
 		$this->captura('cod_tipo','varchar');
 		$this->captura('cod_prioridad','varchar');
 		
-		$this->captura('horas','int4');
+		$this->captura('horas','numeric');
 		$this->captura('nombre_curso','varchar');
 		$this->captura('cod_clasificacion','varchar');
 		$this->captura('expositor','varchar');
@@ -102,7 +102,7 @@ class MODCurso extends MODbase{
 		$this->captura('cod_tipo','varchar');
 		$this->captura('cod_prioridad','varchar');
 		
-		$this->captura('horas','int4');
+		$this->captura('horas','numeric');
 		$this->captura('nombre_curso','varchar');
 		$this->captura('cod_clasificacion','varchar');
 		$this->captura('expositor','varchar');
@@ -145,6 +145,10 @@ class MODCurso extends MODbase{
 		$this->captura('id_funcionario','int4');
 		$this->captura('usuario','varchar');
 		
+		$this->captura('id_usuario','int4');
+		$this->captura('funcionario','varchar');
+		$this->captura('id_curso_funcionario','int4');
+		
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -174,7 +178,7 @@ class MODCurso extends MODbase{
 		$this->setParametro('cod_tipo','cod_tipo','varchar');
 		$this->setParametro('cod_prioridad','cod_prioridad','varchar');
 		
-		$this->setParametro('horas','horas','int4');
+		$this->setParametro('horas','horas','numeric');
 		$this->setParametro('nombre_curso','nombre_curso','varchar');
 		$this->setParametro('cod_clasificacion','cod_clasificacion','varchar');
 		$this->setParametro('expositor','expositor','varchar');
@@ -218,7 +222,7 @@ class MODCurso extends MODbase{
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('cod_tipo','cod_tipo','varchar');
 		$this->setParametro('cod_prioridad','cod_prioridad','varchar');
-		$this->setParametro('horas','horas','int4');
+		$this->setParametro('horas','horas','numeric');
 		$this->setParametro('nombre_curso','nombre_curso','varchar');
 		$this->setParametro('cod_clasificacion','cod_clasificacion','varchar');
 		$this->setParametro('expositor','expositor','varchar');
@@ -582,6 +586,44 @@ class MODCurso extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
+	////////////EGS- 08/08/2018/////////////////
+	function envioCorreo(){
+		//Definicion de variables para ejecucion del procedimientp
+		$this->procedimiento='sigefo.ft_enviocorreo_sel';
+		$this->transaccion='SIGEFO_ENCO_SEL';
+		$this->tipo_procedimiento='SEL';//tipo de transaccion
+		$this->setCount(false); 
+		
+		//$this->setParametro('id_curso', 'id_curso', 'int4');
+		$this->setParametro('id_curso','id_curso','json_text');
+		$this->setParametro('usuario_envio','usuario_envio','varchar');
+		
+		//var_dump($this->objParam);
+		//Definicion de la lista del resultado del query
+		
+		$this->captura('id_curso_funcionario','int4');
+		$this->captura('id_curso','int4');
+		$this->captura('id_funcionario','int4');
+		$this->captura('estado_reg','varchar');
+		$this->captura('fecha_reg','timestamp');
+		$this->captura('usuario_ai','varchar');
+		$this->captura('id_usuario_reg','int4');
+		$this->captura('id_usuario_ai','int4');
+		$this->captura('fecha_mod','timestamp');
+		$this->captura('id_usuario_mod','int4');
+		$this->captura('usr_reg','varchar');
+		$this->captura('usr_mod','varchar');
+		$this->captura('desc_person','text');
+		$this->captura('codigo','varchar');
+		$this->captura('id_usuario','int4');
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+		
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
+	////////////EGS-08/08/2018/////////////////
 	
 }
 ?>

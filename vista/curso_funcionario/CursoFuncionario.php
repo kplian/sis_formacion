@@ -5,7 +5,9 @@
 *@author  (admin)
 *@date 26-01-2017 16:26:09
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
-*/
+	issue			fecha				autor					descripcion
+ * #1				01/11/2018			EGS						se aumento campos para saber si o no se respondio el cuestionario de evaluacion del curso segun el curso y funcionario especificado
+ * */
 
 header("content-type: text/javascript; charset=UTF-8");
 ?>
@@ -218,11 +220,29 @@ Phx.vista.CursoFuncionario=Ext.extend(Phx.gridInterfaz,{
 			},
 			//cambair el tipo de combo
 			type: 'AwesomeCombo',
+			//bottom_filter: true,
 			id_grupo: 0,
-			filters: {pfiltro: 'PERSON.desc_funcionario1',type: 'string'},
+			filters: {pfiltro: 'PERSON.desc_person',type: 'string'},
 			grid: true,
 			form: true
 		},
+		//#1				01/11/2018			EGS	
+		{
+			config:{
+				name: 'evaluo',
+				fieldLabel: 'Respondio ',
+				allowBlank: true,
+				anchor: '80%',
+				gwidth: 100,
+				maxLength:4
+			},
+				type:'Field',
+				filters:{pfiltro:'.cuenta',type:'string'},
+				id_grupo:1,
+				grid:true,
+				form:false
+		},
+		//#1				01/11/2018			EGS	
 		{
 			config:{
 				name: 'estado_reg',
@@ -329,7 +349,24 @@ Phx.vista.CursoFuncionario=Ext.extend(Phx.gridInterfaz,{
 				id_grupo:1,
 				grid:true,
 				form:false
-		}
+		},
+		//#1				01/11/2018			EGS	
+		{
+			config:{
+				name: 'nro_respuesta',
+				fieldLabel: 'Respuestas',
+				allowBlank: true,
+				anchor: '80%',
+				gwidth: 100,
+				maxLength:4
+			},
+				type:'Field',
+				filters:{pfiltro:'.cuenta',type:'string'},
+				id_grupo:1,
+				grid:false,
+				form:false
+		},
+		//#1				01/11/2018			EGS	
 	],
 	tam_pag:50,	
 	title:'Curso funcionario',
@@ -352,8 +389,10 @@ Phx.vista.CursoFuncionario=Ext.extend(Phx.gridInterfaz,{
 		{name:'usr_mod', type: 'string'},
 		{name:'desc_person', type: 'string'},
 		{name:'codigo', type: 'string'},
-		{name:'desc_person', type: 'string'},
 		{name:'id_usuario', type: 'string'},
+		
+		{name:'nro_respuesta', type: 'numeric'},//#1				01/11/2018			EGS	
+		{name:'evaluo', type: 'string'},//#1				01/11/2018			EGS	
 		
 	],
 	sortInfo:{

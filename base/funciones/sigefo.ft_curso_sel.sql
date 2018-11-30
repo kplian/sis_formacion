@@ -47,6 +47,7 @@ DECLARE
   
   v_ids			varchar;
   v_total          NUMERIC;
+  v_bandera_sigeco_admin VARCHAR;
   
 BEGIN
 
@@ -59,6 +60,7 @@ BEGIN
    #AUTOR:		JUAN
    #FECHA:		22-01-2017 15:35:03
   ***********************************/
+
 
   	IF (p_transaccion = 'SIGEFO_SCU_SEL')
 		THEN
@@ -113,7 +115,7 @@ BEGIN
                           WHERE usu2.id_usuario =scu.id_usuario_mod )  :: VARCHAR  AS usr_mod,
               
           
-                          (SELECT array_to_string( array_agg( cc.id_competencia), '','' ) 
+                          /*(SELECT array_to_string( array_agg( cc.id_competencia), '','' ) 
                           FROM sigefo.tcurso_competencia cc 
                           JOIN sigefo.tcurso c ON c.id_curso=cc.id_curso 
                           WHERE cc.id_curso=scu.id_curso)::VARCHAR AS id_competencias,
@@ -122,6 +124,19 @@ BEGIN
                           FROM sigefo.tcurso_competencia cc 
                           JOIN sigefo.tcurso c ON c.id_curso=cc.id_curso 
                           JOIN sigefo.tcompetencia co ON co.id_competencia=cc.id_competencia
+                          WHERE cc.id_curso=scu.id_curso)::VARCHAR AS desc_competencia,*/
+                          
+                          (SELECT array_to_string( array_agg( cn.id_competencia_nivel), '','' ) 
+                          FROM sigefo.tcurso_competencia cc 
+                          JOIN sigefo.tcurso c ON c.id_curso=cc.id_curso 
+                          JOIN sigefo.tcompetencia_nivel cn on cn.id_competencia_nivel=cc.id_competencia_nivel
+                          WHERE cc.id_curso=scu.id_curso)::VARCHAR AS id_competencias,
+                                                                                                                                  
+                          (SELECT array_to_string( array_agg(  (co.competencia||'' -> ''||co.tipo||'' -> ''||cn.nivel)::VARCHAR  ), ''<br>'' ) 
+                          FROM sigefo.tcurso_competencia cc 
+                          JOIN sigefo.tcurso c ON c.id_curso=cc.id_curso 
+                          JOIN sigefo.tcompetencia co ON co.id_competencia=cc.id_competencia
+                          JOIN sigefo.tcompetencia_nivel cn on cn.id_competencia_nivel=cc.id_competencia_nivel
                           WHERE cc.id_curso=scu.id_curso)::VARCHAR AS desc_competencia,
 
 
@@ -169,7 +184,6 @@ BEGIN
 
               RETURN v_consulta;
           END;
-
     /*********************************
      #TRANSACCION:  'SIGEFO_SCU_CONT'
      #DESCRIPCION:	Conteo de registros
@@ -199,6 +213,23 @@ BEGIN
 		THEN
           BEGIN 
           --RAISE EXCEPTION 'Error provocado por juan %',v_parametros.id_usuario;
+          
+            IF((SELECT count(p.codigo) from segu.tusuario u
+              join segu.tusuario_rol ur on ur.id_usuario=u.id_usuario and ur.estado_reg='activo'
+              join segu.trol r on r.id_rol=ur.id_rol
+              join segu.trol_procedimiento_gui rpg on rpg.id_rol=r.id_rol
+              join segu.tprocedimiento_gui pg on pg.id_procedimiento_gui=rpg.id_procedimiento_gui
+              join segu.tprocedimiento p on p.id_procedimiento=pg.id_procedimiento
+              join segu.tgui g on g.id_gui= pg.id_gui
+              where u.id_usuario=v_parametros.id_usuario::INTEGER and r.rol='SIGECO - Admin')>0 )THEN
+                    
+                    v_bandera_sigeco_admin := ' 0 = 0 ';
+                     
+              ELSE
+
+                    v_bandera_sigeco_admin := '( usu1.id_usuario = '||v_parametros.id_usuario::INTEGER||' or cf.id_usuario_reg = '||v_parametros.id_usuario::INTEGER||' )';
+             
+             END IF;	
               v_consulta:='SELECT 
                           scu.id_curso,
                           scu.id_gestion,
@@ -290,26 +321,31 @@ BEGIN
                           where pl.id_curso=scu.id_curso)::varchar as unidad_organizacional,
                           scu.peso::NUMERIC,
                           (SELECT count(cfuncio.id_funcionario) from sigefo.tcurso_funcionario cfuncio where cfuncio.id_curso=scu.id_curso)::INTEGER as cantidad_personas,
-                          (SELECT p.nombre_completo2 from segu.tusuario usu1 join segu.vpersona p on p.id_persona=usu1.id_persona where usu1.id_usuario ='||v_parametros.id_usuario::INTEGER||')::VARCHAR as funcionario_eval,
+                          (SELECT p.nombre_completo2 from segu.tusuario usu11 join segu.vpersona p on p.id_persona=usu11.id_persona where usu11.id_usuario =usu1.id_usuario)::VARCHAR as funcionario_eval,
                           cf.id_funcionario,
-                          (SELECT usu11.cuenta from segu.tusuario usu11 where usu11.id_usuario='||v_parametros.id_usuario||')::varchar AS usuario
+                          (SELECT usu11.cuenta from segu.tusuario usu11 where usu11.id_usuario=usu1.id_usuario)::varchar AS usuario,
+                          usu1.id_usuario::INTEGER as id_usuario,
+                          (p.ap_paterno||'' ''||p.ap_materno||'', ''||p.nombre)::VARCHAR as funcionario,
+                          cf.id_curso_funcionario
                           FROM sigefo.tcurso scu
                           JOIN param.tgestion g ON g.id_gestion=scu.id_gestion         
                           JOIN sigefo.tcurso_funcionario cf on cf.id_curso=scu.id_curso 
                         
                           join orga.tfuncionario f on f.id_funcionario=cf.id_funcionario
                           join segu.vpersona p on p.id_persona=f.id_persona 
-                          join segu.tusuario usu1 on usu1.id_persona = p.id_persona 
+                          join segu.tusuario usu1 on usu1.id_persona = p.id_persona  and usu1.estado_reg=''activo''
      
-                          WHERE (usu1.id_usuario = '||v_parametros.id_usuario::INTEGER||' or cf.id_usuario_reg='||v_parametros.id_usuario::INTEGER||') and ';
+                          WHERE '||v_bandera_sigeco_admin||'
+                          and ';
                           
                 --raise NOTICE 'raise juan %',v_consulta;          
                 --raise exception 'error provocado %' ,v_consulta;          
                 v_consulta:=v_consulta || v_parametros.filtro;
                 v_consulta:=
-                v_consulta || ' order by ' || v_parametros.ordenacion || ' ' || v_parametros.dir_ordenacion || ' limit ' ||
+                v_consulta || ' order by   scu.nombre_curso  ' || v_parametros.dir_ordenacion || ' limit ' ||
                 v_parametros.cantidad || ' offset ' || v_parametros.puntero;
-
+                --RAISE NOTICE 'error provocado %',v_consulta;  
+                --RAISE EXCEPTION 'error provocado %',v_consulta;
               RETURN v_consulta;
           END;
 
@@ -323,11 +359,36 @@ BEGIN
 	ELSIF (p_transaccion = 'SIGEFO_CURCUEST_CONT')
     	THEN
       		BEGIN
-        		v_consulta:='select count(id_curso)
-					    from sigefo.tcurso scu
-					    inner join segu.tusuario usu1 on usu1.id_usuario = scu.id_usuario_reg
-						left join segu.tusuario usu2 on usu2.id_usuario = scu.id_usuario_mod
-					    where ';
+            
+            IF((SELECT count(p.codigo) from segu.tusuario u
+              join segu.tusuario_rol ur on ur.id_usuario=u.id_usuario and ur.estado_reg='activo'
+              join segu.trol r on r.id_rol=ur.id_rol
+              join segu.trol_procedimiento_gui rpg on rpg.id_rol=r.id_rol
+              join segu.tprocedimiento_gui pg on pg.id_procedimiento_gui=rpg.id_procedimiento_gui
+              join segu.tprocedimiento p on p.id_procedimiento=pg.id_procedimiento
+              join segu.tgui g on g.id_gui= pg.id_gui
+              where u.id_usuario=v_parametros.id_usuario::INTEGER and r.rol='SIGECO - Admin')>0 )THEN
+                    
+                    v_bandera_sigeco_admin := ' 0 = 0 ';
+                   
+              ELSE
+
+                    v_bandera_sigeco_admin := '( usu1.id_usuario = '||v_parametros.id_usuario::INTEGER||' or cf.id_usuario_reg = '||v_parametros.id_usuario::INTEGER||' )';
+             
+             END IF;
+            
+        		v_consulta:='select count(scu.id_curso)
+                          FROM sigefo.tcurso scu
+                          JOIN param.tgestion g ON g.id_gestion=scu.id_gestion         
+                          JOIN sigefo.tcurso_funcionario cf on cf.id_curso=scu.id_curso 
+                        
+                          join orga.tfuncionario f on f.id_funcionario=cf.id_funcionario
+                          join segu.vpersona p on p.id_persona=f.id_persona 
+                          join segu.tusuario usu1 on usu1.id_persona = p.id_persona  and usu1.estado_reg=''activo''
+     
+                          WHERE '||v_bandera_sigeco_admin||'
+                          and ';
+                          
                 v_consulta:=v_consulta || v_parametros.filtro;
                 RETURN v_consulta;
             END;
@@ -873,17 +934,17 @@ BEGIN
     	THEN
 			BEGIN
                
-        		v_consulta:=' SELECT 
+        		v_consulta:='SELECT 
+                            
                             f.id_funcionario::INTEGER,
                             f.codigo::VARCHAR,
                             p.nombre_completo2::VARCHAR AS desc_person,
                             p.ci::varchar
                             FROM orga.tcargo c
-                            JOIN orga.tuo tu on tu.id_uo=c.id_uo
-                            JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
-                            JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
-                            JOIN segu.vpersona p on p.id_persona=f.id_persona 
-                             JOIN sigefo.tcargo_competencia cc on cc.id_cargo=c.id_cargo and c.id_uo=tu.id_uo
+                             JOIN orga.tuo tu on tu.id_uo=c.id_uo
+                             JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
+                             JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
+                             JOIN segu.vpersona p on p.id_persona=f.id_persona 
                             WHERE tu.estado_reg=''activo'' and  c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin)
 							and';
 

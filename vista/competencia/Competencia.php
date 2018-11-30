@@ -50,7 +50,24 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 200
                     },
                     type: 'TextField',
+                    bottom_filter: true,
                     filters: {pfiltro: 'sigefoco.competencia', type: 'string'},
+                    id_grupo: 1,
+                    grid: true,
+                    form: true
+                },
+                {
+                    config: {
+                        name: 'descripcion',
+                        fieldLabel: 'Descripcion',
+                        allowBlank: true,
+                        anchor: '80%',
+                        gwidth: 100,
+                        maxLength: 2000
+                    },
+                    type: 'TextField',
+                    bottom_filter: true,
+                    filters: {pfiltro: 'sigefoco.descripcion', type: 'string'},
                     id_grupo: 1,
                     grid: true,
                     form: true
@@ -76,6 +93,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         valueField: 'codigo'
                     },
                     type: 'ComboRec',
+                    bottom_filter: true,
                     id_grupo: 0,
                     filters: {
                         pfiltro: 'sigefoco.tipo',
@@ -105,12 +123,21 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'usr_reg', type: 'string'},
                 {name: 'usr_mod', type: 'string'},
                 {name: 'cod_competencia', type: 'numeric'},
+                {name: 'descripcion', type: 'string'},
 
             ],
             sortInfo: {
                 field: 'id_competencia',
                 direction: 'ASC'
             },
+            tabeast: [
+                {                    
+                    url: '../../../sis_formacion/vista/competencia_nivel/CompetenciaNivel.php',
+                    title: 'Nivel',
+                    width: 500,
+                    cls: 'CompetenciaNivel'
+                }
+            ],
             bdel: true,
             bsave: false
         }

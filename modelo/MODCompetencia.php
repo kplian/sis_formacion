@@ -33,7 +33,7 @@ class MODCompetencia extends MODbase{
 		$this->captura('usr_reg','varchar');
 		$this->captura('usr_mod','varchar');
 		$this->captura('cod_competencia','int4');
-		
+		$this->captura('descripcion','varchar');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -100,7 +100,7 @@ class MODCompetencia extends MODbase{
 		$this->setParametro('tipo','tipo','varchar');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('competencia','competencia','varchar');
-
+        $this->setParametro('descripcion','descripcion','varchar');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -120,7 +120,7 @@ class MODCompetencia extends MODbase{
 		$this->setParametro('tipo','tipo','varchar');
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('competencia','competencia','varchar');
-
+        $this->setParametro('descripcion','descripcion','varchar');
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

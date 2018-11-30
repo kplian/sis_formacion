@@ -298,3 +298,14 @@ ALTER TABLE sigefo.tcurso
 ALTER TABLE sigefo.tplanificacion
   ADD COLUMN aprobado BOOLEAN; 
 /***********************************F-SCP-JUAN-SIGEFO-0-29/11/2017****************************************/
+
+
+/***********************************I-SCP-JUAN-SIGEFO-0-03/07/2018****************************************/
+--------------- SQL ---------------
+ALTER TABLE sigefo.tplanificacion_competencia
+  ADD COLUMN id_competencia_nivel INTEGER;
+
+--------------- SQL ---------------
+ALTER TABLE sigefo.tcurso_competencia
+  ADD COLUMN id_competencia_nivel INTEGER;
+/***********************************F-SCP-JUAN-SIGEFO-0-03/07/2018****************************************/

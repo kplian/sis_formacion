@@ -79,14 +79,18 @@ where pc.id_planificacion=sigefop.id_planificacion)::varchar as cod_criterio,
 from sigefo.tplanificacion_criterio pc join param.tcatalogo c on c.codigo = pc.cod_criterio
 where pc.id_planificacion=sigefop.id_planificacion)::varchar as desc_criterio,
 
-								(select      array_to_string( array_agg(co.competencia), ''<br>'' )
+								(select      array_to_string( array_agg(  (co.competencia||'' -> ''||co.tipo||'' -> ''||cn.nivel)::VARCHAR  ), ''<br>'' )
 from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
+JOIN sigefo.tcompetencia_nivel cn on cn.id_competencia_nivel=pco.id_competencia_nivel
 where pco.id_planificacion=sigefop.id_planificacion)::varchar as desc_competencia,
 
-									(select      array_to_string( array_agg(co.id_competencia), '','' )
+									(select      array_to_string( array_agg(cn.id_competencia_nivel), '','' )
 from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
+JOIN sigefo.tcompetencia_nivel cn on cn.id_competencia_nivel=pco.id_competencia_nivel
 where pco.id_planificacion=sigefop.id_planificacion)::varchar as id_competencias,
 
+                                                                            
+                          
 									(select prov.desc_proveedor 
 from sigefo.tplanificacion pp join param.vproveedor prov ON pp.id_proveedor=prov.id_proveedor
 where pp.id_planificacion=sigefop.id_planificacion)::varchar as desc_proveedor,

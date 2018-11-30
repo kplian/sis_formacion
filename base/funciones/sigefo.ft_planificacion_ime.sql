@@ -123,6 +123,7 @@ BEGIN
       END LOOP;
 
       -- Guardando las competencias asociadas a la planificacion
+      -- la variable va_id_competencias es el id_competencia_nivel 
       va_id_competencias := string_to_array(v_parametros.id_competencias, ',');
 
       FOREACH v_id_competencia IN ARRAY va_id_competencias
@@ -133,7 +134,8 @@ BEGIN
           estado_reg,
           id_usuario_ai,
           id_planificacion,
-          id_competencia
+          id_competencia,
+          id_competencia_nivel
         )
         VALUES (
           p_id_usuario,
@@ -141,6 +143,7 @@ BEGIN
           'activo',
           v_parametros._id_usuario_ai,
           v_id_planificacion,
+          (SELECT cn.id_competencia from sigefo.tcompetencia_nivel cn where cn.id_competencia_nivel=v_id_competencia :: INTEGER),
           v_id_competencia :: INTEGER
         );
 
@@ -227,13 +230,13 @@ BEGIN
       RETURN v_resp;
 
     END;
-
     /*********************************
      #TRANSACCION:  'SIGEFO_SIGEFOP_MOD'
      #DESCRIPCION:	Modificacion de registros
      #AUTOR:		JUAN
      #FECHA:		26-04-2017 20:37:24
     ***********************************/
+
 
   ELSIF (p_transaccion = 'SIGEFO_SIGEFOP_MOD')
     THEN
@@ -349,6 +352,7 @@ BEGIN
         WHERE pco.id_planificacion = v_parametros.id_planificacion;
 
         -- Insertanto
+        -- la variable va_id_competencias es el id_competencia_nivel 
         va_id_competencias := string_to_array(v_parametros.id_competencias, ',');
 
         FOREACH v_id_competencia IN ARRAY va_id_competencias
@@ -359,7 +363,8 @@ BEGIN
             estado_reg,
             id_usuario_ai,
             id_planificacion,
-            id_competencia
+            id_competencia,
+            id_competencia_nivel
           )
           VALUES (
             p_id_usuario,
@@ -367,6 +372,7 @@ BEGIN
             'activo',
             v_parametros._id_usuario_ai,
             v_parametros.id_planificacion,
+            (SELECT cn.id_competencia from sigefo.tcompetencia_nivel cn where cn.id_competencia_nivel=v_id_competencia :: INTEGER),
             v_id_competencia :: INTEGER
           );
 

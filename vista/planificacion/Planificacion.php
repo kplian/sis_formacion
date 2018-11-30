@@ -223,6 +223,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 150
                     },
                     type: 'TextField',
+                    bottom_filter: true,
                     filters: {pfiltro: 'sigefop.nombre_planificacion', type: 'string'},
                     id_grupo: 1,
                     grid: true,
@@ -238,6 +239,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 5000
                     },
                     type: 'TextArea',
+                    bottom_filter: true,
                     filters: {pfiltro: 'sigefop.contenido_basico', type: 'string'},
                     id_grupo: 1,
                     grid: true,
@@ -253,6 +255,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 5000
                     },
                     type: 'TextArea',
+                    bottom_filter: true,
                     filters: {pfiltro: 'sigefop.necesidad', type: 'string'},
                     id_grupo: 1,
                     grid: true,
@@ -268,6 +271,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 4
                     },
                     type: 'NumberField',
+                    bottom_filter: true,
                     filters: {pfiltro: 'sigefop.cantidad_personas', type: 'numeric'},
                     id_grupo: 1,
                     grid: true,
@@ -283,6 +287,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 4
                     },
                     type: 'NumberField',
+                    bottom_filter: true,
                     filters: {pfiltro: 'sigefop.horas_previstas', type: 'numeric'},
                     id_grupo: 1,
                     grid: true,
@@ -340,26 +345,29 @@ header("content-type: text/javascript; charset=UTF-8");
                 {
                     config: {
                         name: 'id_competencias',
-                        fieldLabel: 'Competencias',
+                        fieldLabel: 'Competencia',
                         allowBlank: false,
                         emptyText: 'Competencias...',
                         blankText: 'Debe seleccionar una competencia',
                         store: new Ext.data.JsonStore({
                             url: '../../sis_formacion/control/Competencia/listarCompetenciaCombo',
+                            //id: 'id_competencia_nivel',
                             id: 'id_competencia',
                             root: 'datos',
                             sortInfo: {
-                                field: 'competencia',
+                                field: 'desc_competencia',
+                                //field: 'competencia_nivel',
                                 direction: 'ASC'
                             },
                             totalProperty: 'total',
-                            fields: ['id_competencia', 'competencia', 'tipo'],
+                            fields: ['id_competencia', 'competencia', 'tipo','cod_competencia','id_uo','desc_competencia'],
                             remoteSort: true,
                             baseParams: {par_filtro: 'competencia'}
                         }),
                         valueField: 'id_competencia',
-                        displayField: 'competencia',
-                        tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{competencia} </p> </div> </tpl>',
+                        displayField: 'desc_competencia',
+                        //tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{competencia} </p> </div> </tpl>',
+                        tpl: '<tpl for=".">  <div class="x-combo-list-item" >  <div class="awesomecombo-item {checked}"> <b>{tipo} </b> </div> <p>{desc_competencia} </p> </div> </tpl>',
                         gdisplayField: 'desc_competencia',
                         hiddenName: 'id_competencias',
                         forceSelection: true,
@@ -367,19 +375,19 @@ header("content-type: text/javascript; charset=UTF-8");
                         triggerAction: 'all',
                         lazyRender: true,
                         mode: 'remote',
-                        pageSize: 15,
+                        pageSize: 300,
                         queryDelay: 1000,
                         anchor: '80%',
                         gwidth: 150,
                         minChars: 2,
                         enableMultiSelect: true,
-                        renderer: function (value, p, record) {
-                            return record.data['desc_competencia'];                   
-                        }
+                        /*renderer: function (value, p, record) {
+                            return String.format('{0}', (record.data['desc_competencia']) ? record.data['desc_competencia'] : '');                   
+                        }*/ 
                     },
                     type: 'AwesomeCombo',
                     id_grupo: 0,
-                    filters: {pfiltro: 'competencia', type: 'string'},
+                    filters: {pfiltro: 'c.competencia', type: 'string'},
                     grid: true,
                     form: true
                 },
@@ -561,7 +569,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     form: false
                 },
             ],
-            tam_pag: 50,
+            tam_pag: 300,
             title: 'Planificación',
             ActSave: '../../sis_formacion/control/Planificacion/insertarPlanificacion',
             ActDel: '../../sis_formacion/control/Planificacion/eliminarPlanificacion',

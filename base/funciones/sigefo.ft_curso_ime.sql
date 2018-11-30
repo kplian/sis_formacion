@@ -144,7 +144,8 @@ BEGIN
           estado_reg,
           id_usuario_ai,
           id_curso,
-          id_competencia
+          id_competencia,
+          id_competencia_nivel
         )
         VALUES (
           p_id_usuario,
@@ -152,6 +153,7 @@ BEGIN
           'activo',
           v_parametros._id_usuario_ai,	
           v_id_curso,
+          (SELECT cn.id_competencia from sigefo.tcompetencia_nivel cn where cn.id_competencia_nivel=v_id_competencia :: INTEGER),
           v_id_competencia :: INTEGER
         );
 
@@ -346,7 +348,6 @@ BEGIN
      #AUTOR:		admin
      #FECHA:		22-01-2017 15:35:03
     ***********************************/
-
   ELSIF (p_transaccion = 'SIGEFO_SCU_MOD')
     THEN
 
@@ -382,7 +383,7 @@ BEGIN
         --Editar curso competencia
         DELETE FROM sigefo.tcurso_competencia cc
         WHERE cc.id_curso = v_parametros.id_curso;
-        
+        -- la variable va_id_competencias es el id_competencia_nivel 
         va_id_competencias := string_to_array(v_parametros.id_competencias, ',');
         FOREACH v_id_competencia IN ARRAY va_id_competencias
         LOOP
@@ -392,7 +393,8 @@ BEGIN
             estado_reg,
             id_usuario_ai,
             id_curso,
-            id_competencia
+            id_competencia,
+            id_competencia_nivel
           )
           VALUES (
             p_id_usuario,
@@ -400,6 +402,7 @@ BEGIN
             'activo',
             v_parametros._id_usuario_ai,
             v_parametros.id_curso,
+            (SELECT cn.id_competencia from sigefo.tcompetencia_nivel cn where cn.id_competencia_nivel=v_id_competencia :: INTEGER),
             v_id_competencia :: INTEGER
           );                   
         END LOOP;
@@ -572,7 +575,7 @@ BEGIN
 		END;
         
         
-
+    
 	/*********************************    
  	#TRANSACCION:  'SIGEFO_CUR_AREAL_MOD'
  	#DESCRIPCION:	Modificacion de registros
@@ -616,18 +619,33 @@ BEGIN
        --RAISE EXCEPTION 'Error provocado por juan %', v_parametros.id_planificacion;
        
         --Devuelve la respuesta
-          v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Dato Probado por juan'); 
-          v_resp = pxp.f_agrega_clave(v_resp,'aprobado','%'||(SELECT id_unidad_organizacional FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  ORDER BY id_gestion ASC LIMIT 1)::INTEGER||'%'::varchar||(SELECT id_gerencia FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  ORDER BY id_gestion ASC LIMIT 1)::INTEGER||'%'||
+ /*         v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Dato Probado por juan'); 
+          v_resp = pxp.f_agrega_clave(v_resp,'aprobado','% ddd'||(SELECT COALESCE(id_unidad_organizacional,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  ORDER BY id_gestion ASC LIMIT 1)::VARCHAR||'%'::varchar||(SELECT COALESCE(id_gerencia,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  ORDER BY id_gestion ASC LIMIT 1)::VARCHAR||'%'||
           (SELECT 
           (select array_to_string( array_agg(co.id_competencia), ',' )
 from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
 where pco.id_planificacion=pl.id_planificacion)::varchar as id_competencias 
 FROM sigefo.tplanificacion pl 
 WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR||'%'
-||(SELECT nombre_planificacion FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
-||(SELECT contenido_basico FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
-||(SELECT horas_previstas FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER LIMIT 1)::VARCHAR ||'%'
-||(SELECT id_proveedor FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER LIMIT 1)::INTEGER ||'%');
+||(SELECT COALESCE(nombre_planificacion,'') FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
+||(SELECT COALESCE(contenido_basico,'') FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
+||(SELECT COALESCE(horas_previstas,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER LIMIT 1)::VARCHAR ||'%'
+||(SELECT COALESCE(id_proveedor,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER LIMIT 1)::VARCHAR ||'%');
+    */
+          v_resp = pxp.f_agrega_clave(v_resp,'mensaje','Dato Probado por juan'); 
+          v_resp = pxp.f_agrega_clave(v_resp,'aprobado','%'||(SELECT COALESCE(id_unidad_organizacional,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  ORDER BY id_gestion ASC LIMIT 1)::VARCHAR||'%'::varchar||(SELECT COALESCE(id_gerencia,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  ORDER BY id_gestion ASC LIMIT 1)::VARCHAR||'%'||
+          (SELECT 
+          (select array_to_string( array_agg(co.id_competencia), ',' )
+from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id_competencia = co.id_competencia
+where pco.id_planificacion=pl.id_planificacion)::varchar as id_competencias 
+FROM sigefo.tplanificacion pl 
+WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR||'%'
+||(SELECT COALESCE(nombre_planificacion,'') FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
+||(SELECT COALESCE(contenido_basico,'') FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER  LIMIT 1)::VARCHAR ||'%'
+||(SELECT COALESCE(horas_previstas,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER LIMIT 1)::VARCHAR ||'%'
+||(SELECT COALESCE(id_proveedor,0) FROM sigefo.tplanificacion  WHERE id_planificacion = v_parametros.id_planificacion::INTEGER LIMIT 1)::VARCHAR ||'%');
+    
+
             return v_resp;
             
 	end;   
@@ -700,7 +718,7 @@ WHERE pl.id_planificacion = v_parametros.id_planificacion::INTEGER)::VARCHAR||'%
 	ELSIF(p_transaccion='CUESTIO_INS')then
 					
         begin
-            --RAISE EXCEPTION 'VERIFICAR PARAMETROS  %', v_parametros.tipo_cuestionario;
+           --RAISE EXCEPTION 'VERIFICAR PARAMETROS  %', v_parametros.id_usuario;
         	--Sentencia de la insercion
             
             v_id_pregunta_texto:=NULL;

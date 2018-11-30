@@ -6,7 +6,6 @@
 *@date 22-01-2017 15:35:03
 *@description Clase que recibe los parametros enviados por la vista para mandar a la capa de Modelo
 */
-
 class ACTCurso extends ACTbase{
 			
 	function listarCurso(){
@@ -148,13 +147,13 @@ class ACTCurso extends ACTbase{
 	function listarFuncionarioCombos(){
 		$this->objParam->defecto('ordenacion','p.nombre_completo2');
 
-        if ($this->objParam->getParametro('id_uo')) {
+        /*if ($this->objParam->getParametro('id_uo')) {
             $this->objParam->addFiltro("cc.id_competencia  in (".$this->objParam->getParametro('id_uo').")");
         }
 		else{
 			$this->objParam->addFiltro("tu.id_uo = 0");
-		}
-
+		}*/
+        $this->objParam->addFiltro("0 = 0");
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam, $this);
@@ -223,6 +222,17 @@ class ACTCurso extends ACTbase{
 		}*/
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
+	////////////EGS/////////////////
+	function envioCorreo(){
+		
+		$this->objFunc=$this->create('MODCurso');	
+		
+		$this->res=$this->objFunc->envioCorreo($this->objParam);
+		
+		$this->res->imprimirRespuesta($this->res->generarJson());
+	
+	}
+	////////////EGS/////////////////	
 			
 }
 

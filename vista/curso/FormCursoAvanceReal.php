@@ -199,7 +199,8 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 500
                     },
                     type: 'TextField',
-                    filters: {pfiltro: 'cur.nombre_curso', type: 'string'},
+                    bottom_filter: true,
+                    filters: {pfiltro: 'nombre_curso', type: 'string'},
                     id_grupo: 1,
                     grid: true,
                     form: true
@@ -216,7 +217,8 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 4
                     },
                     type: 'NumberField',
-                    filters: {pfiltro: 'cur.horas', type: 'numeric'},
+                    bottom_filter: true,
+                    filters: {pfiltro: 'horas', type: 'numeric'},
                     id_grupo: 1,
                     grid: true,
                     form: true
@@ -253,8 +255,9 @@ header("content-type: text/javascript; charset=UTF-8");
 	                           }
 	                    },
 	                    type: 'ComboBox',
+	                    bottom_filter: true,
 	                    id_grupo: 0,
-	                    filters: {pfiltro: 'cur.cod_prioridad',type: 'string'},
+	                    filters: {pfiltro: 'cod_prioridad',type: 'string'},
 	                    grid: true,
 	                    form: true
 	                    //,egrid:true,
@@ -269,7 +272,8 @@ header("content-type: text/javascript; charset=UTF-8");
                         maxLength: 4
                     },
                     type: 'NumberField',
-                    filters: {pfiltro: 'scu.peso', type: 'numeric'},
+                    bottom_filter: true,
+                    filters: {pfiltro: 'peso', type: 'numeric'},
                     id_grupo: 1,
                     grid: true,
                     form: false

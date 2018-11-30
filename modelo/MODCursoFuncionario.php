@@ -5,7 +5,10 @@
 *@author  (admin)
 *@date 26-01-2017 16:26:09
 *@description Clase que envia los parametros requeridos a la Base de datos para la ejecucion de las funciones, y que recibe la respuesta del resultado de la ejecucion de las mismas
-*/
+	issue			fecha				autor					descripcion
+ * #1				01/11/2018			EGS						se aumento campos para saber si o no se respondio el cuestionario de evaluacion del curso segun el curso y funcionario especificado
+ * 
+ * */
 
 class MODCursoFuncionario extends MODbase{
 	
@@ -35,6 +38,9 @@ class MODCursoFuncionario extends MODbase{
 		$this->captura('desc_person','text');
 		$this->captura('codigo','varchar');
 		$this->captura('id_usuario','int4');
+		
+		$this->captura('nro_respuesta','integer');//#1				01/11/2018			EGS	
+		$this->captura('evaluo','varchar');//#1				01/11/2018			EGS	
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

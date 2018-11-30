@@ -446,3 +446,15 @@ ALTER TABLE sigefo.tplanificacion_criterio
     ON UPDATE NO ACTION
     NOT DEFERRABLE;
 /***********************************F-DEP-JUAN-SIGEFO-0-23/11/2017****************************************/
+
+
+/***********************************I-DEP-JUAN-SIGEFO-0-12/06/2018****************************************/ 
+ALTER TABLE sigefo.tcompetencia_nivel
+  ADD CONSTRAINT tcompetencia_nivel_fk FOREIGN KEY (id_competencia)
+    REFERENCES sigefo.tcompetencia(id_competencia)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE;
+    
+/***********************************F-DEP-JUAN-SIGEFO-0-12/06/2018****************************************/
+    

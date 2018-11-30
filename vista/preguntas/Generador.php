@@ -70,7 +70,8 @@ header("content-type: text/javascript; charset=UTF-8");
 				else{
 					verBotonGuardarEnEvaluacion='Si';
 				}
-				if(me.sm.selections.items.length==1){				
+				if(me.sm.selections.items.length==1){		
+		
 					Phx.CP.loadingShow();
 					//me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/preguntas/FormProveedorEva.php',
 					me.objSolForm = Phx.CP.loadWindows('../../../sis_formacion/vista/preguntas/FormFuncionarioEva.php',
@@ -89,8 +90,10 @@ header("content-type: text/javascript; charset=UTF-8");
 		                		'fecha_inicio': me.sm.selections.items[0].data.fecha_inicio,
 		                		'fecha_fin': me.sm.selections.items[0].data.fecha_fin,
 		                		'id_gestion':me.sm.selections.items[0].data.id_gestion,
-		                		'id_usuario': Phx.CP.config_ini.id_usuario,
-		                		'usuario': me.sm.selections.items[0].data.funcionario_eval,
+		                		//'id_usuario': Phx.CP.config_ini.id_usuario,
+		                		'id_usuario': me.sm.selections.items[0].data.id_usuario,
+		                		//'usuario': me.sm.selections.items[0].data.funcionario_eval,
+		                		'usuario': me.sm.selections.items[0].data.funcionario,
 		                		'id_proveedor': me.sm.selections.items[0].data.id_proveedor,
 		                		//'tipo':'Proveedor'
 		                		'tipo':'Funcionario',
@@ -297,8 +300,30 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: true
                 },
-
-
+                {
+                    config: {
+                        name: 'funcionario',
+                        fieldLabel: 'Funcionario',
+                        allowBlank: false,
+                        anchor: '80%',
+                        gwidth: 100,
+                        maxLength: 500
+                    },
+                    type: 'TextField',
+                    filters: {pfiltro: 'f.funcionario', type: 'string'},
+                    id_grupo: 1,
+                    grid: true,
+                    form: false
+                },
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
+                        name: 'id_usuario'
+                    },
+                    type: 'Field',
+                    form: true
+                },
                 {
                     config: {
                         name: 'horas',
@@ -367,6 +392,15 @@ header("content-type: text/javascript; charset=UTF-8");
                     grid: true,
                     form: false
                 },
+                {
+                    config: {
+                        labelSeparator: '',
+                        inputType: 'hidden',
+                        name: 'id_curso_funcionario'
+                    },
+                    type: 'Field',
+                    form: true
+                },
                 
             ],
             tam_pag: 50,
@@ -377,7 +411,7 @@ header("content-type: text/javascript; charset=UTF-8");
             //ActSave: '../../sis_formacion/control/Curso/insertarCurso',
             //ActDel: '../../sis_formacion/control/Curso/eliminarCurso',
             ActList: '../../sis_formacion/control/Curso/listarCursoEvaluacion',
-            id_store: 'id_curso',
+            id_store: 'id_curso_funcionario',
             fields: [
                 {name: 'id_curso', type: 'numeric'},
                 {name: 'nombre_curso', type: 'string'},
@@ -393,10 +427,13 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'id_funcionario', type: 'numeric'},
                 {name: 'id_proveedor', type: 'numeric'},
                 {name: 'usuario', type: 'string'},
+                {name: 'id_usuario', type: 'numeric'},
+                {name: 'funcionario', type: 'string'},
+                {name: 'id_curso_funcionario', type: 'numeric'},
                 
             ],
             sortInfo: {
-                field: 'id_curso',
+                field: 'id_curso_funcionario',
                 direction: 'ASC'
             },
             bdel: true,
