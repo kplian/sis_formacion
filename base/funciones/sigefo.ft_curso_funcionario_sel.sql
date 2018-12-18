@@ -1,5 +1,3 @@
---------------- SQL ---------------
-
 CREATE OR REPLACE FUNCTION sigefo.ft_curso_funcionario_sel (
   p_administrador integer,
   p_id_usuario integer,
@@ -17,10 +15,10 @@ $body$
  COMENTARIOS:	
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
-
- DESCRIPCION:	
- AUTOR:			
- FECHA:		
+ISUE			FECHA: 		 		AUTOR: 				DESCRIPCION:
+#1 			1/11/2018				EGS				se modifico consulta en SIGEFO_CUFU_SEL para saber si el funcionario respondio el cuestionario segun curso y cuantas preguntas respondio
+			
+ 		
 ***************************************************************************/
 
 DECLARE
@@ -45,7 +43,7 @@ BEGIN
 	if(p_transaccion='SIGEFO_CUFU_SEL')then
      				
     	begin
-    		--Sentencia de la consulta
+    		--Sentencia de la consulta  --#1 1/11/2018 EGS se aumento campos nro_respuesta y evaluo
 			v_consulta:='select
 						cufu.id_curso_funcionario,
 						cufu.id_curso,
@@ -66,7 +64,20 @@ BEGIN
                         join sigefo.tcurso scuu on scuu.id_curso=cff.id_curso
                         join orga.tfuncionario ff on ff.id_funcionario=cff.id_funcionario
                         join segu.vpersona pp on pp.id_persona=ff.id_persona 
-                        join segu.tusuario usu11 on usu11.id_persona = pp.id_persona where ff.id_funcionario=cufu.id_funcionario limit 1)::integer as id_usuario
+                        join segu.tusuario usu11 on usu11.id_persona = pp.id_persona where ff.id_funcionario=cufu.id_funcionario limit 1)::integer as id_usuario,
+                          
+                        (SELECT 	count(res.id_curso_funcionario_eval)		
+                                        FROM  	sigefo.tcurso_funcionario_eval res
+                                        WHERE res.id_curso = cufu.id_curso and res.id_funcionario = cufu.id_funcionario)::integer as nro_respuesta,
+                        
+                        case
+                              when (select count(res.id_curso_funcionario_eval)		
+                                        FROM  	sigefo.tcurso_funcionario_eval res
+                                        WHERE res.id_curso = cufu.id_curso and res.id_funcionario = cufu.id_funcionario)= 0  then
+                                ''no''::varchar
+                              else  
+                                ''si''::varchar
+                        end as evaluo
                         
 						from sigefo.tcurso_funcionario cufu
 						inner join segu.tusuario usu1 on usu1.id_usuario = cufu.id_usuario_reg
@@ -131,3 +142,6 @@ VOLATILE
 CALLED ON NULL INPUT
 SECURITY INVOKER
 COST 100;
+
+ALTER FUNCTION sigefo.ft_curso_funcionario_sel (p_administrador integer, p_id_usuario integer, p_tabla varchar, p_transaccion varchar)
+  OWNER TO postgres;

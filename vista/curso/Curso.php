@@ -721,7 +721,7 @@ header("content-type: text/javascript; charset=UTF-8");
                             id: 'id_competencia',
                             root: 'datos',
                             sortInfo: {
-                                field: 'desc_competencia',
+                                field: 'c.tipo,c.competencia,cn.nivel',
                                 //field: 'competencia_nivel',
                                 direction: 'ASC'
                             },
