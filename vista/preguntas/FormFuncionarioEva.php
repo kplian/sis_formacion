@@ -243,8 +243,14 @@ header("content-type: text/javascript; charset=UTF-8");
 				                   if(record.data.nivel ==1){
 				                   	    p.style="background-color:#cce6ff;";
 				                   }
+				                   if(record.data.respuesta =='' && record.data.nivel !=1){
+				                   	    return 'Doble click a qui' //#2 endetr juan  placeholder en evalucaión curso
+				                   }
+				                   else{
+				                   	    return String.format('{0}', record.data['respuesta']);
+				                   }
 				                  
-                                   return String.format('{0}', record.data['respuesta']);
+                                   
 	                           },
 	                           gwidth: 200,
 	                           /*enableKeyEvents: true,
