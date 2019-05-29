@@ -309,3 +309,14 @@ ALTER TABLE sigefo.tplanificacion_competencia
 ALTER TABLE sigefo.tcurso_competencia
   ADD COLUMN id_competencia_nivel INTEGER;
 /***********************************F-SCP-JUAN-SIGEFO-0-03/07/2018****************************************/
+/***********************************I-SCP-EGS-SIGEFO-0-31/01/2019****************************************/
+CREATE TABLE sigefo.tcompetencia_nivel (
+  id_competencia_nivel SERIAL,
+  nivel VARCHAR(100),
+  descripcion VARCHAR(2000),
+  id_competencia INTEGER,
+  CONSTRAINT tcompetencia_nivel_pkey PRIMARY KEY(id_competencia_nivel)
+) INHERITS (pxp.tbase)
+
+WITH (oids = false);
+/***********************************F-SCP-EGS-SIGEFO-0-31/01/2019****************************************/
