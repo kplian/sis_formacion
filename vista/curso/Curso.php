@@ -5,6 +5,11 @@
  * @author  (admin)
  * @date 23-01-2017 13:34:58
  * @description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+
+HISTORIAL DE MODIFICACIONES:
+
+ISSUE            FECHA:		      AUTOR                 DESCRIPCION
+#3               13/02/2020          JJA                   Agregado de filtro en curso por funcinario
  */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -799,9 +804,10 @@ header("content-type: text/javascript; charset=UTF-8");
                     },
                     type: 'AwesomeCombo',
                     id_grupo: 0,
-                    filters: {pfiltro: 'desc_person', type: 'string'},
+                    filters: {pfiltro: 'fun.funcionarios', type: 'string'}, //--#3
                     grid: true,
-                    form: true
+                    form: true,
+                    bottom_filter: true, //--#3
                 },
                 {
                     config: {
