@@ -20,6 +20,7 @@ $body$
 
  ISSUE            FECHA:		      AUTOR                 DESCRIPCION
  #3               13/02/2020          JJA                   Agregado de filtro en curso por funcinario
+  #4               04/02/2020          JJA                   Corrección de filtro de funcionarios en cursos
 ***************************************************************************/
 
 DECLARE
@@ -954,7 +955,7 @@ BEGIN
                              JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
                              JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
                              JOIN segu.vpersona p on p.id_persona=f.id_persona
-                            WHERE tu.estado_reg=''activo'' and  c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin)
+                            WHERE tf.estado_reg = ''activo'' and tf.tipo = ''oficial'' and tf.fecha_asignacion<=now() and coalesce(tf.fecha_finalizacion, now())>=now() --#4
 							and';
 
                 v_consulta:=v_consulta || v_parametros.filtro;
