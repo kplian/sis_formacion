@@ -10,6 +10,7 @@ HISTORIAL DE MODIFICACIONES:
 
 ISSUE            FECHA:		      AUTOR                 DESCRIPCION
 #3               13/02/2020          JJA                   Agregado de filtro en curso por funcinario
+#5               05/02/2020          JJA                   Quitar auto completado al seleccionar una planificación en cursos
  */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -18,6 +19,7 @@ header("content-type: text/javascript; charset=UTF-8");
 	var v_maestro =null;
 	var valor;
 	var valor2;
+	var autocompletado =false; //#5
 
   //variables para recuperar datos de planificacion 
     var  v_gerencia;
@@ -190,83 +192,85 @@ header("content-type: text/javascript; charset=UTF-8");
                 
                 this.Cmp.id_planificacion.on('select', function (Combo, dato) {
 
+                     if(autocompletado==false){//#5
 
-			            Ext.Ajax.request({
-			                        url: '../../sis_formacion/control/Curso/datosPlanificacion',
-			                        params: {
-			                            'id_planificacion': Combo.getValue(),
-			                        },
-			                        success: this.RespuestaPlanificacion,
-			                        failure: this.conexionFailure,
-			                        timeout: this.timeout,
-			                        scope: this
-			            });
 
-		                this.Cmp.id_competencias.setValue(''); 
-                        this.Cmp.nombre_curso.setValue('');
-                        this.Cmp.contenido.setValue('');
-                        this.Cmp.horas.setValue('');
-                        this.Cmp.id_proveedor.setValue('');
-		                
-								 this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag}, 
-							           callback : function (y) {
-							           	       var concatenarCompetencias='';
-							           	       var concatenarIduo='';
-							           	       var banderaInicio=0;
-							           	      
-									              for(cont1=0;cont1<y.length;cont1++){
-                                                        //console.log(v_competencias);
-									              	    for (c=0;c<v_competencias.length;c++){
-									              	    	
-									              	    	console.log(v_competencias[c]);
-									              	    	if(String(y[cont1].data.cod_competencia).trim() == String(v_competencias[c]).trim()){
-									              	    		
-									              	    		banderaInicio++;
-									              	    		if(banderaInicio==1){
-									              	    			concatenarCompetencias+=y[cont1].data.id_competencia;
-									              	    			//concatenarIduo+=y[cont1].data.id_uo;
-									              	    			concatenarIduo+=y[cont1].data.id_competencia;
-									              	    			
-									              	    		}
-									              	    		else{
-									              	    			concatenarCompetencias+=','+y[cont1].data.id_competencia;
-									              	    			//concatenarIduo+=','+y[cont1].data.id_uo;
-									              	    			concatenarIduo+=','+y[cont1].data.id_competencia;
-									              	    			
-									              	    		}
-									              	    		
-									              	    		//
-																 this.Cmp.id_proveedor.store.load({params:{start:0,limit:this.tam_pag}, 
-															           callback : function (z) {
-															           	  for(cc=0;cc<z.length;cc++){
-																           	    if(String(z[cc].data.cod_proveedor).trim()==String(v_id_proveedor).trim()){   
-																           	         
-																		             this.Cmp.id_proveedor.setValue(z[cc].data.id_proveedor);  
-																		        }
-																	      }
-																	       
-															            }, scope : this
-															     }); 
-									              	    		//
-									              	    		
-									              	    	}
-									              	    	
-									              	    }
-									              }
-									              this.Cmp.id_competencias.setValue(concatenarCompetencias);  
+                                Ext.Ajax.request({
+                                            url: '../../sis_formacion/control/Curso/datosPlanificacion',
+                                            params: {
+                                                'id_planificacion': Combo.getValue(),
+                                            },
+                                            success: this.RespuestaPlanificacion,
+                                            failure: this.conexionFailure,
+                                            timeout: this.timeout,
+                                            scope: this
+                                });
 
-							                      this.Cmp.nombre_curso.setValue(v_nombre_planificacion);
-                                                  this.Cmp.contenido.setValue(v_contenido_basico);
-                                                  this.Cmp.horas.setValue(v_horas_previstas);
-                                                  
-                                                  this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
-                                                  this.Cmp.id_funcionarios.modificado = true;
-                                                  
-                                             
-							                   
-							            }, scope : this
-							     }); 
-							     
+                                this.Cmp.id_competencias.setValue('');
+                                this.Cmp.nombre_curso.setValue('');
+                                this.Cmp.contenido.setValue('');
+                                this.Cmp.horas.setValue('');
+                                this.Cmp.id_proveedor.setValue('');
+
+                                         this.Cmp.id_competencias.store.load({params:{start:0,limit:this.tam_pag},
+                                               callback : function (y) {
+                                                       var concatenarCompetencias='';
+                                                       var concatenarIduo='';
+                                                       var banderaInicio=0;
+
+                                                          for(cont1=0;cont1<y.length;cont1++){
+                                                                //console.log(v_competencias);
+                                                                for (c=0;c<v_competencias.length;c++){
+
+                                                                    console.log(v_competencias[c]);
+                                                                    if(String(y[cont1].data.cod_competencia).trim() == String(v_competencias[c]).trim()){
+
+                                                                        banderaInicio++;
+                                                                        if(banderaInicio==1){
+                                                                            concatenarCompetencias+=y[cont1].data.id_competencia;
+                                                                            //concatenarIduo+=y[cont1].data.id_uo;
+                                                                            concatenarIduo+=y[cont1].data.id_competencia;
+
+                                                                        }
+                                                                        else{
+                                                                            concatenarCompetencias+=','+y[cont1].data.id_competencia;
+                                                                            //concatenarIduo+=','+y[cont1].data.id_uo;
+                                                                            concatenarIduo+=','+y[cont1].data.id_competencia;
+
+                                                                        }
+
+                                                                        //
+                                                                         this.Cmp.id_proveedor.store.load({params:{start:0,limit:this.tam_pag},
+                                                                               callback : function (z) {
+                                                                                  for(cc=0;cc<z.length;cc++){
+                                                                                        if(String(z[cc].data.cod_proveedor).trim()==String(v_id_proveedor).trim()){
+
+                                                                                             this.Cmp.id_proveedor.setValue(z[cc].data.id_proveedor);
+                                                                                        }
+                                                                                  }
+
+                                                                                }, scope : this
+                                                                         });
+                                                                        //
+
+                                                                    }
+
+                                                                }
+                                                          }
+                                                          this.Cmp.id_competencias.setValue(concatenarCompetencias);
+
+                                                          this.Cmp.nombre_curso.setValue(v_nombre_planificacion);
+                                                          this.Cmp.contenido.setValue(v_contenido_basico);
+                                                          this.Cmp.horas.setValue(v_horas_previstas);
+
+                                                          this.Cmp.id_funcionarios.store.setBaseParam('id_uo',concatenarIduo);
+                                                          this.Cmp.id_funcionarios.modificado = true;
+
+
+
+                                                }, scope : this
+                                         });
+                     }//#5
 
 
                 }, this);
@@ -328,7 +332,7 @@ header("content-type: text/javascript; charset=UTF-8");
 	        onButtonEdit: function () {
 	            Phx.vista.Curso.superclass.onButtonEdit.call(this);
 	            this.cargarPaiseLugares(this.Cmp.id_lugar_pais);
-	            
+                autocompletado=true;//#5
                 this.window.show();
 		        this.loadForm(this.sm.getSelected())
 		       
@@ -1317,7 +1321,7 @@ header("content-type: text/javascript; charset=UTF-8");
             bsave: false,
 	        onButtonNew: function() {
 		       	//Phx.vista.Curso.superclass.onButtonNew.call(this);
-		       
+                autocompletado=false;//#5
 		       	if(!this.cmbGestion.getValue()){
 		       	   	alert("Seleccione una gestion");
 		       	}
