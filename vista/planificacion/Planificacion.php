@@ -5,6 +5,12 @@
  * @author  (admin)
  * @date 26-04-2017 20:37:24
  * @description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+
+
+HISTORIAL DE MODIFICACIONES:
+
+ISSUES  	AUTOR			FECHA		DESCRIPCION
+#6          JUAN            05/03/2020  Agregar cantidad de cursos asociados a una planificación
  */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -273,6 +279,22 @@ header("content-type: text/javascript; charset=UTF-8");
                     type: 'NumberField',
                     bottom_filter: true,
                     filters: {pfiltro: 'sigefop.cantidad_personas', type: 'numeric'},
+                    id_grupo: 1,
+                    grid: true,
+                    form: true
+                },
+                {
+                    config: {
+                        name: 'cantidad_cursos_asociados',
+                        fieldLabel: 'Cantidad de cursos asociados',
+                        allowBlank: true,
+                        anchor: '80%',
+                        gwidth: 100,
+                        maxLength: 4
+                    },
+                    type: 'NumberField',
+                    bottom_filter: true,
+                    filters: {pfiltro: 'sigefop.cantidad_cursos_asociados', type: 'numeric'},
                     id_grupo: 1,
                     grid: true,
                     form: true
@@ -600,6 +622,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 'id_proveedor',
                 'desc_proveedor',
                 {name: 'aprobado', type: 'string'},
+                {name: 'cantidad_cursos_asociados', type: 'string'}, //#6
             ],            
             sortInfo: {
                 field: 'id_planificacion',

@@ -18,9 +18,8 @@ $body$
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 
- DESCRIPCION:	
- AUTOR:			
- FECHA:		
+ISSUES  	AUTOR			FECHA		DESCRIPCION
+#6          JUAN            05/03/2020  Agregar cantidad de cursos asociados a una planificación
 ***************************************************************************/
 
 DECLARE
@@ -98,8 +97,8 @@ where pp.id_planificacion=sigefop.id_planificacion)::varchar as desc_proveedor,
 
 sigefop.id_gerencia::INTEGER AS id_uo,
 (SELECT tu.nombre_unidad FROM sigefo.tplanificacion p  join orga.tuo tu ON p.id_gerencia=tu.id_uo where sigefop.id_gerencia=tu.id_uo and p.id_planificacion=sigefop.id_planificacion	)::VARCHAR as desc_uo,
-sigefop.aprobado::boolean
-
+sigefop.aprobado::boolean,
+sigefop.cantidad_cursos_asociados::integer --#6
  
 						from sigefo.tplanificacion sigefop
 						inner join segu.tusuario usu1 on usu1.id_usuario = sigefop.id_usuario_reg

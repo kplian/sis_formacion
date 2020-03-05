@@ -320,3 +320,11 @@ CREATE TABLE sigefo.tcompetencia_nivel (
 
 WITH (oids = false);
 /***********************************F-SCP-EGS-SIGEFO-0-31/01/2019****************************************/
+
+
+/***********************************I-SCP-JUAN-SIGEFO-0-05/03/2020****************************************/
+
+ALTER TABLE sigefo.tplanificacion --#6
+  ADD COLUMN cantidad_cursos_asociados INTEGER;--#6
+
+/***********************************F-SCP-JUAN-SIGEFO-0-05/03/2020****************************************/
