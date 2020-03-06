@@ -5,7 +5,13 @@
 *@author  (admin)
 *@date 04-05-2017 19:30:13
 *@description Clase que envia los parametros requeridos a la Base de datos para la ejecucion de las funciones, y que recibe la respuesta del resultado de la ejecucion de las mismas
-*/
+
+
+HISTORIAL DE MODIFICACIONES:
+
+ISSUE            FECHA:		      AUTOR                 DESCRIPCION
+#7               05/03/2020          JJA                   agregar gestión en competencias
+ */
 
 class MODCompetencia extends MODbase{
 	
@@ -34,6 +40,9 @@ class MODCompetencia extends MODbase{
 		$this->captura('usr_mod','varchar');
 		$this->captura('cod_competencia','int4');
 		$this->captura('descripcion','varchar');
+
+        $this->captura('id_gestion','int4'); //#7
+
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -53,6 +62,7 @@ class MODCompetencia extends MODbase{
 		$this->captura('tipo','varchar');
         $this->captura('desc_competencia','varchar');
 		$this->captura('cod_competencia','int4');
+
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -101,6 +111,8 @@ class MODCompetencia extends MODbase{
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('competencia','competencia','varchar');
         $this->setParametro('descripcion','descripcion','varchar');
+        $this->setParametro('id_gestion','id_gestion','int4'); //#7
+
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -121,6 +133,9 @@ class MODCompetencia extends MODbase{
 		$this->setParametro('estado_reg','estado_reg','varchar');
 		$this->setParametro('competencia','competencia','varchar');
         $this->setParametro('descripcion','descripcion','varchar');
+        $this->setParametro('id_gestion','id_gestion','int4'); //#7
+
+
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();

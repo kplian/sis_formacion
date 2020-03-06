@@ -7,6 +7,12 @@
  * @author  (admin)
  * @date 04-05-2017 19:30:13
  * @description Clase que recibe los parametros enviados por la vista para mandar a la capa de Modelo
+
+
+HISTORIAL DE MODIFICACIONES:
+
+ISSUE            FECHA:		      AUTOR                 DESCRIPCION
+#7               05/03/2020          JJA                   agregar gestión en competencias
  */
 class ACTCompetencia extends ACTbase
 {
@@ -16,6 +22,15 @@ class ACTCompetencia extends ACTbase
         $this->objParam->defecto('ordenacion', 'id_competencia');
 
         $this->objParam->defecto('dir_ordenacion', 'asc');
+
+
+        if ($this->objParam->getParametro('id_gestion')) { //#7
+            $this->objParam->addFiltro("gc.id_gestion  =". $this->objParam->getParametro('id_gestion'));//#7
+        }
+        else{
+            $this->objParam->addFiltro("gc.id_gestion  = 0");//#7
+        }
+
         if ($this->objParam->getParametro('tipoReporte') == 'excel_grid' || $this->objParam->getParametro('tipoReporte') == 'pdf_grid') {
             $this->objReporte = new Reporte($this->objParam, $this);
             $this->res = $this->objReporte->generarReporteListado('MODCompetencia', 'listarCompetencia');

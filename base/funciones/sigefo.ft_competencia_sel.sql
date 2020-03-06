@@ -1,3 +1,5 @@
+--------------- SQL ---------------
+
 CREATE OR REPLACE FUNCTION sigefo.ft_competencia_sel (
   p_administrador integer,
   p_id_usuario integer,
@@ -16,9 +18,9 @@ $body$
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 
- DESCRIPCION:
- AUTOR:
- FECHA:
+ ISSUE            FECHA:		      AUTOR                 DESCRIPCION
+ #7               05/03/2020          JJA                   agregar gestión en competencias
+
 ***************************************************************************/
 
 DECLARE
@@ -48,7 +50,7 @@ BEGIN
     BEGIN
       --Sentencia de la consulta
 
-                        
+
            v_consulta:='SELECT  cn.id_competencia_nivel as id_competencia,c.competencia,c.tipo,(c.competencia||'' -> ''||cn.nivel)::VARCHAR as desc_competencia,c.id_competencia::integer as cod_competencia
                         from sigefo.tcompetencia c
                         join sigefo.tcompetencia_nivel cn on cn.id_competencia=c.id_competencia
@@ -78,13 +80,13 @@ BEGIN
       BEGIN
         --Sentencia de la consulta
         v_consulta:='SELECT c.id_cargo, c.id_cargo::integer as cod_cargo, c.nombre::varchar as nombre_cargo, (COALESCE(p.ap_paterno, '''') || '' '' || COALESCE(p.ap_materno, '''') || '', '' || COALESCE(p.nombre, ''''))::varchar as funcionario,
-      
+
         (CASE WHEN  cc.id_competencia ISNULL THEN 0::INTEGER ELSE  cc.id_competencia END)::integer as id_competencia
 FROM orga.tcargo c
 JOIN orga.tuo tu on tu.id_uo=c.id_uo
 JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
 JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
-JOIN segu.vpersona p on p.id_persona=f.id_persona 
+JOIN segu.vpersona p on p.id_persona=f.id_persona
 LEFT JOIN sigefo.tcargo_competencia cc on cc.id_cargo=c.id_cargo
 WHERE tu.estado_reg=''activo'' and  c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin) and   ';
 
@@ -189,7 +191,7 @@ WHERE tu.estado_reg=''activo'' and  c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin I
 JOIN orga.tuo tu on tu.id_uo=c.id_uo
 JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
 JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
-JOIN segu.vpersona p on p.id_persona=f.id_persona 
+JOIN segu.vpersona p on p.id_persona=f.id_persona
 LEFT JOIN sigefo.tcargo_competencia cc on cc.id_cargo=c.id_cargo
 WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin) and';
 
@@ -208,7 +210,7 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
        #AUTOR:		admin
        #FECHA:		04-05-2017 19:30:13
       ***********************************/
- 
+
   ELSIF (p_transaccion = 'SIGEFO_COMCOMBO_CONT')
     THEN
 
@@ -252,8 +254,11 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
 						usu1.cuenta as usr_reg,
 						usu2.cuenta as usr_mod,
 						sigefoco.id_competencia as cod_competencia,
-                        sigefoco.descripcion
+                        sigefoco.descripcion,
+                        gc.id_gestion::integer --#7
 						from sigefo.tcompetencia sigefoco
+                        join sigefo.tgestion_competencia gc on gc.id_competencia=sigefoco.id_competencia --#7
+                        join param.tgestion g on g.id_gestion=gc.id_gestion --#7
 						inner join segu.tusuario usu1 on usu1.id_usuario = sigefoco.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod
 						left join param.tcatalogo tc on tc.codigo = sigefoco.tipo
@@ -285,6 +290,8 @@ WHERE tu.estado_reg=''activo'' and c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS
             --Sentencia de la consulta de conteo de registros
             v_consulta:='select count(DISTINCT sigefoco.id_competencia)
                             from sigefo.tcompetencia sigefoco
+                            join sigefo.tgestion_competencia gc on gc.id_competencia=sigefoco.id_competencia --#7
+                            join param.tgestion g on g.id_gestion=gc.id_gestion --#7
                             inner join segu.tusuario usu1 on usu1.id_usuario = sigefoco.id_usuario_reg
                             left join segu.tusuario usu2 on usu2.id_usuario = sigefoco.id_usuario_mod
                             left join param.tcatalogo tc on tc.codigo = sigefoco.tipo
@@ -321,6 +328,3 @@ VOLATILE
 CALLED ON NULL INPUT
 SECURITY INVOKER
 COST 100;
-
-ALTER FUNCTION sigefo.ft_competencia_sel (p_administrador integer, p_id_usuario integer, p_tabla varchar, p_transaccion varchar)
-  OWNER TO postgres;

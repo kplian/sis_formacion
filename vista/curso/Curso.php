@@ -11,6 +11,7 @@ HISTORIAL DE MODIFICACIONES:
 ISSUE            FECHA:		      AUTOR                 DESCRIPCION
 #3               13/02/2020          JJA                   Agregado de filtro en curso por funcinario
 #5               05/02/2020          JJA                   Quitar auto completado al seleccionar una planificación en cursos
+#7               05/03/2020          JJA                   agregar gestión en competencias
  */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -463,7 +464,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     config: {
                         name: 'id_planificacion',
                         fieldLabel: 'Planificación',
-                        allowBlank: true,
+                        allowBlank: false,//#7
                         emptyText: 'Planificacion...',
                         blankText: 'Planificacion',
                         store: new Ext.data.JsonStore({
@@ -502,6 +503,46 @@ header("content-type: text/javascript; charset=UTF-8");
                     filters: {pfiltro: 'scu.planificacion', type: 'string'},
                     grid: true,
                     form: true
+                },
+                { //#7
+                    config: {
+                        name: 'planificado',
+                        fieldLabel: '¿Considerar lo planificado?',
+                        allowBlank: false,
+                        emptyText: 'Elija una opción...',
+                        store: new Ext.data.ArrayStore({
+                            id: 0,
+                            fields: [
+                                'planificado'
+                            ],
+                            data: [['Si'], ['No']]
+                        }),
+                        valueField: 'planificado',
+                        displayField: 'planificado',
+                        gdisplayField: 'planificado',
+                        hiddenName: 'planificado',
+                        forceSelection: true,
+                        typeAhead: false,
+                        triggerAction: 'all',
+                        lazyRender: true,
+                        mode: 'local',
+                        pageSize: 15,
+                        queryDelay: 1000,
+                        anchor: '80%',
+                        gwidth: 150,
+                        minChars: 2,
+                        listeners: {
+                            'afterrender': function(combo){
+                                combo.setValue('No');
+                            }
+                        }
+                    },
+                    type: 'ComboBox',
+                    id_grupo: 0,
+                    filters: {pfiltro: 'scu.planificado',type: 'string'},
+                    grid: true,
+                    form: true
+                    //,egrid:true,
                 },
                 {
                     config: {
@@ -1310,7 +1351,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 {name: 'funcionarios', type: 'string'},
                 {name: 'peso', type: 'numeric'},
                 {name: 'comite_etica', type: 'string'},
-                
+                {name: 'planificado', type: 'string'}, //#7
 
             ],
             sortInfo: {
@@ -1337,6 +1378,7 @@ header("content-type: text/javascript; charset=UTF-8");
 			        this.Cmp.certificacion.setValue('No');
 			        this.Cmp.evaluacion.setValue('No');
 			        this.Cmp.comite_etica.setValue('No');
+                    this.Cmp.planificado.setValue('Si');//#7
 		       	}
 
 		    },

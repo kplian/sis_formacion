@@ -20,7 +20,8 @@ $body$
 
  ISSUE            FECHA:		      AUTOR                 DESCRIPCION
  #3               13/02/2020          JJA                   Agregado de filtro en curso por funcinario
-  #4               04/02/2020          JJA                   Corrección de filtro de funcionarios en cursos
+ #4               04/02/2020          JJA                   Corrección de filtro de funcionarios en cursos
+#7               05/03/2020          JJA                   agregar gestión en competencias
 ***************************************************************************/
 
 DECLARE
@@ -170,8 +171,8 @@ BEGIN
                           where pl.id_curso=scu.id_curso)::varchar as unidad_organizacional,
                           scu.peso::NUMERIC,
                           (SELECT count(cfuncio.id_funcionario) from sigefo.tcurso_funcionario cfuncio where cfuncio.id_curso=scu.id_curso)::INTEGER as cantidad_personas,
-                          scu.comite_etica
-
+                          scu.comite_etica,
+                          scu.planificado --#7
                           FROM sigefo.tcurso scu
                           JOIN param.tgestion g ON g.id_gestion=scu.id_gestion
                           join funcionario fun on fun.id_curso=scu.id_curso --#3
@@ -955,8 +956,10 @@ BEGIN
                              JOIN orga.tuo_funcionario tf ON tf.id_cargo=c.id_cargo AND tf.fecha_asignacion<=CURRENT_DATE AND (tf.fecha_finalizacion IS NULL OR CURRENT_DATE<=tf.fecha_finalizacion)
                              JOIN orga.tfuncionario f on f.id_funcionario = tf.id_funcionario
                              JOIN segu.vpersona p on p.id_persona=f.id_persona
-                            WHERE tf.estado_reg = ''activo'' and tf.tipo = ''oficial'' and tf.fecha_asignacion<=now() and coalesce(tf.fecha_finalizacion, now())>=now() --#4
-							and';
+                            WHERE
+                            --tu.estado_reg=''activo'' and  c.fecha_ini<=CURRENT_DATE AND (c.fecha_fin IS NULL OR CURRENT_DATE<=c.fecha_fin)
+							tf.estado_reg = ''activo'' and tf.tipo = ''oficial'' and tf.fecha_asignacion<=now() and coalesce(tf.fecha_finalizacion, now())>=now() --#4
+                            and';
 
                 v_consulta:=v_consulta || v_parametros.filtro;
                 v_consulta:=

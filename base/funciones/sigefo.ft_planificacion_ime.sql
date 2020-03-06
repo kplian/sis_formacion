@@ -18,9 +18,8 @@ $body$
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 
- DESCRIPCION:	
- AUTOR:			
- FECHA:		
+ ISSUE            FECHA:		      AUTOR                 DESCRIPCION
+#7               05/03/2020          JJA                   agregar gestión en competencias
 ***************************************************************************/
 
 DECLARE
@@ -78,7 +77,8 @@ BEGIN
         id_usuario_ai,
         id_usuario_mod,
         fecha_mod,
-        id_proveedor
+        id_proveedor,
+        cantidad_cursos_asociados --#7
       ) VALUES (
         v_parametros.id_gestion,
         'activo',
@@ -93,7 +93,8 @@ BEGIN
         v_parametros._id_usuario_ai,
         NULL,
         NULL,
-        v_parametros.id_proveedor::INTEGER
+        v_parametros.id_proveedor::INTEGER,
+        v_parametros.cantidad_cursos_asociados ----#7
       )
       RETURNING id_planificacion
         INTO v_id_planificacion;
@@ -123,7 +124,7 @@ BEGIN
       END LOOP;
 
       -- Guardando las competencias asociadas a la planificacion
-      -- la variable va_id_competencias es el id_competencia_nivel 
+      -- la variable va_id_competencias es el id_competencia_nivel
       va_id_competencias := string_to_array(v_parametros.id_competencias, ',');
 
       FOREACH v_id_competencia IN ARRAY va_id_competencias
@@ -255,7 +256,8 @@ BEGIN
           fecha_mod            = now(),
           id_usuario_ai        = v_parametros._id_usuario_ai,
           usuario_ai           = v_parametros._nombre_usuario_ai,
-          id_proveedor = v_parametros.id_proveedor::INTEGER
+          id_proveedor = v_parametros.id_proveedor::INTEGER,
+          cantidad_cursos_asociados = v_parametros.cantidad_cursos_asociados --#7
         WHERE id_planificacion = v_parametros.id_planificacion;
 
         -- PLANIFICACION CRITERIO
@@ -352,7 +354,7 @@ BEGIN
         WHERE pco.id_planificacion = v_parametros.id_planificacion;
 
         -- Insertanto
-        -- la variable va_id_competencias es el id_competencia_nivel 
+        -- la variable va_id_competencias es el id_competencia_nivel
         va_id_competencias := string_to_array(v_parametros.id_competencias, ',');
 
         FOREACH v_id_competencia IN ARRAY va_id_competencias
@@ -426,23 +428,23 @@ BEGIN
 
   ELSIF (p_transaccion = 'SIGEFO_SIGEFOP_ELI')
     THEN
-		
+
       BEGIN
-        --Sentencia de la eliminacion        
-	    v_total = (SELECT COUNT(*) FROM sigefo.tcurso WHERE id_planificacion=v_parametros.id_planificacion);    
+        --Sentencia de la eliminacion
+	    v_total = (SELECT COUNT(*) FROM sigefo.tcurso WHERE id_planificacion=v_parametros.id_planificacion);
         v_sw :='';
         IF (v_total = 0)
         	THEN
               DELETE
               FROM  sigefo.tplanificacion sigefop
               WHERE sigefop.id_planificacion=v_parametros.id_planificacion;
-              
+
               v_resp = pxp.f_agrega_clave(v_resp, 'mensaje', 'Planificación eliminado(a)');
-       		  v_resp = pxp.f_agrega_clave(v_resp, 'id_planificacion', v_parametros.id_planificacion :: VARCHAR);              
+       		  v_resp = pxp.f_agrega_clave(v_resp, 'id_planificacion', v_parametros.id_planificacion :: VARCHAR);
         ELSE
-        	RAISE EXCEPTION 'Error!! La planificacion esta registrado en curso ';      
+        	RAISE EXCEPTION 'Error!! La planificacion esta registrado en curso ';
 		END IF;
-	                   
+
 		RETURN v_resp;
       END;
       /*********************************
@@ -454,11 +456,11 @@ BEGIN
 
       ELSIF (p_transaccion = 'SIGEFO_APROB_PLA')
         THEN
-    		
+
           BEGIN
-            --Sentencia de la eliminacion   
-                 
-           
+            --Sentencia de la eliminacion
+
+
             IF(SELECT count(p.codigo) from segu.tusuario u
               join segu.tusuario_rol ur on ur.id_usuario=u.id_usuario
               join segu.trol r on r.id_rol=ur.id_rol
@@ -469,26 +471,26 @@ BEGIN
               where u.id_usuario=v_parametros.id_usuario::INTEGER and p.codigo=v_parametros.transaccion::VARCHAR)then
 
                   IF (v_parametros.aprobado=1)THEN
-                        UPDATE  sigefo.tplanificacion 
+                        UPDATE  sigefo.tplanificacion
                         SET aprobado=TRUE
                         WHERE id_planificacion=v_parametros.id_planificacion;
                   ELSE
-                        UPDATE  sigefo.tplanificacion 
+                        UPDATE  sigefo.tplanificacion
                         SET aprobado=FALSE
-                        WHERE id_planificacion=v_parametros.id_planificacion;      
+                        WHERE id_planificacion=v_parametros.id_planificacion;
                   END IF;
             ELSE
-                  RAISE EXCEPTION 'El usuario no tiene permiso a la funcion % ',v_parametros.transaccion; 
+                  RAISE EXCEPTION 'El usuario no tiene permiso a la funcion % ',v_parametros.transaccion;
             end if;
 
             v_resp = pxp.f_agrega_clave(v_resp, 'mensaje', 'Planificación aprobado(a)');
-            v_resp = pxp.f_agrega_clave(v_resp, 'id_planificacion', v_parametros.id_planificacion :: VARCHAR);  
-                               
+            v_resp = pxp.f_agrega_clave(v_resp, 'id_planificacion', v_parametros.id_planificacion :: VARCHAR);
+
             RETURN v_resp;
           END;
 
   ELSE
-  	
+
     RAISE EXCEPTION 'Transaccion inexistente: ';
 
   END IF;
@@ -501,7 +503,7 @@ BEGIN
         v_resp = pxp.f_agrega_clave(v_resp, 'mensaje', SQLERRM);
         v_resp = pxp.f_agrega_clave(v_resp, 'codigo_error', SQLSTATE);
         v_resp = pxp.f_agrega_clave(v_resp, 'procedimientos', v_nombre_funcion);
-        RAISE EXCEPTION '%', v_resp;     
+        RAISE EXCEPTION '%', v_resp;
 
 END;
 $body$

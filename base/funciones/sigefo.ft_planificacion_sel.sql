@@ -14,7 +14,7 @@ $body$
  DESCRIPCION:   Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'sigefo.tplanificacion'
  AUTOR: 		 (admin)
  FECHA:	        26-04-2017 20:37:24
- COMENTARIOS:	
+ COMENTARIOS:
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 
@@ -88,9 +88,9 @@ from sigefo.tplanificacion_competencia pco join sigefo.tcompetencia co on pco.id
 JOIN sigefo.tcompetencia_nivel cn on cn.id_competencia_nivel=pco.id_competencia_nivel
 where pco.id_planificacion=sigefop.id_planificacion)::varchar as id_competencias,
 
-                                                                            
-                          
-									(select prov.desc_proveedor 
+
+
+									(select prov.desc_proveedor
 from sigefo.tplanificacion pp join param.vproveedor prov ON pp.id_proveedor=prov.id_proveedor
 where pp.id_planificacion=sigefop.id_planificacion)::varchar as desc_proveedor,
 									sigefop.id_proveedor::INTEGER,
@@ -99,7 +99,8 @@ sigefop.id_gerencia::INTEGER AS id_uo,
 (SELECT tu.nombre_unidad FROM sigefo.tplanificacion p  join orga.tuo tu ON p.id_gerencia=tu.id_uo where sigefop.id_gerencia=tu.id_uo and p.id_planificacion=sigefop.id_planificacion	)::VARCHAR as desc_uo,
 sigefop.aprobado::boolean,
 sigefop.cantidad_cursos_asociados::integer --#6
- 
+
+
 						from sigefo.tplanificacion sigefop
 						inner join segu.tusuario usu1 on usu1.id_usuario = sigefop.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = sigefop.id_usuario_mod
@@ -116,7 +117,7 @@ sigefop.cantidad_cursos_asociados::integer --#6
       RETURN v_consulta;
 
     END;
- 
+
     /*********************************
      #TRANSACCION:  'SIGEFO_SIGEFOP_CONT'
      #DESCRIPCION:	Conteo de registros
@@ -154,14 +155,14 @@ sigefop.cantidad_cursos_asociados::integer --#6
 
       BEGIN
         --Sentencia de la consulta de conteo de registros
-        
+
        v_consulta:='select
                     uo.id_uo,
                     uo.nombre_unidad,
                     uo.id_uo::integer as cod_uo
                     from orga.tuo uo
         where uo.estado_reg=''activo'' and uo.gerencia=''si'' and ';
-        
+
 
         --Definicion de la respuesta
         v_consulta:=v_consulta || v_parametros.filtro;
