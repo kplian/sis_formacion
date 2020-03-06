@@ -53,6 +53,8 @@ class MODPlanificacion extends MODbase{
         $this->captura('desc_uo','varchar');
 		$this->captura('aprobado','bool');
 
+        $this->captura('cantidad_cursos_asociados','int4'); //#6
+
         //Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
@@ -79,6 +81,7 @@ class MODPlanificacion extends MODbase{
         $this->setParametro('id_competencias', 'id_competencias', 'varchar');
         $this->setParametro('id_proveedor', 'id_proveedor', 'int4');
 
+        $this->setParametro('cantidad_cursos_asociados', 'cantidad_cursos_asociados', 'int4'); //#6
 		
 
         //Ejecuta la instruccion
@@ -108,6 +111,8 @@ class MODPlanificacion extends MODbase{
         $this->setParametro('cod_criterio', 'cod_criterio', 'varchar');
         $this->setParametro('id_competencias', 'id_competencias', 'varchar');
         $this->setParametro('id_proveedor', 'id_proveedor', 'int4');
+
+        $this->setParametro('cantidad_cursos_asociados', 'cantidad_cursos_asociados', 'int4'); //#6
 
         //Ejecuta la instruccion
 		$this->armarConsulta();

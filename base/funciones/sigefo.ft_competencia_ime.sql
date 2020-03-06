@@ -18,9 +18,8 @@ $body$
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 
- DESCRIPCION:	
- AUTOR:			
- FECHA:		
+ ISSUE            FECHA:		      AUTOR                 DESCRIPCION
+ #3               13/02/2020          JJA                   Agregado de filtro en curso por funcinario
 ***************************************************************************/
 
 DECLARE
@@ -84,6 +83,8 @@ BEGIN
       )
       RETURNING id_competencia
         INTO v_id_competencia;
+
+      insert into sigefo.tgestion_competencia (id_gestion,id_competencia)values(v_parametros.id_gestion::integer,v_id_competencia::integer); --#3
 
       --Definicion de la respuesta
       v_resp = pxp.f_agrega_clave(v_resp, 'mensaje',

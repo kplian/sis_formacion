@@ -320,3 +320,37 @@ CREATE TABLE sigefo.tcompetencia_nivel (
 
 WITH (oids = false);
 /***********************************F-SCP-EGS-SIGEFO-0-31/01/2019****************************************/
+
+
+/***********************************I-SCP-JUAN-SIGEFO-0-05/03/2020****************************************/
+
+ALTER TABLE sigefo.tplanificacion --#6
+  ADD COLUMN cantidad_cursos_asociados INTEGER;--#6
+
+
+
+CREATE TABLE sigefo.tgestion_competencia ( --#7
+  id_competencia INTEGER,--#7
+  id_gestion INTEGER--#7
+) --#7
+WITH (oids = false);--#7
+
+
+
+ALTER TABLE sigefo.tcurso --#7
+  ADD COLUMN planificado BOOLEAN; --#7
+
+
+
+COMMENT ON COLUMN sigefo.tcurso.planificado --#7
+IS 'Define si el curso es planificado o no es planificado'; --#7
+
+
+COMMENT ON COLUMN sigefo.tcurso.id_planificacion --#7
+IS 'Define de donde saca el presupuesto'; --#7
+
+
+
+ALTER TABLE sigefo.tcurso --#7
+  ALTER COLUMN planificado TYPE VARCHAR(50); --#7
+/***********************************F-SCP-JUAN-SIGEFO-0-05/03/2020****************************************/

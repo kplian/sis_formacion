@@ -457,4 +457,36 @@ ALTER TABLE sigefo.tcompetencia_nivel
     NOT DEFERRABLE;
     
 /***********************************F-DEP-JUAN-SIGEFO-0-12/06/2018****************************************/
-    
+
+
+/***********************************I-DEP-JUAN-SIGEFO-0-05/03/2020****************************************/
+
+ALTER TABLE sigefo.tgestion_competencia --#7
+  ADD CONSTRAINT tgestion_competencia_fk FOREIGN KEY (id_competencia)--#7
+    REFERENCES sigefo.tcompetencia(id_competencia)--#7
+    ON DELETE NO ACTION--#7
+    ON UPDATE NO ACTION--#7
+    NOT DEFERRABLE;--#7
+
+
+
+ALTER TABLE sigefo.tgestion_competencia --#7
+  ADD CONSTRAINT tgestion_competencia_fk1 FOREIGN KEY (id_gestion) --#7
+    REFERENCES param.tgestion(id_gestion) --#7
+    ON DELETE NO ACTION --#7
+    ON UPDATE NO ACTION --#7
+    NOT DEFERRABLE; --#7
+
+--------------- SQL ---------------
+
+
+ALTER TABLE sigefo.tgestion_competencia --#7
+  DROP CONSTRAINT tgestion_competencia_fk RESTRICT; --#7
+
+ALTER TABLE sigefo.tgestion_competencia --#7
+  ADD CONSTRAINT tgestion_competencia_fk FOREIGN KEY (id_competencia) --#7
+    REFERENCES sigefo.tcompetencia(id_competencia) --#7
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE;
+/***********************************F-DEP-JUAN-SIGEFO-0-05/03/2020****************************************/
