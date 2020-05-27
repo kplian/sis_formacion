@@ -354,3 +354,10 @@ IS 'Define de donde saca el presupuesto'; --#7
 ALTER TABLE sigefo.tcurso --#7
   ALTER COLUMN planificado TYPE VARCHAR(50); --#7
 /***********************************F-SCP-JUAN-SIGEFO-0-05/03/2020****************************************/
+
+
+/***********************************I-SCP-MANU-SIGEFO-0-27/05/2020****************************************/
+ALTER TABLE sigefo.tpreguntas
+  ADD COLUMN peso NUMERIC(17,2);
+
+/***********************************F-SCP-MANU-SIGEFO-0-27/05/2020****************************************/  
